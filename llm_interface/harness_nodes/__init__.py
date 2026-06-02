@@ -336,6 +336,8 @@ try:
             await send("error", str(exc))
 
         finally:
+            gen_task.cancel()
+            await asyncio.gather(gen_task, return_exceptions=True)
             exec_log.unsubscribe(q)
             await resp.write_eof()
 

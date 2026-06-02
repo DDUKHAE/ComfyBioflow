@@ -24,6 +24,9 @@ if str(_LLM_DIR) not in sys.path:
 # Web directory for frontend JS
 WEB_DIRECTORY = "./llm_interface/harness_nodes/web"
 
+# Import harness_nodes to register /comfybio/* API routes with PromptServer
+import harness_nodes  # noqa: F401
+
 
 @lru_cache(maxsize=1)
 def _collect_biopython_nodes() -> list[type[io.ComfyNode]]:

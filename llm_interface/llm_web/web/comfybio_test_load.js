@@ -119,7 +119,8 @@ async function _openXtermLogin(provider) {
         _xtermInst?.write(data);
     };
     _xtermWs.onerror = () => _xtermInst?.write("\r\n\x1b[31m[오류] 서버 연결 실패\x1b[0m\r\n");
-    _xtermWs.onclose = () => _xtermInst?.write("\r\n\x1b[33m[세션 종료]\x1b[0m\r\n");
+    // onclose is set by _triggerLogin after this function returns,
+    // so it can call _checkAndRestore with the correct closure.
 
     // Encode keystrokes as UTF-8 bytes so the backend receives BINARY frames
     // and writes them directly to the PTY (TEXT frames are reserved for JSON
@@ -250,38 +251,56 @@ function _applyStatus(statusData) {
 
 async function _triggerLogin() {
     const provider = getProvider();
-
-    // Open embedded xterm terminal for the login session
-    const opened = await _openXtermLogin(provider);
+    const opened   = await _openXtermLogin(provider);
 
     if (!opened) {
-        // Fallback: open browser URL (old behaviour)
         try {
             const data = await postLogin(provider);
             if (data.login_url) window.open(data.login_url, "_blank");
         } catch { /* ignore */ }
     }
 
-    // Poll status until authenticated (or timeout after 3 min)
+    let done = false;
+
+    // Shared restore logic — called from both WS-close and the periodic poll.
+    async function _checkAndRestore() {
+        if (done) return;
+        invalidateCachedStatus(provider);
+        const s = await fetchStatus(provider).catch(() => null);
+        if (!s || done) return;
+        setCachedStatus(provider, s);
+        if (!s.ready) return;
+
+        done = true;
+        _destroyXterm();
+        if (getProvider() === provider) {
+            _applyStatus(s);
+            renderLLMLog(s, _modelsData(), provider, {
+                onInstall: _triggerInstall,
+                onLogin: _triggerLogin,
+                onTestConnection: _triggerTestConnection,
+            });
+        }
+    }
+
+    // When the CLI process exits the WebSocket closes — check immediately
+    // (800 ms delay lets the CLI flush auth tokens to disk first).
+    if (_xtermWs) {
+        _xtermWs.onclose = () => {
+            _xtermInst?.write("\r\n\x1b[33m[세션 종료 — 상태 확인 중…]\x1b[0m\r\n");
+            setTimeout(_checkAndRestore, 800);
+        };
+    }
+
+    // Periodic fallback: re-check every 3 s up to 3 min.
     let tries = 0;
-    const pollProvider = provider;
     _xtermPoll = setInterval(async () => {
         tries++;
-        invalidateCachedStatus(pollProvider);
-        const s = await fetchStatus(pollProvider).catch(() => null);
-        if (!s) return;
-        setCachedStatus(pollProvider, s);
-
-        if (s.ready || tries > 60) {
+        await _checkAndRestore();
+        if (tries > 60 && !done) {
+            done = true;
             _destroyXterm();
-            if (getProvider() === pollProvider) {
-                _applyStatus(s);
-                renderLLMLog(s, _modelsData(), pollProvider, {
-                    onInstall: _triggerInstall,
-                    onLogin: _triggerLogin,
-                    onTestConnection: _triggerTestConnection,
-                });
-            }
+            if (getProvider() === provider) refreshProvider(provider);
         }
     }, 3000);
 }

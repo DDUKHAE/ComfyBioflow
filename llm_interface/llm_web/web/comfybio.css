@@ -215,6 +215,32 @@ select:focus, input[type="text"]:focus, textarea:focus {
     border-color: var(--cb-accent);
     box-shadow: 0 0 0 3px rgba(29, 185, 84, 0.30);
 }
+input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    background: var(--cb-border-subtle);
+    height: 6px;
+    border-radius: 3px;
+    outline: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--cb-accent);
+    cursor: pointer;
+    transition: transform 0.1s, background-color 0.15s;
+    border: none;
+}
+input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.25);
+    background: var(--cb-accent-2);
+}
 textarea {
     resize: vertical; min-height: 72px; max-height: 160px;
     font-family: inherit; overflow-y: auto;
@@ -271,23 +297,55 @@ textarea::-webkit-scrollbar { display: none; }
 .cb-auth-msg  { font-size: 10px; color: #f59e0b; flex: 1; line-height: 1.4; }
 
 /* ── LLM log ── */
-#cb-llm-log { overflow: hidden; }
+#cb-llm-log {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    margin-top: 8px;
+    overflow: hidden;
+}
+
+/* ── Embedded xterm terminal (login) ── */
+#cb-xterm-wrap {
+    flex: 1 1 auto;
+    min-height: 0;
+    border-radius: var(--cb-radius);
+    border: 1px solid var(--cb-border-sp);
+    overflow: hidden;
+    background: var(--cb-canvas);
+    display: none;
+    flex-direction: column;
+}
+#cb-xterm-wrap.cb-xterm-open { display: flex; }
+
+/* Force xterm to fill the container */
+#cb-xterm-wrap .xterm { flex: 1 1 auto; min-height: 0; }
+#cb-xterm-wrap .xterm-screen { height: 100% !important; }
+#cb-xterm-wrap .xterm-viewport { background: transparent !important; }
+#cb-xterm-wrap .xterm-helper-textarea { position: absolute; }
 
 .cb-status-card {
-    display: flex; align-items: flex-start; gap: 10px;
-    padding: 10px 12px; border-radius: var(--cb-radius);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 24px 16px;
+    border-radius: var(--cb-radius);
     border: 1px solid transparent;
+    gap: 14px;
 }
 .cb-status-ok   { background: var(--cb-status-ok-bg);   border-color: var(--cb-status-ok-border); }
 .cb-status-warn { background: var(--cb-status-warn-bg);  border-color: var(--cb-status-warn-border); }
 .cb-status-err  { background: var(--cb-status-err-bg);   border-color: var(--cb-status-err-border); }
-.cb-status-icon    { font-size: 15px; flex-shrink: 0; line-height: 1.5; }
-.cb-status-content { display: flex; flex-direction: column; gap: 7px; flex: 1; min-width: 0; }
-.cb-status-msg     { font-size: 11px; font-weight: 600; line-height: 1.4; }
+.cb-status-icon    { font-size: 36px; flex-shrink: 0; line-height: 1; margin-bottom: 4px; }
+.cb-status-content { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; flex: 1; min-width: 0; width: 100%; }
+.cb-status-msg     { font-size: 13px; font-weight: 600; line-height: 1.4; }
 .cb-status-ok   .cb-status-msg { color: var(--cb-status-ok-text); }
 .cb-status-warn .cb-status-msg { color: var(--cb-status-warn-text); }
 .cb-status-err  .cb-status-msg { color: var(--cb-status-err-text); }
-.cb-status-action  { align-self: flex-start; font-size: 10px; padding: 4px 12px; }
+.cb-status-action  { align-self: center; font-size: 11px; padding: 8px 18px; border-radius: var(--cb-radius); width: 100%; max-width: 160px; margin-top: 4px; }
 
 /* ── Prompt log ── */
 #cb-prompt-log {
@@ -358,7 +416,8 @@ textarea::-webkit-scrollbar { display: none; }
 .cb-browser-list {
     border: 1px solid var(--cb-border);
     border-radius: var(--cb-radius);
-    flex: 0 0 204px;
+    flex: 1 1 auto;
+    min-height: 120px;
     overflow-y: auto;
     background: var(--cb-log-bg);
     display: grid;
@@ -394,7 +453,13 @@ textarea::-webkit-scrollbar { display: none; }
 .cb-io-selected-summary {
     background: var(--cb-surface-2);
     border: 1px solid var(--cb-border);
-    border-radius: var(--cb-radius); padding: 8px 10px; font-size: 11px;
+    border-radius: var(--cb-radius); padding: 10px 14px; font-size: 11px;
+}
+#cb-browser-select-current {
+    padding: 10px 18px;
+    font-size: 12px;
+    font-weight: 700;
+    border-radius: 20px;
 }
 .cb-selected-path-val {
     font-family: "SF Mono", "Consolas", monospace;

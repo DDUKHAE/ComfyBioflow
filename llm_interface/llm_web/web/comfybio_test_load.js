@@ -15,8 +15,114 @@ import {
 } from "./api_client.js";
 import {
     renderLLMLog, renderInstallProgress, renderInstallError,
-    renderPromptLog, renderBrowserEntries,
+    renderPromptLog, renderBrowserEntries, renderTestConnectionProgress,
+    renderTerminalLog,
 } from "./ui_controller.js";
+
+// ── xterm.js CDN ───────────────────────────────────────────────────────────────
+const _XTERM_JS  = "https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.min.js";
+const _XTERM_CSS = "https://cdn.jsdelivr.net/npm/xterm@5.3.0/css/xterm.css";
+const _XTERM_FIT = "https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.8.0/lib/xterm-addon-fit.min.js";
+
+let _xtermInst  = null;   // xterm Terminal instance
+let _xtermWs    = null;   // WebSocket to PTY backend
+let _xtermPoll  = null;   // status-poll interval during login
+let _fitAddon   = null;
+
+async function _loadXtermJs() {
+    if (window.Terminal) return;
+    if (!document.querySelector("[data-xterm-css]")) {
+        const link = document.createElement("link");
+        link.rel = "stylesheet"; link.href = _XTERM_CSS;
+        link.dataset.xtermCss = "1";
+        document.head.appendChild(link);
+    }
+    await new Promise((res, rej) => {
+        const s = document.createElement("script");
+        s.src = _XTERM_JS; s.onload = res; s.onerror = rej;
+        document.head.appendChild(s);
+    });
+    // FitAddon (optional)
+    if (!window.FitAddon) {
+        await new Promise(res => {
+            const s = document.createElement("script");
+            s.src = _XTERM_FIT; s.onload = res; s.onerror = res;
+            document.head.appendChild(s);
+        });
+    }
+}
+
+function _destroyXterm() {
+    if (_xtermPoll) { clearInterval(_xtermPoll); _xtermPoll = null; }
+    if (_xtermWs)   { _xtermWs.close();  _xtermWs   = null; }
+    if (_xtermInst) { _xtermInst.dispose(); _xtermInst = null; }
+    _fitAddon = null;
+    const wrap = _el("cb-xterm-wrap");
+    if (wrap) { wrap.classList.remove("cb-xterm-open"); wrap.innerHTML = ""; }
+    const log = _el("cb-llm-log");
+    if (log) log.style.display = "";
+}
+
+async function _openXtermLogin(provider) {
+    try { await _loadXtermJs(); } catch (e) { return false; }
+
+    const wrap = _el("cb-xterm-wrap");
+    const log  = _el("cb-llm-log");
+    if (!wrap) return false;
+
+    // Hide status card, show terminal
+    if (log) log.style.display = "none";
+    wrap.innerHTML = "";
+    wrap.classList.add("cb-xterm-open");
+
+    // Measure available size
+    const rect = wrap.getBoundingClientRect();
+    const cols  = Math.max(20, Math.floor((rect.width  - 8) / 7.2)) || 44;
+    const rows  = Math.max(4,  Math.floor((rect.height - 8) / 14))  || 18;
+
+    _xtermInst = new window.Terminal({
+        cols, rows,
+        theme: {
+            background: "#0B1A10", foreground: "#FFFFFF",
+            cursor: "#1DB954", cursorAccent: "#000000",
+            selectionBackground: "rgba(29,185,84,0.25)",
+            green: "#1DB954", brightGreen: "#1ED760",
+        },
+        fontSize: 11,
+        fontFamily: '"SF Mono","Consolas","Courier New",monospace',
+        cursorBlink: true,
+        cursorStyle: "block",
+        allowProposedApi: true,
+        convertEol: true,
+    });
+    _xtermInst.open(wrap);
+
+    if (window.FitAddon) {
+        _fitAddon = new window.FitAddon.FitAddon();
+        _xtermInst.loadAddon(_fitAddon);
+        _fitAddon.fit();
+    }
+
+    // WebSocket to PTY backend
+    const proto = location.protocol === "https:" ? "wss:" : "ws:";
+    const url   = `${proto}//${location.host}/comfybio/terminal?provider=${encodeURIComponent(provider)}&cols=${cols}&rows=${rows}`;
+    _xtermWs = new WebSocket(url);
+    _xtermWs.binaryType = "arraybuffer";
+
+    _xtermWs.onopen  = () => _xtermInst?.write("\x1b[32m[ComfyBIO]\x1b[0m 터미널 세션 연결됨\r\n\r\n");
+    _xtermWs.onmessage = (e) => {
+        const data = e.data instanceof ArrayBuffer ? new Uint8Array(e.data) : e.data;
+        _xtermInst?.write(data);
+    };
+    _xtermWs.onerror = () => _xtermInst?.write("\r\n\x1b[31m[오류] 서버 연결 실패\x1b[0m\r\n");
+    _xtermWs.onclose = () => _xtermInst?.write("\r\n\x1b[33m[세션 종료]\x1b[0m\r\n");
+
+    _xtermInst.onData((d) => {
+        if (_xtermWs?.readyState === WebSocket.OPEN) _xtermWs.send(d);
+    });
+
+    return true;
+}
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 function _el(id) { return document.getElementById(id); }
@@ -135,42 +241,41 @@ function _applyStatus(statusData) {
 }
 
 async function _triggerLogin() {
-    const btn = _el("cb-login-card-btn");
-    if (btn) btn.disabled = true;
-    try {
-        const data = await postLogin(getProvider());
+    const provider = getProvider();
 
-        if (data.login_url) {
-            window.open(data.login_url, "_blank");
-            let tries = 0;
-            const pollProvider = getProvider();
-            const poll = setInterval(async () => {
-                tries++;
-                invalidateCachedStatus(pollProvider);
-                let s = getCachedStatus(pollProvider);
-                if (!s) {
-                    s = await fetchStatus(pollProvider);
-                    setCachedStatus(pollProvider, s);
-                }
-                if (s.ready || tries > 40) {
-                    clearInterval(poll);
-                    if (getProvider() === pollProvider) {
-                        _applyStatus(s);
-                        renderLLMLog(s, _modelsData(), pollProvider, { onInstall: _triggerInstall, onLogin: _triggerLogin });
-                    }
-                }
-            }, 3000);
-        } else {
-            setTimeout(() => {
-                invalidateCachedStatus(getProvider());
-                refreshProvider(getProvider());
-            }, 4000);
-        }
-    } catch { }
-    finally {
-        const btn2 = _el("cb-login-card-btn");
-        if (btn2) btn2.disabled = false;
+    // Open embedded xterm terminal for the login session
+    const opened = await _openXtermLogin(provider);
+
+    if (!opened) {
+        // Fallback: open browser URL (old behaviour)
+        try {
+            const data = await postLogin(provider);
+            if (data.login_url) window.open(data.login_url, "_blank");
+        } catch { /* ignore */ }
     }
+
+    // Poll status until authenticated (or timeout after 3 min)
+    let tries = 0;
+    const pollProvider = provider;
+    _xtermPoll = setInterval(async () => {
+        tries++;
+        invalidateCachedStatus(pollProvider);
+        const s = await fetchStatus(pollProvider).catch(() => null);
+        if (!s) return;
+        setCachedStatus(pollProvider, s);
+
+        if (s.ready || tries > 60) {
+            _destroyXterm();
+            if (getProvider() === pollProvider) {
+                _applyStatus(s);
+                renderLLMLog(s, _modelsData(), pollProvider, {
+                    onInstall: _triggerInstall,
+                    onLogin: _triggerLogin,
+                    onTestConnection: _triggerTestConnection,
+                });
+            }
+        }
+    }, 3000);
 }
 
 async function _triggerInstall() {
@@ -190,6 +295,36 @@ async function _triggerInstall() {
         }
     } catch (err) {
         renderInstallError(box, label, err.message, _triggerInstall);
+    }
+}
+
+async function _triggerTestConnection() {
+    const box = _el("cb-llm-log");
+    const label = _capitalize(getProvider());
+    renderTestConnectionProgress(box, label);
+
+    try {
+        invalidateCachedStatus(getProvider());
+        // Add a small UX simulation delay so the connection test feels reactive and real
+        await new Promise(resolve => setTimeout(resolve, 600));
+
+        const statusData = await fetchStatus(getProvider());
+        setCachedStatus(getProvider(), statusData);
+
+        const modelsData = _modelsData();
+        _applyStatus(statusData);
+        renderLLMLog(statusData, modelsData, getProvider(), {
+            onInstall: _triggerInstall,
+            onLogin: _triggerLogin,
+            onTestConnection: _triggerTestConnection
+        });
+    } catch (err) {
+        const cached = getCachedStatus(getProvider()) || { installed: true, ready: true };
+        renderLLMLog(cached, _modelsData(), getProvider(), {
+            onInstall: _triggerInstall,
+            onLogin: _triggerLogin,
+            onTestConnection: _triggerTestConnection
+        });
     }
 }
 
@@ -227,7 +362,11 @@ async function refreshProvider(provider) {
             setCachedStatus(provider, statusData);
         }
         _applyStatus(statusData);
-        renderLLMLog(statusData, modelsData, provider, { onInstall: _triggerInstall, onLogin: _triggerLogin });
+        renderLLMLog(statusData, modelsData, provider, {
+            onInstall: _triggerInstall,
+            onLogin: _triggerLogin,
+            onTestConnection: _triggerTestConnection
+        });
     })();
 }
 
@@ -465,6 +604,7 @@ const PANEL_HTML = `
         </div>
 
         <div id="cb-llm-log"></div>
+        <div id="cb-xterm-wrap"></div>
       </div>
 
       <!-- ── I/O tab ── -->
@@ -615,7 +755,11 @@ app.registerExtension({
         _el("cb-model").addEventListener("change", e => {
             setModel(e.target.value);
             const cachedStatus = getCachedStatus(getProvider());
-            if (cachedStatus) renderLLMLog(cachedStatus, _modelsData(), getProvider(), { onInstall: _triggerInstall, onLogin: _triggerLogin });
+            if (cachedStatus) renderLLMLog(cachedStatus, _modelsData(), getProvider(), {
+                onInstall: _triggerInstall,
+                onLogin: _triggerLogin,
+                onTestConnection: _triggerTestConnection
+            });
         });
 
         // ── I/O Browser controls ──────────────────────────────────────────────

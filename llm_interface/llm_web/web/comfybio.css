@@ -114,7 +114,7 @@
 /* ── Panel ── */
 #cb-panel {
     position: fixed; top: 60px; right: 20px;
-    width: 380px; max-height: calc(100vh - 80px);
+    width: 380px; height: 460px; max-height: calc(100vh - 80px);
     box-sizing: border-box;
     background: var(--cb-bg);
     border: 1px solid var(--cb-border);
@@ -155,8 +155,8 @@
 .cb-dna-btn:hover { color: var(--cb-text-primary); background: var(--cb-surface-2); transform: scale(1.1); }
 .cb-dna-btn:active { transform: scale(0.9); }
 
-/* ── Body layout — height follows content ── */
-.cb-body { display: flex; overflow: hidden !important; }
+/* ── Body layout — fills fixed panel height ── */
+.cb-body { display: flex; flex: 1 1 auto; min-height: 0; overflow: hidden !important; }
 .cb-tabs {
     display: flex; flex-direction: column;
     width: 52px; flex-shrink: 0;
@@ -182,16 +182,17 @@
     width: 3px; height: 50%; border-radius: 0 3px 3px 0; background: var(--cb-accent);
 }
 .cb-right {
-    flex: 1 1 auto;
+    flex: 1 1 auto; min-height: 0;
     display: flex; flex-direction: column;
     overflow: hidden !important; min-width: 0;
 }
 .cb-content {
-    flex: 0 0 auto;
+    flex: 1 1 auto; min-height: 0;
     box-sizing: border-box; padding: 14px;
     display: flex; flex-direction: column; gap: 12px; min-width: 0;
 }
 .cb-tab-pane {
+    flex: 1 1 auto; min-height: 0;
     display: flex; flex-direction: column; gap: 10px;
     overflow: hidden !important;
 }
@@ -290,7 +291,7 @@ textarea::-webkit-scrollbar { display: none; }
 
 /* ── Prompt log ── */
 #cb-prompt-log {
-    max-height: 200px; overflow-y: auto;
+    flex: 1 1 auto; min-height: 0; overflow-y: auto;
     background: var(--cb-log-bg);
     border: 1px solid var(--cb-border);
     border-radius: var(--cb-radius); padding: 10px;
@@ -357,7 +358,7 @@ textarea::-webkit-scrollbar { display: none; }
 .cb-browser-list {
     border: 1px solid var(--cb-border);
     border-radius: var(--cb-radius);
-    min-height: 100px; max-height: 200px;
+    flex: 1 1 auto; min-height: 0;
     overflow-y: auto;
     background: var(--cb-log-bg);
     display: grid;

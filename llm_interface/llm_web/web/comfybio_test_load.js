@@ -112,20 +112,12 @@ function _fitPanelToViewport() {
     panel.style.maxHeight = `${maxHeight}px`;
 }
 
-// Reset any JS-forced height so the panel shrinks/grows to content naturally.
-function _resetPanelHeight() {
-    const panel = _el("cb-panel");
-    if (!panel) return;
-    panel.style.height = "";
-}
-
 function switchTab(tabId) {
     setActiveTab(tabId);
     document.querySelectorAll(".cb-tab-btn").forEach(btn =>
         btn.classList.toggle("active", btn.dataset.tab === tabId));
     document.querySelectorAll(".cb-tab-pane").forEach(pane =>
         pane.style.display = pane.dataset.pane === tabId ? "flex" : "none");
-    _resetPanelHeight();
     requestAnimationFrame(_fitPanelToViewport);
 }
 
@@ -555,19 +547,12 @@ app.registerExtension({
         makeDraggable(toggler, toggler);
 
         // ── Panel toggle ──────────────────────────────────────────────────────
-        // I/O tab reference dimensions used as default panel size on open
-        const IO_DEFAULT_W = 380;
-        const IO_DEFAULT_H = 460;
-
         toggler.addEventListener("click", () => {
             if (toggler._dragging) return;
             const tr  = toggler.getBoundingClientRect();
             const tcx = tr.left + tr.width  / 2;
             const tcy = tr.top  + tr.height / 2;
-            const panelW = panel.offsetWidth || IO_DEFAULT_W;
-
-            // Set I/O-reference height on first open (cleared on tab switch by auto-resize)
-            if (!panel.style.height) panel.style.height = IO_DEFAULT_H + "px";
+            const panelW = panel.offsetWidth || 380;
 
             panel.style.visibility = "hidden";
             panel.style.left = "0px";
@@ -586,7 +571,7 @@ app.registerExtension({
             let left = tcx - dnaRelX;
             let top  = tcy - dnaRelY;
             left = Math.max(8, Math.min(window.innerWidth  - panelW - 8, left));
-            top  = Math.max(8, Math.min(window.innerHeight - IO_DEFAULT_H - 8, top));
+            top  = Math.max(8, Math.min(window.innerHeight - 460 - 8, top));
 
             panel.style.left = left + "px";
             panel.style.top  = top  + "px";

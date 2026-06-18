@@ -106,10 +106,17 @@ function _fitPanelToViewport() {
     const left = parseFloat(panel.style.left || `${panelRect.left}`) || panelRect.left;
     const top = parseFloat(panel.style.top || `${panelRect.top}`) || panelRect.top;
     const maxWidth = Math.max(220, window.innerWidth - left - 8);
-    const maxHeight = Math.max(220, window.innerHeight - top - 8);
+    const maxHeight = Math.max(100, window.innerHeight - top - 8);
 
     panel.style.maxWidth = `${maxWidth}px`;
     panel.style.maxHeight = `${maxHeight}px`;
+}
+
+// Reset any JS-forced height so the panel shrinks/grows to content naturally.
+function _resetPanelHeight() {
+    const panel = _el("cb-panel");
+    if (!panel) return;
+    panel.style.height = "";
 }
 
 function switchTab(tabId) {
@@ -118,6 +125,7 @@ function switchTab(tabId) {
         btn.classList.toggle("active", btn.dataset.tab === tabId));
     document.querySelectorAll(".cb-tab-pane").forEach(pane =>
         pane.style.display = pane.dataset.pane === tabId ? "flex" : "none");
+    _resetPanelHeight();
     requestAnimationFrame(_fitPanelToViewport);
 }
 

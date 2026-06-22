@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 from functools import lru_cache
 from pathlib import Path
 
@@ -15,12 +16,16 @@ def list_domains() -> list[str]:
 
 
 @lru_cache(maxsize=None)
-def load_domain_tsr(domain_id: str) -> DomainTSR:
+def _load_domain_tsr_cached(domain_id: str) -> DomainTSR:
     path = _DOMAINS_DIR / f"{domain_id}.yaml"
     if not path.exists():
         raise FileNotFoundError(f"No TSR domain file for '{domain_id}': {path}")
     data = yaml.safe_load(path.read_text(encoding="utf-8"))
     return _parse_domain(data)
+
+
+def load_domain_tsr(domain_id: str) -> DomainTSR:
+    return copy.deepcopy(_load_domain_tsr_cached(domain_id))
 
 
 def _parse_domain(data: dict) -> DomainTSR:

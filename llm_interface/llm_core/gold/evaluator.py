@@ -10,6 +10,13 @@ class GoldEvaluator:
         self._gold = gold
 
     def evaluate(self, generated_tools: list[str], output: dict) -> Verdict:
+        """Evaluate generated workflow tools against tiered gold criteria.
+
+        Canonical match requires exact set equality with canonical.tools.
+        Alternative match requires at least one generated tool in alternatives.tools
+        (intentionally looser — alternatives are valid substitutions, not full replacements).
+        INVALID tool check always takes priority over both.
+        """
         # Invalid tool → immediate CRITICAL_ERROR
         if any(t in self._gold.invalid_tools for t in generated_tools):
             return Verdict.CRITICAL_ERROR
@@ -44,17 +51,20 @@ class GoldEvaluator:
 
     @staticmethod
     def _eval_criterion(value: float, threshold: float | str) -> bool:
-        if isinstance(threshold, (int, float)):
-            return value >= threshold
-        # Parse ">= 0.80", "== 1.0", "> 0.5" etc.
-        m = re.fullmatch(r"\s*(>=|<=|==|>|<)\s*([0-9.]+)\s*", str(threshold))
-        if not m:
+        try:
+            if isinstance(threshold, (int, float)):
+                return value >= threshold
+            # Parse ">= 0.80", "== 1.0", "> 0.5" etc.
+            m = re.fullmatch(r"\s*(>=|<=|==|>|<)\s*([0-9.]+)\s*", str(threshold))
+            if not m:
+                return False
+            op, rhs = m.group(1), float(m.group(2))
+            return {
+                ">=": value >= rhs,
+                "<=": value <= rhs,
+                "==": value == rhs,
+                ">": value > rhs,
+                "<": value < rhs,
+            }[op]
+        except (TypeError, ValueError):
             return False
-        op, rhs = m.group(1), float(m.group(2))
-        return {
-            ">=": value >= rhs,
-            "<=": value <= rhs,
-            "==": value == rhs,
-            ">": value > rhs,
-            "<": value < rhs,
-        }[op]

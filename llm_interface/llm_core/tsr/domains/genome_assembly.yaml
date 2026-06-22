@@ -1,0 +1,143 @@
+domain_id: genome_assembly
+description: "De novo genome assembly, polishing, and annotation — CS6"
+steps:
+  - step_id: short_read_assembly
+    step_name: Short-read De Novo Assembly
+    condition: "read_type == 'short_read'"
+    tools:
+      - tool_id: SPAdes
+        validity: canonical
+        reason: "Best-practice short-read assembler, widely used"
+      - tool_id: ABySS
+        validity: alternative_valid
+        reason: "Parallel assembler for large genomes"
+      - tool_id: Velvet
+        validity: invalid
+        reason: "Obsolete; SPAdes outperforms in all metrics"
+
+  - step_id: long_read_assembly
+    step_name: Long-read De Novo Assembly
+    condition: "read_type == 'long_read'"
+    tools:
+      - tool_id: Flye
+        validity: canonical
+        reason: "Fast, high-quality long-read assembler"
+      - tool_id: Hifiasm
+        validity: alternative_valid
+        reason: "Best for PacBio HiFi reads"
+      - tool_id: Canu
+        validity: alternative_valid
+        reason: "Established long-read assembler"
+
+  - step_id: hybrid_assembly
+    step_name: Hybrid Assembly
+    condition: "read_type == 'hybrid'"
+    tools:
+      - tool_id: Unicycler
+        validity: canonical
+        reason: "Best hybrid assembler, especially for bacteria"
+      - tool_id: SPAdes_hybrid
+        validity: alternative_valid
+        reason: "SPAdes with long-read scaffolding"
+
+  - step_id: assembly_qc
+    step_name: Assembly Quality Assessment
+    condition: "True"
+    tools:
+      - tool_id: QUAST
+        validity: canonical
+        reason: "Standard N50/contig metrics, optional reference"
+      - tool_id: BUSCO
+        validity: alternative_valid
+        reason: "Completeness via conserved single-copy orthologs"
+
+  - step_id: polishing
+    step_name: Assembly Polishing
+    condition: "read_type == 'long_read'"
+    tools:
+      - tool_id: Medaka
+        validity: canonical
+        reason: "Oxford Nanopore polishing tool from ONT"
+      - tool_id: Racon
+        validity: alternative_valid
+        reason: "Fast consensus for any long-read platform"
+
+  - step_id: polishing
+    step_name: Assembly Polishing
+    condition: "read_type == 'short_read' or read_type == 'hybrid'"
+    tools:
+      - tool_id: Pilon
+        validity: canonical
+        reason: "Illumina-based polishing, corrects SNPs/indels/gaps"
+      - tool_id: NextPolish
+        validity: alternative_valid
+        reason: "Fast Illumina/ONT polisher"
+
+  - step_id: repeat_masking
+    step_name: Repeat Masking
+    condition: "True"
+    tools:
+      - tool_id: RepeatMasker
+        validity: canonical
+        reason: "Gold standard repeat masker using Repbase"
+      - tool_id: RepeatModeler
+        validity: alternative_valid
+        reason: "De novo repeat library builder, precedes RepeatMasker"
+
+  - step_id: prokaryote_annotation
+    step_name: Prokaryotic Genome Annotation
+    condition: "kingdom == 'prokaryote'"
+    tools:
+      - tool_id: Prokka
+        validity: canonical
+        reason: "Rapid prokaryotic annotation, widely used"
+      - tool_id: RAST
+        validity: alternative_valid
+        reason: "Web-based prokaryotic annotation"
+      - tool_id: Augustus
+        validity: invalid
+        reason: "Eukaryotic gene predictor; wrong kingdom"
+
+  - step_id: eukaryote_annotation
+    step_name: Eukaryotic Genome Annotation
+    condition: "kingdom == 'eukaryote'"
+    tools:
+      - tool_id: MAKER
+        validity: canonical
+        reason: "Evidence-based eukaryotic annotation pipeline"
+      - tool_id: BRAKER3
+        validity: alternative_valid
+        reason: "Combines RNA-seq + protein evidence with AUGUSTUS"
+
+  - step_id: comparative_genomics
+    step_name: Comparative Genomics Alignment
+    condition: "True"
+    tools:
+      - tool_id: MUMmer
+        validity: canonical
+        reason: "Whole-genome alignment for closely related genomes"
+      - tool_id: minimap2_asm
+        validity: alternative_valid
+        reason: "Fast pairwise assembly alignment, any divergence level"
+
+  - step_id: scaffolding
+    step_name: Scaffolding
+    condition: "True"
+    tools:
+      - tool_id: RagTag
+        validity: canonical
+        reason: "Reference-guided scaffolding, easy to use"
+      - tool_id: 3D-DNA
+        validity: alternative_valid
+        reason: "Hi-C based scaffolding for chromosome-level assembly"
+
+  - step_id: contamination_check
+    step_name: Contamination Screening
+    condition: "True"
+    tools:
+      - tool_id: BlobTools
+        validity: canonical
+        reason: "GC/coverage/taxonomy blobplot for contamination detection"
+      - tool_id: Kraken2
+        validity: alternative_valid
+        reason: "K-mer taxonomic screening for contamination"

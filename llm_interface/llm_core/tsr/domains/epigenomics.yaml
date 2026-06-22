@@ -1,0 +1,140 @@
+domain_id: epigenomics
+description: "ChIP-seq, ATAC-seq, and bisulfite methylation analysis — CS4"
+steps:
+  - step_id: chip_alignment
+    step_name: ChIP-seq Read Alignment
+    condition: "True"
+    tools:
+      - tool_id: Bowtie2
+        validity: canonical
+        reason: "Standard for ChIP-seq — fast, sensitive short-read aligner"
+      - tool_id: BWA-MEM2
+        validity: alternative_valid
+        reason: "Also widely used for ChIP-seq"
+      - tool_id: STAR
+        validity: invalid
+        reason: "Splice-aware; inappropriate for ChIP-seq DNA reads"
+
+  - step_id: peak_calling
+    step_name: Peak Calling
+    condition: "assay == 'chip_narrow'"
+    tools:
+      - tool_id: MACS3
+        validity: canonical
+        reason: "Gold standard narrow peak caller for TF ChIP"
+      - tool_id: SEACR
+        validity: alternative_valid
+        reason: "Sparse enrichment caller, good for CUT&RUN/CUT&TAG"
+
+  - step_id: peak_calling
+    step_name: Peak Calling
+    condition: "assay == 'chip_broad'"
+    tools:
+      - tool_id: MACS3_broad
+        validity: canonical
+        reason: "MACS3 --broad mode for H3K27me3/H3K9me3 histone marks"
+      - tool_id: SICER2
+        validity: alternative_valid
+        reason: "Domain-based caller optimized for broad histone marks"
+
+  - step_id: atac_alignment
+    step_name: ATAC-seq Read Alignment
+    condition: "True"
+    tools:
+      - tool_id: Bowtie2
+        validity: canonical
+        reason: "Standard ATAC-seq aligner"
+      - tool_id: BWA-MEM2
+        validity: alternative_valid
+        reason: "Also suitable for ATAC-seq"
+
+  - step_id: atac_peaks
+    step_name: ATAC-seq Peak Calling
+    condition: "True"
+    tools:
+      - tool_id: MACS3_atac
+        validity: canonical
+        reason: "MACS3 --nomodel --shift mode optimized for Tn5 cut sites"
+      - tool_id: Genrich
+        validity: alternative_valid
+        reason: "Peak caller designed specifically for ATAC-seq"
+
+  - step_id: bisulfite_alignment
+    step_name: Bisulfite Sequencing Alignment
+    condition: "True"
+    tools:
+      - tool_id: Bismark
+        validity: canonical
+        reason: "Most widely used WGBS/RRBS aligner, extensive documentation"
+      - tool_id: bwa-meth
+        validity: alternative_valid
+        reason: "Fast, memory-efficient bisulfite aligner"
+      - tool_id: STAR
+        validity: invalid
+        reason: "Not bisulfite-aware; cannot align bisulfite-converted reads"
+
+  - step_id: methylation_extraction
+    step_name: Methylation Level Extraction
+    condition: "True"
+    tools:
+      - tool_id: Bismark_extractor
+        validity: canonical
+        reason: "Canonical pairing with Bismark for CpG methylation extraction"
+      - tool_id: MethylDackel
+        validity: alternative_valid
+        reason: "Fast extractor compatible with any aligner output"
+
+  - step_id: dmr_analysis
+    step_name: Differentially Methylated Region Analysis
+    condition: "True"
+    tools:
+      - tool_id: methylKit
+        validity: canonical
+        reason: "R package for DMR analysis, widely cited in WGBS studies"
+      - tool_id: DSS
+        validity: alternative_valid
+        reason: "Beta-binomial model, handles low-coverage regions well"
+
+  - step_id: signal_track
+    step_name: Signal Track Generation
+    condition: "True"
+    tools:
+      - tool_id: deeptools_bamCoverage
+        validity: canonical
+        reason: "Standard for normalized BigWig track generation"
+      - tool_id: MACS3_bdgcmp
+        validity: alternative_valid
+        reason: "MACS3 signal comparison for fold-enrichment tracks"
+
+  - step_id: peak_annotation
+    step_name: Peak Annotation
+    condition: "True"
+    tools:
+      - tool_id: ChIPseeker
+        validity: canonical
+        reason: "R package for genomic feature annotation of peaks"
+      - tool_id: HOMER_annotatePeaks
+        validity: alternative_valid
+        reason: "HOMER annotation with built-in motif analysis"
+
+  - step_id: motif_analysis
+    step_name: Motif Analysis
+    condition: "True"
+    tools:
+      - tool_id: HOMER_findMotifs
+        validity: canonical
+        reason: "De novo and known motif enrichment, widely used for ChIP"
+      - tool_id: MEME-ChIP
+        validity: alternative_valid
+        reason: "Comprehensive motif analysis suite from MEME suite"
+
+  - step_id: visualization
+    step_name: Visualization
+    condition: "True"
+    tools:
+      - tool_id: deeptools_heatmap
+        validity: canonical
+        reason: "Heatmap and profile plots for signal at peaks/TSS regions"
+      - tool_id: IGV
+        validity: alternative_valid
+        reason: "Interactive genome browser for visual inspection"

@@ -23,8 +23,9 @@ def test_load_transcriptomics_tsr():
     tsr = load_domain_tsr("transcriptomics")
     assert tsr.domain_id == "transcriptomics"
     step_ids = [s.step_id for s in tsr.steps]
-    assert "alignment" in step_ids
-    assert "de_analysis" in step_ids
+    # step_ids renamed in Task 5: alignment→genome_alignment, de_analysis→differential_expression
+    assert "genome_alignment" in step_ids
+    assert "differential_expression" in step_ids
 
 
 def test_transcriptomics_alignment_has_canonical():
@@ -32,7 +33,7 @@ def test_transcriptomics_alignment_has_canonical():
     tsr = load_domain_tsr("transcriptomics")
     engine = TSREngine(tsr)
     ctx = {"data_type": "short_read", "read_length": 150}
-    assert engine.canonical("alignment", ctx) == "STAR"
+    assert engine.canonical("genome_alignment", ctx) == "STAR"
 
 
 def test_load_unknown_domain_raises():

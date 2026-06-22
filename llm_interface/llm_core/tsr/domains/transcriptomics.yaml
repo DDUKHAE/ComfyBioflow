@@ -1,6 +1,17 @@
 domain_id: transcriptomics
 description: "Bulk RNA-seq and scRNA-seq analysis — CS2"
 steps:
+  - step_id: raw_qc
+    step_name: Raw Quality Control
+    condition: "True"
+    tools:
+      - tool_id: FastQC
+        validity: canonical
+        reason: "Industry standard QC report"
+      - tool_id: MultiQC
+        validity: alternative_valid
+        reason: "Aggregates multiple FastQC reports"
+
   - step_id: adapter_trimming
     step_name: Adapter Trimming
     condition: "True"
@@ -10,26 +21,23 @@ steps:
         reason: "Fast, all-in-one quality control"
       - tool_id: trimmomatic
         validity: alternative_valid
-        reason: "Widely used, highly configurable"
+        reason: "Highly configurable, widely used"
       - tool_id: cutadapt
         validity: alternative_valid
         reason: "Flexible adapter trimmer"
 
-  - step_id: alignment
+  - step_id: genome_alignment
     step_name: Genome Alignment
-    condition: "data_type == 'short_read' and read_length >= 75"
+    condition: "data_type == 'short_read'"
     tools:
       - tool_id: STAR
         validity: canonical
-        reason: "Splice-aware aligner, RNA-seq standard"
+        reason: "Splice-aware aligner, RNA-seq standard for short reads"
       - tool_id: HISAT2
         validity: alternative_valid
         reason: "Memory-efficient splice-aware aligner"
-      - tool_id: minimap2
-        validity: invalid
-        reason: "Designed for long reads; cannot handle short-read RNA-seq error profile"
 
-  - step_id: alignment
+  - step_id: genome_alignment
     step_name: Genome Alignment
     condition: "data_type == 'long_read'"
     tools:
@@ -42,16 +50,30 @@ steps:
 
   - step_id: pseudo_alignment
     step_name: Pseudo-alignment / Quantification
-    condition: "quantification_only == True"
+    condition: "True"
     tools:
       - tool_id: kallisto
         validity: canonical
-        reason: "Fast pseudo-alignment, sufficient for quantification"
+        reason: "Fast pseudo-alignment, sufficient when genome alignment not needed"
       - tool_id: salmon
         validity: alternative_valid
         reason: "Quasi-mapping with GC-bias correction"
 
-  - step_id: de_analysis
+  - step_id: read_quantification
+    step_name: Read Quantification
+    condition: "True"
+    tools:
+      - tool_id: featureCounts
+        validity: canonical
+        reason: "Fast, memory-efficient gene-level counting"
+      - tool_id: HTSeq
+        validity: alternative_valid
+        reason: "Python-based, flexible counting"
+      - tool_id: RSEM
+        validity: alternative_valid
+        reason: "Handles multi-mapping reads with EM algorithm"
+
+  - step_id: differential_expression
     step_name: Differential Expression Analysis
     condition: "n_samples_per_group < 6"
     tools:
@@ -62,7 +84,7 @@ steps:
         validity: alternative_valid
         reason: "Acceptable but less optimal for n<6"
 
-  - step_id: de_analysis
+  - step_id: differential_expression
     step_name: Differential Expression Analysis
     condition: "n_samples_per_group >= 6"
     tools:
@@ -74,7 +96,32 @@ steps:
         reason: "Also valid for larger sample sizes"
       - tool_id: limma_voom
         validity: alternative_valid
-        reason: "Good for large studies"
+        reason: "Good for large studies or complex designs"
+
+  - step_id: pathway_enrichment
+    step_name: Pathway Enrichment Analysis
+    condition: "True"
+    tools:
+      - tool_id: clusterProfiler
+        validity: canonical
+        reason: "Comprehensive ORA and GSEA in R"
+      - tool_id: fgsea
+        validity: alternative_valid
+        reason: "Fast GSEA implementation"
+      - tool_id: GSEA
+        validity: alternative_valid
+        reason: "Original GSEA Java implementation"
+
+  - step_id: sc_preprocessing
+    step_name: Single-cell Preprocessing
+    condition: "assay == 'scrna_seq'"
+    tools:
+      - tool_id: scanpy
+        validity: canonical
+        reason: "Python-native sc analysis, Leiden/Louvain built-in"
+      - tool_id: seurat
+        validity: alternative_valid
+        reason: "R-based, widely used reference implementation"
 
   - step_id: sc_clustering
     step_name: Single-cell Clustering
@@ -85,10 +132,10 @@ steps:
         reason: "Superior community detection; default in Scanpy"
       - tool_id: louvain
         validity: alternative_valid
-        reason: "Widely used; predecessor to Leiden"
+        reason: "Predecessor to Leiden, still widely used"
       - tool_id: kmeans
         validity: invalid
-        reason: "Assumes spherical clusters; inappropriate for single-cell data"
+        reason: "Assumes spherical clusters; inappropriate for single-cell embedding"
 
   - step_id: sc_annotation
     step_name: Cell Type Annotation
@@ -100,3 +147,28 @@ steps:
       - tool_id: CellTypist
         validity: alternative_valid
         reason: "Machine learning-based annotation"
+
+  - step_id: sc_trajectory
+    step_name: Trajectory Analysis
+    condition: "assay == 'scrna_seq'"
+    tools:
+      - tool_id: PAGA
+        validity: canonical
+        reason: "Graph-based trajectory in Scanpy"
+      - tool_id: Monocle3
+        validity: alternative_valid
+        reason: "Pseudotime analysis in R"
+
+  - step_id: visualization
+    step_name: Visualization
+    condition: "True"
+    tools:
+      - tool_id: ggplot2
+        validity: canonical
+        reason: "Flexible R-based publication-quality plots"
+      - tool_id: seaborn
+        validity: alternative_valid
+        reason: "Python-based statistical visualization"
+      - tool_id: matplotlib
+        validity: alternative_valid
+        reason: "General-purpose Python plotting"

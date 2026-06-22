@@ -1,0 +1,16 @@
+{
+  "template_id": "phylogeny_basic",
+  "intent": "phylogeny",
+  "description": "Read a phylogenetic tree and inspect its topology",
+  "required_nodes": ["Phylo_read", "Phylo_info"],
+  "required_edges": [
+    {
+      "from_class": "Phylo_read",
+      "from_port": "tree",
+      "to_class": "Phylo_info",
+      "to_port": "tree"
+    }
+  ],
+  "optional_nodes": ["Phylo_write", "Phylo_draw_ascii"],
+  "forbidden_nodes": []
+}

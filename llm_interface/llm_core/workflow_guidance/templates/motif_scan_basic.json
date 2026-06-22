@@ -1,0 +1,11 @@
+{
+  "template_id": "motif_scan_basic",
+  "intent": "motif_scan_basic",
+  "description": "Create a motif from instances and summarize its consensus",
+  "required_nodes": ["Motif_create", "Motif_consensus"],
+  "required_edges": [
+    {"from_class": "Motif_create", "from_port": "motif", "to_class": "Motif_consensus", "to_port": "motif"}
+  ],
+  "optional_nodes": ["Motif_pssm_scan", "Motif_reverse_complement", "Motif_weblogo"],
+  "forbidden_nodes": []
+}

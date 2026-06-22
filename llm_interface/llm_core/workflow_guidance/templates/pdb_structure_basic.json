@@ -1,0 +1,11 @@
+{
+  "template_id": "pdb_structure_basic",
+  "intent": "pdb_structure_basic",
+  "description": "Read a PDB structure and inspect structural information",
+  "required_nodes": ["PDB_read", "PDB_structure_info"],
+  "required_edges": [
+    {"from_class": "PDB_read", "from_port": "structure", "to_class": "PDB_structure_info", "to_port": "structure"}
+  ],
+  "optional_nodes": ["PDB_header", "PDB_write", "PDB_get_chain"],
+  "forbidden_nodes": []
+}

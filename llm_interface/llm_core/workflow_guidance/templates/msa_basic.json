@@ -1,0 +1,16 @@
+{
+  "template_id": "msa_basic",
+  "intent": "multiple_alignment",
+  "description": "Read an alignment and summarize it",
+  "required_nodes": ["Align_read", "Align_summary"],
+  "required_edges": [
+    {
+      "from_class": "Align_read",
+      "from_port": "alignment",
+      "to_class": "Align_summary",
+      "to_port": "alignment"
+    }
+  ],
+  "optional_nodes": ["Align_write", "Align_counts"],
+  "forbidden_nodes": []
+}

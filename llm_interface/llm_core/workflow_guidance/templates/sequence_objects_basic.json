@@ -1,0 +1,11 @@
+{
+  "template_id": "sequence_objects_basic",
+  "intent": "sequence_objects_basic",
+  "description": "Translate a sequence and inspect the translated length",
+  "required_nodes": ["Seq_translate", "Seq_len"],
+  "required_edges": [
+    {"from_class": "Seq_translate", "from_port": "sequence", "to_class": "Seq_len", "to_port": "sequence"}
+  ],
+  "optional_nodes": ["Seq_GC_percent", "Seq_reverse_complement"],
+  "forbidden_nodes": []
+}

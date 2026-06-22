@@ -1,0 +1,11 @@
+{
+  "template_id": "cluster_basic",
+  "intent": "cluster_basic",
+  "description": "Load numeric CSV data and compute a distance matrix",
+  "required_nodes": ["Cluster_load_data", "Cluster_distance_matrix"],
+  "required_edges": [
+    {"from_class": "Cluster_load_data", "from_port": "data", "to_class": "Cluster_distance_matrix", "to_port": "data"}
+  ],
+  "optional_nodes": ["Cluster_hierarchical", "Cluster_pca", "Cluster_kcluster"],
+  "forbidden_nodes": []
+}

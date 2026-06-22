@@ -1,0 +1,9 @@
+{
+  "template_id": "kegg_pathway_basic",
+  "intent": "kegg_pathway_basic",
+  "description": "Fetch a KEGG entry or pathway payload",
+  "required_nodes": ["KEGG_api_get"],
+  "required_edges": [],
+  "optional_nodes": ["KEGG_api_list", "KEGG_api_info", "KEGG_api_find"],
+  "forbidden_nodes": []
+}

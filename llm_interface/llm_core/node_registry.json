@@ -1,0 +1,5146 @@
+{
+  "Align_read": {
+    "node_id": "Align_read",
+    "display_name": "Align read",
+    "category": "Biopython/Alignment",
+    "inputs": [
+      {
+        "name": "source",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "source_kind",
+        "type": "COMBO",
+        "default": "path"
+      },
+      {
+        "name": "format",
+        "type": "COMBO",
+        "default": "clustal"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "alignment",
+        "type": "STRING"
+      },
+      {
+        "name": "summary",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": true,
+    "is_output_node": false
+  },
+  "Align_parse": {
+    "node_id": "Align_parse",
+    "display_name": "Align parse",
+    "category": "Biopython/Alignment",
+    "inputs": [
+      {
+        "name": "file_path",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "format",
+        "type": "COMBO",
+        "default": "maf"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "alignments",
+        "type": "STRING"
+      },
+      {
+        "name": "count",
+        "type": "INT"
+      }
+    ],
+    "is_input_node": true,
+    "is_output_node": false
+  },
+  "Align_get_item": {
+    "node_id": "Align_get_item",
+    "display_name": "Align get item",
+    "category": "Biopython/Alignment",
+    "inputs": [
+      {
+        "name": "alignments",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "index",
+        "type": "INT",
+        "default": 1
+      }
+    ],
+    "outputs": [
+      {
+        "name": "alignment",
+        "type": "STRING"
+      },
+      {
+        "name": "summary",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Align_write": {
+    "node_id": "Align_write",
+    "display_name": "Align write",
+    "category": "Biopython/Alignment",
+    "inputs": [
+      {
+        "name": "alignments",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "file_path",
+        "type": "STRING",
+        "default": "output.aln"
+      },
+      {
+        "name": "format",
+        "type": "COMBO",
+        "default": "clustal"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "count",
+        "type": "INT"
+      },
+      {
+        "name": "file_path",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": true
+  },
+  "Align_summary": {
+    "node_id": "Align_summary",
+    "display_name": "Align summary",
+    "category": "Biopython/Alignment",
+    "inputs": [
+      {
+        "name": "alignment",
+        "type": "STRING",
+        "default": ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "summary",
+        "type": "STRING"
+      },
+      {
+        "name": "rows",
+        "type": "INT"
+      },
+      {
+        "name": "columns",
+        "type": "INT"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Align_counts": {
+    "node_id": "Align_counts",
+    "display_name": "Align counts",
+    "category": "Biopython/Alignment",
+    "inputs": [
+      {
+        "name": "alignment",
+        "type": "STRING",
+        "default": ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "identities",
+        "type": "INT"
+      },
+      {
+        "name": "mismatches",
+        "type": "INT"
+      },
+      {
+        "name": "gaps",
+        "type": "INT"
+      },
+      {
+        "name": "aligned",
+        "type": "INT"
+      },
+      {
+        "name": "detail",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Align_get_row": {
+    "node_id": "Align_get_row",
+    "display_name": "Align get row",
+    "category": "Biopython/Alignment",
+    "inputs": [
+      {
+        "name": "alignment",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "row",
+        "type": "INT",
+        "default": 1
+      }
+    ],
+    "outputs": [
+      {
+        "name": "sequence",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Align_format": {
+    "node_id": "Align_format",
+    "display_name": "Align format",
+    "category": "Biopython/Alignment",
+    "inputs": [
+      {
+        "name": "alignment",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "format",
+        "type": "COMBO",
+        "default": "fasta"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "text",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Align_slice": {
+    "node_id": "Align_slice",
+    "display_name": "Align slice columns",
+    "category": "Biopython/Alignment",
+    "inputs": [
+      {
+        "name": "alignment",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "start",
+        "type": "INT",
+        "default": 0
+      },
+      {
+        "name": "end",
+        "type": "INT",
+        "default": 0
+      }
+    ],
+    "outputs": [
+      {
+        "name": "alignment",
+        "type": "STRING"
+      },
+      {
+        "name": "summary",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Align_sort": {
+    "node_id": "Align_sort",
+    "display_name": "Align sort",
+    "category": "Biopython/Alignment",
+    "inputs": [
+      {
+        "name": "alignment",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "reverse",
+        "type": "BOOLEAN",
+        "default": false
+      }
+    ],
+    "outputs": [
+      {
+        "name": "alignment",
+        "type": "STRING"
+      },
+      {
+        "name": "summary",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Align_convert": {
+    "node_id": "Align_convert",
+    "display_name": "Align convert",
+    "category": "Biopython/Alignment",
+    "inputs": [
+      {
+        "name": "input_path",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "input_format",
+        "type": "COMBO",
+        "default": "stockholm"
+      },
+      {
+        "name": "output_path",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "output_format",
+        "type": "COMBO",
+        "default": "fasta"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "count",
+        "type": "INT"
+      },
+      {
+        "name": "output_path",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": true,
+    "is_output_node": true
+  },
+  "BLAST_qblast": {
+    "node_id": "BLAST_qblast",
+    "display_name": "BLAST qblast",
+    "category": "Biopython/BLAST",
+    "inputs": [
+      {
+        "name": "email",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "program",
+        "type": "COMBO",
+        "default": "blastn"
+      },
+      {
+        "name": "database",
+        "type": "COMBO",
+        "default": "nt"
+      },
+      {
+        "name": "query",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "output_file",
+        "type": "STRING",
+        "default": "blast_result.xml"
+      },
+      {
+        "name": "expect",
+        "type": "FLOAT",
+        "default": 10.0
+      }
+    ],
+    "outputs": [
+      {
+        "name": "file_path",
+        "type": "STRING"
+      },
+      {
+        "name": "bytes_written",
+        "type": "INT"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": true
+  },
+  "BLAST_read": {
+    "node_id": "BLAST_read",
+    "display_name": "BLAST read",
+    "category": "Biopython/BLAST",
+    "inputs": [
+      {
+        "name": "file_path",
+        "type": "STRING",
+        "default": ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "record",
+        "type": "STRING"
+      },
+      {
+        "name": "query_id",
+        "type": "STRING"
+      },
+      {
+        "name": "hit_count",
+        "type": "INT"
+      },
+      {
+        "name": "summary",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": true,
+    "is_output_node": false
+  },
+  "BLAST_parse": {
+    "node_id": "BLAST_parse",
+    "display_name": "BLAST parse",
+    "category": "Biopython/BLAST",
+    "inputs": [
+      {
+        "name": "file_path",
+        "type": "STRING",
+        "default": ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "records",
+        "type": "STRING"
+      },
+      {
+        "name": "count",
+        "type": "INT"
+      },
+      {
+        "name": "program",
+        "type": "STRING"
+      },
+      {
+        "name": "database",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": true,
+    "is_output_node": false
+  },
+  "BLAST_get_record": {
+    "node_id": "BLAST_get_record",
+    "display_name": "BLAST get record",
+    "category": "Biopython/BLAST",
+    "inputs": [
+      {
+        "name": "records",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "index",
+        "type": "INT",
+        "default": 1
+      }
+    ],
+    "outputs": [
+      {
+        "name": "record",
+        "type": "STRING"
+      },
+      {
+        "name": "query_id",
+        "type": "STRING"
+      },
+      {
+        "name": "hit_count",
+        "type": "INT"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "BLAST_hit_info": {
+    "node_id": "BLAST_hit_info",
+    "display_name": "BLAST hit info",
+    "category": "Biopython/BLAST",
+    "inputs": [
+      {
+        "name": "record",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "hit_index",
+        "type": "INT",
+        "default": 1
+      }
+    ],
+    "outputs": [
+      {
+        "name": "target_id",
+        "type": "STRING"
+      },
+      {
+        "name": "description",
+        "type": "STRING"
+      },
+      {
+        "name": "alignment_count",
+        "type": "INT"
+      },
+      {
+        "name": "summary",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "BLAST_hsp_info": {
+    "node_id": "BLAST_hsp_info",
+    "display_name": "BLAST HSP info",
+    "category": "Biopython/BLAST",
+    "inputs": [
+      {
+        "name": "record",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "hit_index",
+        "type": "INT",
+        "default": 1
+      },
+      {
+        "name": "hsp_index",
+        "type": "INT",
+        "default": 1
+      }
+    ],
+    "outputs": [
+      {
+        "name": "evalue",
+        "type": "FLOAT"
+      },
+      {
+        "name": "bitscore",
+        "type": "FLOAT"
+      },
+      {
+        "name": "score",
+        "type": "FLOAT"
+      },
+      {
+        "name": "alignment_text",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "BLAST_filter_evalue": {
+    "node_id": "BLAST_filter_evalue",
+    "display_name": "BLAST filter by E-value",
+    "category": "Biopython/BLAST",
+    "inputs": [
+      {
+        "name": "record",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "max_evalue",
+        "type": "FLOAT",
+        "default": 0.001
+      }
+    ],
+    "outputs": [
+      {
+        "name": "record",
+        "type": "STRING"
+      },
+      {
+        "name": "hit_count",
+        "type": "INT"
+      },
+      {
+        "name": "hit_ids",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Cluster_load_data": {
+    "node_id": "Cluster_load_data",
+    "display_name": "Cluster load data (CSV)",
+    "category": "Biopython/Cluster",
+    "inputs": [
+      {
+        "name": "csv_text",
+        "type": "STRING",
+        "default": "1.0,2.0,3.0\n4.0,5.0,6.0\n7.0,8.0,9.0"
+      },
+      {
+        "name": "separator",
+        "type": "STRING",
+        "default": ","
+      }
+    ],
+    "outputs": [
+      {
+        "name": "data",
+        "type": "STRING"
+      },
+      {
+        "name": "rows",
+        "type": "INT"
+      },
+      {
+        "name": "cols",
+        "type": "INT"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Cluster_distance_matrix": {
+    "node_id": "Cluster_distance_matrix",
+    "display_name": "Cluster distance matrix",
+    "category": "Biopython/Cluster",
+    "inputs": [
+      {
+        "name": "data",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "dist",
+        "type": "COMBO",
+        "default": "pearson"
+      },
+      {
+        "name": "transpose",
+        "type": "BOOLEAN",
+        "default": false
+      }
+    ],
+    "outputs": [
+      {
+        "name": "matrix",
+        "type": "STRING"
+      },
+      {
+        "name": "matrix_preview",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Cluster_hierarchical": {
+    "node_id": "Cluster_hierarchical",
+    "display_name": "Cluster hierarchical",
+    "category": "Biopython/Cluster",
+    "inputs": [
+      {
+        "name": "data",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "method",
+        "type": "COMBO",
+        "default": "m"
+      },
+      {
+        "name": "dist",
+        "type": "COMBO",
+        "default": "pearson"
+      },
+      {
+        "name": "transpose",
+        "type": "BOOLEAN",
+        "default": false
+      }
+    ],
+    "outputs": [
+      {
+        "name": "tree",
+        "type": "STRING"
+      },
+      {
+        "name": "tree_summary",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Cluster_kcluster": {
+    "node_id": "Cluster_kcluster",
+    "display_name": "Cluster k-means",
+    "category": "Biopython/Cluster",
+    "inputs": [
+      {
+        "name": "data",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "nclusters",
+        "type": "INT",
+        "default": 3
+      },
+      {
+        "name": "npass",
+        "type": "INT",
+        "default": 10
+      },
+      {
+        "name": "dist",
+        "type": "COMBO",
+        "default": "euclidean"
+      },
+      {
+        "name": "transpose",
+        "type": "BOOLEAN",
+        "default": false
+      }
+    ],
+    "outputs": [
+      {
+        "name": "cluster_ids",
+        "type": "STRING"
+      },
+      {
+        "name": "error",
+        "type": "FLOAT"
+      },
+      {
+        "name": "nfound",
+        "type": "INT"
+      },
+      {
+        "name": "summary",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Cluster_kmedoids": {
+    "node_id": "Cluster_kmedoids",
+    "display_name": "Cluster k-medoids",
+    "category": "Biopython/Cluster",
+    "inputs": [
+      {
+        "name": "distance_matrix",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "nclusters",
+        "type": "INT",
+        "default": 3
+      },
+      {
+        "name": "npass",
+        "type": "INT",
+        "default": 10
+      }
+    ],
+    "outputs": [
+      {
+        "name": "cluster_ids",
+        "type": "STRING"
+      },
+      {
+        "name": "error",
+        "type": "FLOAT"
+      },
+      {
+        "name": "nfound",
+        "type": "INT"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Cluster_pca": {
+    "node_id": "Cluster_pca",
+    "display_name": "Cluster PCA",
+    "category": "Biopython/Cluster",
+    "inputs": [
+      {
+        "name": "data",
+        "type": "STRING",
+        "default": ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "coordinates",
+        "type": "STRING"
+      },
+      {
+        "name": "eigenvalues",
+        "type": "STRING"
+      },
+      {
+        "name": "mean",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Cluster_som": {
+    "node_id": "Cluster_som",
+    "display_name": "Cluster SOM",
+    "category": "Biopython/Cluster",
+    "inputs": [
+      {
+        "name": "data",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "nxgrid",
+        "type": "INT",
+        "default": 2
+      },
+      {
+        "name": "nygrid",
+        "type": "INT",
+        "default": 1
+      },
+      {
+        "name": "niter",
+        "type": "INT",
+        "default": 1000
+      },
+      {
+        "name": "dist",
+        "type": "COMBO",
+        "default": "euclidean"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "cluster_ids",
+        "type": "STRING"
+      },
+      {
+        "name": "summary",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Entrez_einfo": {
+    "node_id": "Entrez_einfo",
+    "display_name": "Entrez einfo",
+    "category": "Biopython/Entrez",
+    "inputs": [
+      {
+        "name": "email",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "db",
+        "type": "STRING",
+        "default": ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "result",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Entrez_esearch": {
+    "node_id": "Entrez_esearch",
+    "display_name": "Entrez esearch",
+    "category": "Biopython/Entrez",
+    "inputs": [
+      {
+        "name": "email",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "db",
+        "type": "COMBO",
+        "default": "pubmed"
+      },
+      {
+        "name": "term",
+        "type": "STRING",
+        "default": "biopython[title]"
+      },
+      {
+        "name": "retmax",
+        "type": "INT",
+        "default": 20
+      }
+    ],
+    "outputs": [
+      {
+        "name": "id_list",
+        "type": "STRING"
+      },
+      {
+        "name": "count",
+        "type": "STRING"
+      },
+      {
+        "name": "webenv",
+        "type": "STRING"
+      },
+      {
+        "name": "query_key",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Entrez_efetch": {
+    "node_id": "Entrez_efetch",
+    "display_name": "Entrez efetch",
+    "category": "Biopython/Entrez",
+    "inputs": [
+      {
+        "name": "email",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "db",
+        "type": "COMBO",
+        "default": "nucleotide"
+      },
+      {
+        "name": "ids",
+        "type": "STRING",
+        "default": "EU490707"
+      },
+      {
+        "name": "rettype",
+        "type": "STRING",
+        "default": "gb"
+      },
+      {
+        "name": "retmode",
+        "type": "STRING",
+        "default": "text"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "result",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Entrez_efetch_save": {
+    "node_id": "Entrez_efetch_save",
+    "display_name": "Entrez efetch save",
+    "category": "Biopython/Entrez",
+    "inputs": [
+      {
+        "name": "email",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "db",
+        "type": "COMBO",
+        "default": "nucleotide"
+      },
+      {
+        "name": "ids",
+        "type": "STRING",
+        "default": "EU490707"
+      },
+      {
+        "name": "rettype",
+        "type": "STRING",
+        "default": "gb"
+      },
+      {
+        "name": "retmode",
+        "type": "STRING",
+        "default": "text"
+      },
+      {
+        "name": "output_file",
+        "type": "STRING",
+        "default": "fetched.gb"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "file_path",
+        "type": "STRING"
+      },
+      {
+        "name": "bytes_written",
+        "type": "INT"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": true
+  },
+  "Entrez_esummary": {
+    "node_id": "Entrez_esummary",
+    "display_name": "Entrez esummary",
+    "category": "Biopython/Entrez",
+    "inputs": [
+      {
+        "name": "email",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "db",
+        "type": "COMBO",
+        "default": "pubmed"
+      },
+      {
+        "name": "ids",
+        "type": "STRING",
+        "default": "19304878"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "summary",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Entrez_epost": {
+    "node_id": "Entrez_epost",
+    "display_name": "Entrez epost",
+    "category": "Biopython/Entrez",
+    "inputs": [
+      {
+        "name": "email",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "db",
+        "type": "COMBO",
+        "default": "pubmed"
+      },
+      {
+        "name": "ids",
+        "type": "STRING",
+        "default": ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "webenv",
+        "type": "STRING"
+      },
+      {
+        "name": "query_key",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Entrez_elink": {
+    "node_id": "Entrez_elink",
+    "display_name": "Entrez elink",
+    "category": "Biopython/Entrez",
+    "inputs": [
+      {
+        "name": "email",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "dbfrom",
+        "type": "COMBO",
+        "default": "pubmed"
+      },
+      {
+        "name": "ids",
+        "type": "STRING",
+        "default": "19304878"
+      },
+      {
+        "name": "db",
+        "type": "STRING",
+        "default": ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "result",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Entrez_egquery": {
+    "node_id": "Entrez_egquery",
+    "display_name": "Entrez egquery",
+    "category": "Biopython/Entrez",
+    "inputs": [
+      {
+        "name": "email",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "term",
+        "type": "STRING",
+        "default": "biopython"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "counts_by_database",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Entrez_espell": {
+    "node_id": "Entrez_espell",
+    "display_name": "Entrez espell",
+    "category": "Biopython/Entrez",
+    "inputs": [
+      {
+        "name": "email",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "term",
+        "type": "STRING",
+        "default": ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "corrected_query",
+        "type": "STRING"
+      },
+      {
+        "name": "original_query",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "GenomeDiagram_from_genbank": {
+    "node_id": "GenomeDiagram_from_genbank",
+    "display_name": "Genome Diagram from GenBank",
+    "category": "Biopython/Graphics",
+    "inputs": [
+      {
+        "name": "genbank_file",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "diagram_name",
+        "type": "STRING",
+        "default": "Genome"
+      },
+      {
+        "name": "feature_type",
+        "type": "STRING",
+        "default": "gene"
+      },
+      {
+        "name": "diagram_format",
+        "type": "COMBO",
+        "default": "linear"
+      },
+      {
+        "name": "orientation",
+        "type": "COMBO",
+        "default": "landscape"
+      },
+      {
+        "name": "fragments",
+        "type": "INT",
+        "default": 4
+      },
+      {
+        "name": "output_file",
+        "type": "STRING",
+        "default": "genome_diagram.pdf"
+      },
+      {
+        "name": "output_format",
+        "type": "COMBO",
+        "default": "PDF"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "file_path",
+        "type": "STRING"
+      },
+      {
+        "name": "feature_count",
+        "type": "INT"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": true
+  },
+  "GenomeDiagram_from_seqrecord": {
+    "node_id": "GenomeDiagram_from_seqrecord",
+    "display_name": "Genome Diagram from SeqRecord",
+    "category": "Biopython/Graphics",
+    "inputs": [
+      {
+        "name": "seqrecord",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "diagram_name",
+        "type": "STRING",
+        "default": "Genome"
+      },
+      {
+        "name": "feature_type",
+        "type": "STRING",
+        "default": "gene"
+      },
+      {
+        "name": "diagram_format",
+        "type": "COMBO",
+        "default": "linear"
+      },
+      {
+        "name": "orientation",
+        "type": "COMBO",
+        "default": "landscape"
+      },
+      {
+        "name": "fragments",
+        "type": "INT",
+        "default": 4
+      },
+      {
+        "name": "output_file",
+        "type": "STRING",
+        "default": "genome_diagram.pdf"
+      },
+      {
+        "name": "output_format",
+        "type": "COMBO",
+        "default": "PDF"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "file_path",
+        "type": "STRING"
+      },
+      {
+        "name": "feature_count",
+        "type": "INT"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": true
+  },
+  "GenomeDiagram_compare_regions": {
+    "node_id": "GenomeDiagram_compare_regions",
+    "display_name": "Genome Diagram compare regions",
+    "category": "Biopython/Graphics",
+    "inputs": [
+      {
+        "name": "genbank_file1",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "genbank_file2",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "diagram_name",
+        "type": "STRING",
+        "default": "Comparison"
+      },
+      {
+        "name": "output_file",
+        "type": "STRING",
+        "default": "comparison.pdf"
+      },
+      {
+        "name": "output_format",
+        "type": "COMBO",
+        "default": "PDF"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "file_path",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": true
+  },
+  "KEGG_enzyme_read": {
+    "node_id": "KEGG_enzyme_read",
+    "display_name": "KEGG enzyme read",
+    "category": "Biopython/KEGG",
+    "inputs": [
+      {
+        "name": "file_path",
+        "type": "STRING",
+        "default": ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "record",
+        "type": "STRING"
+      },
+      {
+        "name": "entry",
+        "type": "STRING"
+      },
+      {
+        "name": "classname",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": true,
+    "is_output_node": false
+  },
+  "KEGG_enzyme_parse": {
+    "node_id": "KEGG_enzyme_parse",
+    "display_name": "KEGG enzyme parse",
+    "category": "Biopython/KEGG",
+    "inputs": [
+      {
+        "name": "file_path",
+        "type": "STRING",
+        "default": ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "records",
+        "type": "STRING"
+      },
+      {
+        "name": "count",
+        "type": "INT"
+      },
+      {
+        "name": "entries",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": true,
+    "is_output_node": false
+  },
+  "KEGG_api_get": {
+    "node_id": "KEGG_api_get",
+    "display_name": "KEGG API get",
+    "category": "Biopython/KEGG",
+    "inputs": [
+      {
+        "name": "query",
+        "type": "STRING",
+        "default": "ec:5.4.2.2"
+      },
+      {
+        "name": "option",
+        "type": "STRING",
+        "default": ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "result",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "KEGG_api_list": {
+    "node_id": "KEGG_api_list",
+    "display_name": "KEGG API list",
+    "category": "Biopython/KEGG",
+    "inputs": [
+      {
+        "name": "database",
+        "type": "STRING",
+        "default": "pathway"
+      },
+      {
+        "name": "organism",
+        "type": "STRING",
+        "default": ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "result",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "KEGG_api_find": {
+    "node_id": "KEGG_api_find",
+    "display_name": "KEGG API find",
+    "category": "Biopython/KEGG",
+    "inputs": [
+      {
+        "name": "database",
+        "type": "STRING",
+        "default": "compound"
+      },
+      {
+        "name": "query",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "option",
+        "type": "STRING",
+        "default": ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "result",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "KEGG_api_info": {
+    "node_id": "KEGG_api_info",
+    "display_name": "KEGG API info",
+    "category": "Biopython/KEGG",
+    "inputs": [
+      {
+        "name": "database",
+        "type": "STRING",
+        "default": "kegg"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "result",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Motif_create": {
+    "node_id": "Motif_create",
+    "display_name": "Motif create from instances",
+    "category": "Biopython/Motif",
+    "inputs": [
+      {
+        "name": "instances",
+        "type": "STRING",
+        "default": "TACAA\nTACGC\nTACCC"
+      },
+      {
+        "name": "alphabet",
+        "type": "STRING",
+        "default": "ACGT"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "motif",
+        "type": "STRING"
+      },
+      {
+        "name": "length",
+        "type": "INT"
+      },
+      {
+        "name": "num_instances",
+        "type": "INT"
+      },
+      {
+        "name": "consensus",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Motif_read": {
+    "node_id": "Motif_read",
+    "display_name": "Motif read",
+    "category": "Biopython/Motif",
+    "inputs": [
+      {
+        "name": "source",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "source_kind",
+        "type": "COMBO",
+        "default": "path"
+      },
+      {
+        "name": "format",
+        "type": "COMBO",
+        "default": "jaspar"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "motif",
+        "type": "STRING"
+      },
+      {
+        "name": "length",
+        "type": "INT"
+      },
+      {
+        "name": "consensus",
+        "type": "STRING"
+      },
+      {
+        "name": "counts",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": true,
+    "is_output_node": false
+  },
+  "Motif_parse": {
+    "node_id": "Motif_parse",
+    "display_name": "Motif parse",
+    "category": "Biopython/Motif",
+    "inputs": [
+      {
+        "name": "source",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "source_kind",
+        "type": "COMBO",
+        "default": "path"
+      },
+      {
+        "name": "format",
+        "type": "COMBO",
+        "default": "jaspar"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "motifs",
+        "type": "STRING"
+      },
+      {
+        "name": "count",
+        "type": "INT"
+      },
+      {
+        "name": "consensus_list",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": true,
+    "is_output_node": false
+  },
+  "Motif_get_motif": {
+    "node_id": "Motif_get_motif",
+    "display_name": "Motif get from list",
+    "category": "Biopython/Motif",
+    "inputs": [
+      {
+        "name": "motifs_list",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "index",
+        "type": "INT",
+        "default": 1
+      }
+    ],
+    "outputs": [
+      {
+        "name": "motif",
+        "type": "STRING"
+      },
+      {
+        "name": "length",
+        "type": "INT"
+      },
+      {
+        "name": "consensus",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Motif_consensus": {
+    "node_id": "Motif_consensus",
+    "display_name": "Motif consensus",
+    "category": "Biopython/Motif",
+    "inputs": [
+      {
+        "name": "motif",
+        "type": "STRING",
+        "default": ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "consensus",
+        "type": "STRING"
+      },
+      {
+        "name": "anticonsensus",
+        "type": "STRING"
+      },
+      {
+        "name": "degenerate_consensus",
+        "type": "STRING"
+      },
+      {
+        "name": "counts_matrix",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Motif_reverse_complement": {
+    "node_id": "Motif_reverse_complement",
+    "display_name": "Motif reverse complement",
+    "category": "Biopython/Motif",
+    "inputs": [
+      {
+        "name": "motif",
+        "type": "STRING",
+        "default": ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "motif",
+        "type": "STRING"
+      },
+      {
+        "name": "consensus",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Motif_pssm_scan": {
+    "node_id": "Motif_pssm_scan",
+    "display_name": "Motif PSSM scan",
+    "category": "Biopython/Motif",
+    "inputs": [
+      {
+        "name": "motif",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "sequence",
+        "type": "STRING",
+        "default": "ACGTACGT"
+      },
+      {
+        "name": "pseudocount",
+        "type": "FLOAT",
+        "default": 0.5
+      }
+    ],
+    "outputs": [
+      {
+        "name": "scores",
+        "type": "STRING"
+      },
+      {
+        "name": "hit_count",
+        "type": "INT"
+      },
+      {
+        "name": "best_position",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Motif_weblogo": {
+    "node_id": "Motif_weblogo",
+    "display_name": "Motif weblogo",
+    "category": "Biopython/Motif",
+    "inputs": [
+      {
+        "name": "motif",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "output_file",
+        "type": "STRING",
+        "default": "motif_logo.png"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "file_path",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": true
+  },
+  "Motif_write": {
+    "node_id": "Motif_write",
+    "display_name": "Motif write",
+    "category": "Biopython/Motif",
+    "inputs": [
+      {
+        "name": "motif",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "format",
+        "type": "COMBO",
+        "default": "jaspar"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "text",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "PDB_read": {
+    "node_id": "PDB_read",
+    "display_name": "PDB read",
+    "category": "Biopython/PDB",
+    "inputs": [
+      {
+        "name": "file_path",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "structure_id",
+        "type": "STRING",
+        "default": "structure"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "structure",
+        "type": "STRING"
+      },
+      {
+        "name": "structure_id",
+        "type": "STRING"
+      },
+      {
+        "name": "summary",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": true,
+    "is_output_node": false
+  },
+  "MMCIF_read": {
+    "node_id": "MMCIF_read",
+    "display_name": "mmCIF read",
+    "category": "Biopython/PDB",
+    "inputs": [
+      {
+        "name": "file_path",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "structure_id",
+        "type": "STRING",
+        "default": "structure"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "structure",
+        "type": "STRING"
+      },
+      {
+        "name": "structure_id",
+        "type": "STRING"
+      },
+      {
+        "name": "summary",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": true,
+    "is_output_node": false
+  },
+  "MMCIF2Dict_read": {
+    "node_id": "MMCIF2Dict_read",
+    "display_name": "mmCIF2Dict read",
+    "category": "Biopython/PDB",
+    "inputs": [
+      {
+        "name": "file_path",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "tag",
+        "type": "STRING",
+        "default": "_exptl_crystal.density_percent_sol"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "value",
+        "type": "STRING"
+      },
+      {
+        "name": "all_tags",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": true,
+    "is_output_node": false
+  },
+  "PDB_structure_info": {
+    "node_id": "PDB_structure_info",
+    "display_name": "PDB structure info",
+    "category": "Biopython/PDB",
+    "inputs": [
+      {
+        "name": "structure",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "level",
+        "type": "COMBO",
+        "default": "chain"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "info",
+        "type": "STRING"
+      },
+      {
+        "name": "count",
+        "type": "INT"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "PDB_get_chain": {
+    "node_id": "PDB_get_chain",
+    "display_name": "PDB get chain",
+    "category": "Biopython/PDB",
+    "inputs": [
+      {
+        "name": "structure",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "model_index",
+        "type": "INT",
+        "default": 0
+      },
+      {
+        "name": "chain_id",
+        "type": "STRING",
+        "default": "A"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "chain",
+        "type": "STRING"
+      },
+      {
+        "name": "residue_count",
+        "type": "INT"
+      },
+      {
+        "name": "sequence",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "PDB_header": {
+    "node_id": "PDB_header",
+    "display_name": "PDB header",
+    "category": "Biopython/PDB",
+    "inputs": [
+      {
+        "name": "structure",
+        "type": "STRING",
+        "default": ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "name",
+        "type": "STRING"
+      },
+      {
+        "name": "resolution",
+        "type": "STRING"
+      },
+      {
+        "name": "keywords",
+        "type": "STRING"
+      },
+      {
+        "name": "deposition_date",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "PDB_write": {
+    "node_id": "PDB_write",
+    "display_name": "PDB write",
+    "category": "Biopython/PDB",
+    "inputs": [
+      {
+        "name": "structure",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "file_path",
+        "type": "STRING",
+        "default": "output.pdb"
+      },
+      {
+        "name": "format",
+        "type": "COMBO",
+        "default": "pdb"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "file_path",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": true
+  },
+  "PDB_superimpose": {
+    "node_id": "PDB_superimpose",
+    "display_name": "PDB superimpose",
+    "category": "Biopython/PDB",
+    "inputs": [
+      {
+        "name": "structure_fixed",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "structure_moving",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "chain_id",
+        "type": "STRING",
+        "default": "A"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "structure_moved",
+        "type": "STRING"
+      },
+      {
+        "name": "rmsd",
+        "type": "FLOAT"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "PDB_neighbor_search": {
+    "node_id": "PDB_neighbor_search",
+    "display_name": "PDB neighbor search",
+    "category": "Biopython/PDB",
+    "inputs": [
+      {
+        "name": "structure",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "center_x",
+        "type": "FLOAT",
+        "default": 0.0
+      },
+      {
+        "name": "center_y",
+        "type": "FLOAT",
+        "default": 0.0
+      },
+      {
+        "name": "center_z",
+        "type": "FLOAT",
+        "default": 0.0
+      },
+      {
+        "name": "radius",
+        "type": "FLOAT",
+        "default": 5.0
+      },
+      {
+        "name": "level",
+        "type": "COMBO",
+        "default": "R"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "neighbors",
+        "type": "STRING"
+      },
+      {
+        "name": "count",
+        "type": "INT"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Pairwise_align": {
+    "node_id": "Pairwise_align",
+    "display_name": "Pairwise align",
+    "category": "Biopython/Pairwise",
+    "inputs": [
+      {
+        "name": "target",
+        "type": "STRING",
+        "default": "GAACTTT"
+      },
+      {
+        "name": "query",
+        "type": "STRING",
+        "default": "GATTT"
+      },
+      {
+        "name": "mode",
+        "type": "COMBO",
+        "default": "global"
+      },
+      {
+        "name": "match_score",
+        "type": "FLOAT",
+        "default": 1.0
+      },
+      {
+        "name": "mismatch_score",
+        "type": "FLOAT",
+        "default": 0.0
+      },
+      {
+        "name": "open_gap_score",
+        "type": "FLOAT",
+        "default": -1.0
+      },
+      {
+        "name": "extend_gap_score",
+        "type": "FLOAT",
+        "default": -1.0
+      }
+    ],
+    "outputs": [
+      {
+        "name": "alignments",
+        "type": "STRING"
+      },
+      {
+        "name": "count",
+        "type": "INT"
+      },
+      {
+        "name": "score",
+        "type": "FLOAT"
+      },
+      {
+        "name": "best_alignment",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Pairwise_align_matrix": {
+    "node_id": "Pairwise_align_matrix",
+    "display_name": "Pairwise align (substitution matrix)",
+    "category": "Biopython/Pairwise",
+    "inputs": [
+      {
+        "name": "target",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "query",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "mode",
+        "type": "COMBO",
+        "default": "global"
+      },
+      {
+        "name": "matrix",
+        "type": "COMBO",
+        "default": "BLOSUM62"
+      },
+      {
+        "name": "open_gap_score",
+        "type": "FLOAT",
+        "default": -10.0
+      },
+      {
+        "name": "extend_gap_score",
+        "type": "FLOAT",
+        "default": -0.5
+      }
+    ],
+    "outputs": [
+      {
+        "name": "alignments",
+        "type": "STRING"
+      },
+      {
+        "name": "count",
+        "type": "INT"
+      },
+      {
+        "name": "score",
+        "type": "FLOAT"
+      },
+      {
+        "name": "best_alignment",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Pairwise_score": {
+    "node_id": "Pairwise_score",
+    "display_name": "Pairwise score",
+    "category": "Biopython/Pairwise",
+    "inputs": [
+      {
+        "name": "target",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "query",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "mode",
+        "type": "COMBO",
+        "default": "global"
+      },
+      {
+        "name": "match_score",
+        "type": "FLOAT",
+        "default": 1.0
+      },
+      {
+        "name": "mismatch_score",
+        "type": "FLOAT",
+        "default": 0.0
+      },
+      {
+        "name": "open_gap_score",
+        "type": "FLOAT",
+        "default": -1.0
+      },
+      {
+        "name": "extend_gap_score",
+        "type": "FLOAT",
+        "default": -1.0
+      }
+    ],
+    "outputs": [
+      {
+        "name": "score",
+        "type": "FLOAT"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Pairwise_get_alignment": {
+    "node_id": "Pairwise_get_alignment",
+    "display_name": "Pairwise get alignment",
+    "category": "Biopython/Pairwise",
+    "inputs": [
+      {
+        "name": "alignments",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "index",
+        "type": "INT",
+        "default": 1
+      }
+    ],
+    "outputs": [
+      {
+        "name": "alignment",
+        "type": "STRING"
+      },
+      {
+        "name": "text",
+        "type": "STRING"
+      },
+      {
+        "name": "score",
+        "type": "FLOAT"
+      },
+      {
+        "name": "length",
+        "type": "INT"
+      },
+      {
+        "name": "target_seq",
+        "type": "STRING"
+      },
+      {
+        "name": "query_seq",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Pairwise_aligner_info": {
+    "node_id": "Pairwise_aligner_info",
+    "display_name": "Pairwise aligner info",
+    "category": "Biopython/Pairwise",
+    "inputs": [
+      {
+        "name": "mode",
+        "type": "COMBO",
+        "default": "global"
+      },
+      {
+        "name": "match_score",
+        "type": "FLOAT",
+        "default": 1.0
+      },
+      {
+        "name": "mismatch_score",
+        "type": "FLOAT",
+        "default": 0.0
+      },
+      {
+        "name": "open_gap_score",
+        "type": "FLOAT",
+        "default": -1.0
+      },
+      {
+        "name": "extend_gap_score",
+        "type": "FLOAT",
+        "default": -1.0
+      }
+    ],
+    "outputs": [
+      {
+        "name": "aligner_info",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Substitution_matrix_load": {
+    "node_id": "Substitution_matrix_load",
+    "display_name": "Substitution matrix load",
+    "category": "Biopython/Pairwise",
+    "inputs": [
+      {
+        "name": "matrix",
+        "type": "COMBO",
+        "default": "BLOSUM62"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "matrix_info",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Phenotype_parse": {
+    "node_id": "Phenotype_parse",
+    "display_name": "Phenotype parse",
+    "category": "Biopython/Phenotype",
+    "inputs": [
+      {
+        "name": "file_path",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "format",
+        "type": "COMBO",
+        "default": "pm-csv"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "plates",
+        "type": "STRING"
+      },
+      {
+        "name": "count",
+        "type": "INT"
+      },
+      {
+        "name": "plate_ids",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": true,
+    "is_output_node": false
+  },
+  "Phenotype_get_plate": {
+    "node_id": "Phenotype_get_plate",
+    "display_name": "Phenotype get plate",
+    "category": "Biopython/Phenotype",
+    "inputs": [
+      {
+        "name": "plates",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "index",
+        "type": "INT",
+        "default": 1
+      }
+    ],
+    "outputs": [
+      {
+        "name": "plate",
+        "type": "STRING"
+      },
+      {
+        "name": "plate_id",
+        "type": "STRING"
+      },
+      {
+        "name": "well_count",
+        "type": "INT"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Phenotype_get_well": {
+    "node_id": "Phenotype_get_well",
+    "display_name": "Phenotype get well",
+    "category": "Biopython/Phenotype",
+    "inputs": [
+      {
+        "name": "plate",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "well_id",
+        "type": "STRING",
+        "default": "A01"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "well",
+        "type": "STRING"
+      },
+      {
+        "name": "well_id_out",
+        "type": "STRING"
+      },
+      {
+        "name": "data_preview",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Phenotype_well_slice": {
+    "node_id": "Phenotype_well_slice",
+    "display_name": "Phenotype well slice",
+    "category": "Biopython/Phenotype",
+    "inputs": [
+      {
+        "name": "well",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "start",
+        "type": "FLOAT",
+        "default": 0.0
+      },
+      {
+        "name": "end",
+        "type": "FLOAT",
+        "default": 10.0
+      }
+    ],
+    "outputs": [
+      {
+        "name": "values",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Phenotype_subtract_control": {
+    "node_id": "Phenotype_subtract_control",
+    "display_name": "Phenotype subtract control",
+    "category": "Biopython/Phenotype",
+    "inputs": [
+      {
+        "name": "plate",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "control_well",
+        "type": "STRING",
+        "default": "A01"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "plate",
+        "type": "STRING"
+      },
+      {
+        "name": "plate_id",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Phenotype_fit": {
+    "node_id": "Phenotype_fit",
+    "display_name": "Phenotype fit well",
+    "category": "Biopython/Phenotype",
+    "inputs": [
+      {
+        "name": "well",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "model",
+        "type": "COMBO",
+        "default": "default"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "well",
+        "type": "STRING"
+      },
+      {
+        "name": "model_used",
+        "type": "STRING"
+      },
+      {
+        "name": "parameters",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Phenotype_write": {
+    "node_id": "Phenotype_write",
+    "display_name": "Phenotype write",
+    "category": "Biopython/Phenotype",
+    "inputs": [
+      {
+        "name": "plate",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "file_path",
+        "type": "STRING",
+        "default": "output.json"
+      },
+      {
+        "name": "format",
+        "type": "COMBO",
+        "default": "pm-json"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "count",
+        "type": "INT"
+      },
+      {
+        "name": "file_path",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": true
+  },
+  "Phylo_read": {
+    "node_id": "Phylo_read",
+    "display_name": "Phylo read",
+    "category": "Biopython/Phylo",
+    "inputs": [
+      {
+        "name": "source",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "source_kind",
+        "type": "COMBO",
+        "default": "path"
+      },
+      {
+        "name": "format",
+        "type": "COMBO",
+        "default": "newick"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "tree",
+        "type": "STRING"
+      },
+      {
+        "name": "summary",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": true,
+    "is_output_node": false
+  },
+  "Phylo_parse": {
+    "node_id": "Phylo_parse",
+    "display_name": "Phylo parse",
+    "category": "Biopython/Phylo",
+    "inputs": [
+      {
+        "name": "file_path",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "format",
+        "type": "COMBO",
+        "default": "phyloxml"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "trees",
+        "type": "STRING"
+      },
+      {
+        "name": "count",
+        "type": "INT"
+      }
+    ],
+    "is_input_node": true,
+    "is_output_node": false
+  },
+  "Phylo_get_tree": {
+    "node_id": "Phylo_get_tree",
+    "display_name": "Phylo get tree",
+    "category": "Biopython/Phylo",
+    "inputs": [
+      {
+        "name": "trees",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "index",
+        "type": "INT",
+        "default": 1
+      }
+    ],
+    "outputs": [
+      {
+        "name": "tree",
+        "type": "STRING"
+      },
+      {
+        "name": "summary",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Phylo_write": {
+    "node_id": "Phylo_write",
+    "display_name": "Phylo write",
+    "category": "Biopython/Phylo",
+    "inputs": [
+      {
+        "name": "tree",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "file_path",
+        "type": "STRING",
+        "default": "output.nwk"
+      },
+      {
+        "name": "format",
+        "type": "COMBO",
+        "default": "newick"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "count",
+        "type": "INT"
+      },
+      {
+        "name": "file_path",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": true
+  },
+  "Phylo_convert": {
+    "node_id": "Phylo_convert",
+    "display_name": "Phylo convert",
+    "category": "Biopython/Phylo",
+    "inputs": [
+      {
+        "name": "input_path",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "input_format",
+        "type": "COMBO",
+        "default": "newick"
+      },
+      {
+        "name": "output_path",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "output_format",
+        "type": "COMBO",
+        "default": "phyloxml"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "count",
+        "type": "INT"
+      },
+      {
+        "name": "output_path",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": true,
+    "is_output_node": true
+  },
+  "Phylo_draw_ascii": {
+    "node_id": "Phylo_draw_ascii",
+    "display_name": "Phylo draw ASCII",
+    "category": "Biopython/Phylo",
+    "inputs": [
+      {
+        "name": "tree",
+        "type": "STRING",
+        "default": ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "ascii_art",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Phylo_info": {
+    "node_id": "Phylo_info",
+    "display_name": "Phylo info",
+    "category": "Biopython/Phylo",
+    "inputs": [
+      {
+        "name": "tree",
+        "type": "STRING",
+        "default": ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "terminals",
+        "type": "INT"
+      },
+      {
+        "name": "total_branch_length",
+        "type": "FLOAT"
+      },
+      {
+        "name": "is_bifurcating",
+        "type": "BOOLEAN"
+      },
+      {
+        "name": "terminal_names",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Phylo_common_ancestor": {
+    "node_id": "Phylo_common_ancestor",
+    "display_name": "Phylo common ancestor",
+    "category": "Biopython/Phylo",
+    "inputs": [
+      {
+        "name": "tree",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "name1",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "name2",
+        "type": "STRING",
+        "default": ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "ancestor_name",
+        "type": "STRING"
+      },
+      {
+        "name": "terminal_count",
+        "type": "INT"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Phylo_ladderize": {
+    "node_id": "Phylo_ladderize",
+    "display_name": "Phylo ladderize",
+    "category": "Biopython/Phylo",
+    "inputs": [
+      {
+        "name": "tree",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "reverse",
+        "type": "BOOLEAN",
+        "default": false
+      }
+    ],
+    "outputs": [
+      {
+        "name": "tree",
+        "type": "STRING"
+      },
+      {
+        "name": "ascii_art",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Phylo_root_at_midpoint": {
+    "node_id": "Phylo_root_at_midpoint",
+    "display_name": "Phylo root at midpoint",
+    "category": "Biopython/Phylo",
+    "inputs": [
+      {
+        "name": "tree",
+        "type": "STRING",
+        "default": ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "tree",
+        "type": "STRING"
+      },
+      {
+        "name": "ascii_art",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "PopGen_read": {
+    "node_id": "PopGen_read",
+    "display_name": "PopGen read",
+    "category": "Biopython/PopGen",
+    "inputs": [
+      {
+        "name": "file_path",
+        "type": "STRING",
+        "default": ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "record",
+        "type": "STRING"
+      },
+      {
+        "name": "loci",
+        "type": "STRING"
+      },
+      {
+        "name": "loci_count",
+        "type": "INT"
+      },
+      {
+        "name": "population_count",
+        "type": "INT"
+      }
+    ],
+    "is_input_node": true,
+    "is_output_node": false
+  },
+  "PopGen_info": {
+    "node_id": "PopGen_info",
+    "display_name": "PopGen info",
+    "category": "Biopython/PopGen",
+    "inputs": [
+      {
+        "name": "record",
+        "type": "STRING",
+        "default": ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "loci",
+        "type": "STRING"
+      },
+      {
+        "name": "loci_count",
+        "type": "INT"
+      },
+      {
+        "name": "population_count",
+        "type": "INT"
+      },
+      {
+        "name": "populations_summary",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "PopGen_remove_population": {
+    "node_id": "PopGen_remove_population",
+    "display_name": "PopGen remove population",
+    "category": "Biopython/PopGen",
+    "inputs": [
+      {
+        "name": "record",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "position",
+        "type": "INT",
+        "default": 0
+      }
+    ],
+    "outputs": [
+      {
+        "name": "record",
+        "type": "STRING"
+      },
+      {
+        "name": "population_count",
+        "type": "INT"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "PopGen_remove_locus": {
+    "node_id": "PopGen_remove_locus",
+    "display_name": "PopGen remove locus",
+    "category": "Biopython/PopGen",
+    "inputs": [
+      {
+        "name": "record",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "by",
+        "type": "COMBO",
+        "default": "name"
+      },
+      {
+        "name": "name",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "position",
+        "type": "INT",
+        "default": 0
+      }
+    ],
+    "outputs": [
+      {
+        "name": "record",
+        "type": "STRING"
+      },
+      {
+        "name": "loci_count",
+        "type": "INT"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "PopGen_split_in_loci": {
+    "node_id": "PopGen_split_in_loci",
+    "display_name": "PopGen split in loci",
+    "category": "Biopython/PopGen",
+    "inputs": [
+      {
+        "name": "record",
+        "type": "STRING",
+        "default": ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "records_dict",
+        "type": "STRING"
+      },
+      {
+        "name": "loci_names",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "PopGen_split_in_pops": {
+    "node_id": "PopGen_split_in_pops",
+    "display_name": "PopGen split in populations",
+    "category": "Biopython/PopGen",
+    "inputs": [
+      {
+        "name": "record",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "pop_names",
+        "type": "STRING",
+        "default": "Pop1\nPop2"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "records_dict",
+        "type": "STRING"
+      },
+      {
+        "name": "pop_names_out",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "SearchIO_read": {
+    "node_id": "SearchIO_read",
+    "display_name": "SearchIO read",
+    "category": "Biopython/SearchIO",
+    "inputs": [
+      {
+        "name": "file_path",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "format",
+        "type": "COMBO",
+        "default": "blast-xml"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "qresult",
+        "type": "STRING"
+      },
+      {
+        "name": "query_id",
+        "type": "STRING"
+      },
+      {
+        "name": "hit_count",
+        "type": "INT"
+      },
+      {
+        "name": "summary",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": true,
+    "is_output_node": false
+  },
+  "SearchIO_parse": {
+    "node_id": "SearchIO_parse",
+    "display_name": "SearchIO parse",
+    "category": "Biopython/SearchIO",
+    "inputs": [
+      {
+        "name": "file_path",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "format",
+        "type": "COMBO",
+        "default": "blast-xml"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "qresults",
+        "type": "STRING"
+      },
+      {
+        "name": "count",
+        "type": "INT"
+      },
+      {
+        "name": "query_ids",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": true,
+    "is_output_node": false
+  },
+  "SearchIO_get_qresult": {
+    "node_id": "SearchIO_get_qresult",
+    "display_name": "SearchIO get query result",
+    "category": "Biopython/SearchIO",
+    "inputs": [
+      {
+        "name": "qresults",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "index",
+        "type": "INT",
+        "default": 1
+      }
+    ],
+    "outputs": [
+      {
+        "name": "qresult",
+        "type": "STRING"
+      },
+      {
+        "name": "query_id",
+        "type": "STRING"
+      },
+      {
+        "name": "hit_count",
+        "type": "INT"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "SearchIO_hit_info": {
+    "node_id": "SearchIO_hit_info",
+    "display_name": "SearchIO hit info",
+    "category": "Biopython/SearchIO",
+    "inputs": [
+      {
+        "name": "qresult",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "hit_index",
+        "type": "INT",
+        "default": 1
+      }
+    ],
+    "outputs": [
+      {
+        "name": "hit_id",
+        "type": "STRING"
+      },
+      {
+        "name": "description",
+        "type": "STRING"
+      },
+      {
+        "name": "hsp_count",
+        "type": "INT"
+      },
+      {
+        "name": "summary",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "SearchIO_hsp_info": {
+    "node_id": "SearchIO_hsp_info",
+    "display_name": "SearchIO HSP info",
+    "category": "Biopython/SearchIO",
+    "inputs": [
+      {
+        "name": "qresult",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "hit_index",
+        "type": "INT",
+        "default": 1
+      },
+      {
+        "name": "hsp_index",
+        "type": "INT",
+        "default": 1
+      }
+    ],
+    "outputs": [
+      {
+        "name": "query_range",
+        "type": "STRING"
+      },
+      {
+        "name": "hit_range",
+        "type": "STRING"
+      },
+      {
+        "name": "summary",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "SearchIO_write": {
+    "node_id": "SearchIO_write",
+    "display_name": "SearchIO write",
+    "category": "Biopython/SearchIO",
+    "inputs": [
+      {
+        "name": "qresults",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "file_path",
+        "type": "STRING",
+        "default": "output.tab"
+      },
+      {
+        "name": "format",
+        "type": "COMBO",
+        "default": "blast-tab"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "counts",
+        "type": "STRING"
+      },
+      {
+        "name": "file_path",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": true
+  },
+  "SearchIO_convert": {
+    "node_id": "SearchIO_convert",
+    "display_name": "SearchIO convert",
+    "category": "Biopython/SearchIO",
+    "inputs": [
+      {
+        "name": "input_path",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "input_format",
+        "type": "COMBO",
+        "default": "blast-xml"
+      },
+      {
+        "name": "output_path",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "output_format",
+        "type": "COMBO",
+        "default": "blast-tab"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "counts",
+        "type": "STRING"
+      },
+      {
+        "name": "output_path",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": true,
+    "is_output_node": true
+  },
+  "SeqIO_parse": {
+    "node_id": "SeqIO_parse",
+    "display_name": "SeqIO parse",
+    "category": "Biopython/SeqIO",
+    "inputs": [
+      {
+        "name": "source",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "source_kind",
+        "type": "COMBO",
+        "default": "path"
+      },
+      {
+        "name": "format",
+        "type": "COMBO",
+        "default": "fasta"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "records",
+        "type": "STRING"
+      },
+      {
+        "name": "count",
+        "type": "INT"
+      },
+      {
+        "name": "ids",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": true,
+    "is_output_node": false
+  },
+  "SeqIO_write": {
+    "node_id": "SeqIO_write",
+    "display_name": "SeqIO write",
+    "category": "Biopython/SeqIO",
+    "inputs": [
+      {
+        "name": "records",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "file_path",
+        "type": "STRING",
+        "default": "output.fasta"
+      },
+      {
+        "name": "format",
+        "type": "COMBO",
+        "default": "fasta"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "count",
+        "type": "INT"
+      },
+      {
+        "name": "file_path",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": true
+  },
+  "SeqIO_convert": {
+    "node_id": "SeqIO_convert",
+    "display_name": "SeqIO convert",
+    "category": "Biopython/SeqIO",
+    "inputs": [
+      {
+        "name": "input_path",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "input_format",
+        "type": "COMBO",
+        "default": "genbank"
+      },
+      {
+        "name": "output_path",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "output_format",
+        "type": "COMBO",
+        "default": "fasta"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "count",
+        "type": "INT"
+      },
+      {
+        "name": "output_path",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": true,
+    "is_output_node": true
+  },
+  "SeqIO_get_record": {
+    "node_id": "SeqIO_get_record",
+    "display_name": "SeqIO get record",
+    "category": "Biopython/SeqIO",
+    "inputs": [
+      {
+        "name": "records",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "index",
+        "type": "INT",
+        "default": 1
+      }
+    ],
+    "outputs": [
+      {
+        "name": "record",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "SeqIO_filter_records": {
+    "node_id": "SeqIO_filter_records",
+    "display_name": "SeqIO filter records",
+    "category": "Biopython/SeqIO",
+    "inputs": [
+      {
+        "name": "records",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "min_length",
+        "type": "INT",
+        "default": 0
+      },
+      {
+        "name": "max_length",
+        "type": "INT",
+        "default": 0
+      }
+    ],
+    "outputs": [
+      {
+        "name": "records",
+        "type": "STRING"
+      },
+      {
+        "name": "count",
+        "type": "INT"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "SeqIO_records_info": {
+    "node_id": "SeqIO_records_info",
+    "display_name": "SeqIO records info",
+    "category": "Biopython/SeqIO",
+    "inputs": [
+      {
+        "name": "records",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "info_type",
+        "type": "COMBO",
+        "default": "summary"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "info",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "SeqIO_lookup_by_id": {
+    "node_id": "SeqIO_lookup_by_id",
+    "display_name": "SeqIO lookup by ID",
+    "category": "Biopython/SeqIO",
+    "inputs": [
+      {
+        "name": "records",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "record_id",
+        "type": "STRING",
+        "default": ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "record",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "SimpleFastaParser_parse": {
+    "node_id": "SimpleFastaParser_parse",
+    "display_name": "Simple FASTA parser",
+    "category": "Biopython/SeqIO",
+    "inputs": [
+      {
+        "name": "source",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "source_kind",
+        "type": "COMBO",
+        "default": "path"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "count",
+        "type": "INT"
+      },
+      {
+        "name": "total_length",
+        "type": "INT"
+      },
+      {
+        "name": "titles",
+        "type": "STRING"
+      },
+      {
+        "name": "sequences",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": true,
+    "is_output_node": false
+  },
+  "FastqGeneralIterator_parse": {
+    "node_id": "FastqGeneralIterator_parse",
+    "display_name": "FASTQ general iterator",
+    "category": "Biopython/SeqIO",
+    "inputs": [
+      {
+        "name": "file_path",
+        "type": "STRING",
+        "default": ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "count",
+        "type": "INT"
+      },
+      {
+        "name": "total_length",
+        "type": "INT"
+      },
+      {
+        "name": "titles",
+        "type": "STRING"
+      },
+      {
+        "name": "sequences",
+        "type": "STRING"
+      },
+      {
+        "name": "qualities",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": true,
+    "is_output_node": false
+  },
+  "SeqRecord_read": {
+    "node_id": "SeqRecord_read",
+    "display_name": "SeqRecord read",
+    "category": "Biopython/Sequence Annotation Objects",
+    "inputs": [
+      {
+        "name": "source",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "source_kind",
+        "type": "COMBO",
+        "default": "path"
+      },
+      {
+        "name": "format",
+        "type": "COMBO",
+        "default": "fasta"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "record",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": true,
+    "is_output_node": false
+  },
+  "SeqRecord_create": {
+    "node_id": "SeqRecord_create",
+    "display_name": "SeqRecord create",
+    "category": "Biopython/Sequence Annotation Objects",
+    "inputs": [
+      {
+        "name": "sequence",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "id",
+        "type": "STRING",
+        "default": "<unknown id>"
+      },
+      {
+        "name": "name",
+        "type": "STRING",
+        "default": "<unknown name>"
+      },
+      {
+        "name": "description",
+        "type": "STRING",
+        "default": "<unknown description>"
+      },
+      {
+        "name": "molecule_type",
+        "type": "COMBO",
+        "default": "DNA"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "record",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "SeqRecord_summary": {
+    "node_id": "SeqRecord_summary",
+    "display_name": "SeqRecord summary",
+    "category": "Biopython/Sequence Annotation Objects",
+    "inputs": [
+      {
+        "name": "record",
+        "type": "STRING",
+        "default": ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "summary",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "SeqRecord_get_fields": {
+    "node_id": "SeqRecord_get_fields",
+    "display_name": "SeqRecord fields",
+    "category": "Biopython/Sequence Annotation Objects",
+    "inputs": [
+      {
+        "name": "record",
+        "type": "STRING",
+        "default": ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "id",
+        "type": "STRING"
+      },
+      {
+        "name": "name",
+        "type": "STRING"
+      },
+      {
+        "name": "description",
+        "type": "STRING"
+      },
+      {
+        "name": "sequence",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "SeqRecord_set_annotation": {
+    "node_id": "SeqRecord_set_annotation",
+    "display_name": "SeqRecord set annotation",
+    "category": "Biopython/Sequence Annotation Objects",
+    "inputs": [
+      {
+        "name": "record",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "key",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "value",
+        "type": "STRING",
+        "default": ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "record",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "SeqRecord_set_letter_annotation": {
+    "node_id": "SeqRecord_set_letter_annotation",
+    "display_name": "SeqRecord set letter annotation",
+    "category": "Biopython/Sequence Annotation Objects",
+    "inputs": [
+      {
+        "name": "record",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "key",
+        "type": "STRING",
+        "default": "phred_quality"
+      },
+      {
+        "name": "values",
+        "type": "STRING",
+        "default": ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "record",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "SeqRecord_set_dbxrefs": {
+    "node_id": "SeqRecord_set_dbxrefs",
+    "display_name": "SeqRecord set dbxrefs",
+    "category": "Biopython/Sequence Annotation Objects",
+    "inputs": [
+      {
+        "name": "record",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "dbxrefs",
+        "type": "STRING",
+        "default": ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "record",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "SeqRecord_add_feature": {
+    "node_id": "SeqRecord_add_feature",
+    "display_name": "SeqRecord add feature",
+    "category": "Biopython/Sequence Annotation Objects",
+    "inputs": [
+      {
+        "name": "record",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "feature",
+        "type": "STRING",
+        "default": ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "record",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "SeqRecord_add_reference": {
+    "node_id": "SeqRecord_add_reference",
+    "display_name": "SeqRecord add reference",
+    "category": "Biopython/Sequence Annotation Objects",
+    "inputs": [
+      {
+        "name": "record",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "reference",
+        "type": "STRING",
+        "default": ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "record",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "SeqRecord_format": {
+    "node_id": "SeqRecord_format",
+    "display_name": "SeqRecord format",
+    "category": "Biopython/Sequence Annotation Objects",
+    "inputs": [
+      {
+        "name": "source",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "format",
+        "type": "COMBO",
+        "default": "fasta"
+      },
+      {
+        "name": "name",
+        "type": "STRING",
+        "default": "Sequence"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "formatted",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": true,
+    "is_output_node": false
+  },
+  "SeqRecord_slice": {
+    "node_id": "SeqRecord_slice",
+    "display_name": "SeqRecord slice",
+    "category": "Biopython/Sequence Annotation Objects",
+    "inputs": [
+      {
+        "name": "record",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "start",
+        "type": "INT",
+        "default": 0
+      },
+      {
+        "name": "end",
+        "type": "INT",
+        "default": 1
+      }
+    ],
+    "outputs": [
+      {
+        "name": "record",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "SeqRecord_addition": {
+    "node_id": "SeqRecord_addition",
+    "display_name": "SeqRecord addition",
+    "category": "Biopython/Sequence Annotation Objects",
+    "inputs": [
+      {
+        "name": "record1",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "record2",
+        "type": "STRING",
+        "default": ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "record",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "SeqRecord_reverse_complement": {
+    "node_id": "SeqRecord_reverse_complement",
+    "display_name": "SeqRecord reverse complement",
+    "category": "Biopython/Sequence Annotation Objects",
+    "inputs": [
+      {
+        "name": "record",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "id",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "preserve_name",
+        "type": "BOOLEAN",
+        "default": false
+      },
+      {
+        "name": "preserve_description",
+        "type": "BOOLEAN",
+        "default": false
+      },
+      {
+        "name": "preserve_annotations",
+        "type": "BOOLEAN",
+        "default": false
+      },
+      {
+        "name": "preserve_dbxrefs",
+        "type": "BOOLEAN",
+        "default": false
+      }
+    ],
+    "outputs": [
+      {
+        "name": "record",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "SeqRecord_compare_attributes": {
+    "node_id": "SeqRecord_compare_attributes",
+    "display_name": "SeqRecord compare attributes",
+    "category": "Biopython/Sequence Annotation Objects",
+    "inputs": [
+      {
+        "name": "source1",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "source2",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "compare",
+        "type": "COMBO",
+        "default": "seq"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "equal",
+        "type": "BOOLEAN"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Position_create": {
+    "node_id": "Position_create",
+    "display_name": "Position create",
+    "category": "Biopython/Sequence Annotation Objects",
+    "inputs": [
+      {
+        "name": "position_type",
+        "type": "COMBO",
+        "default": "exact"
+      },
+      {
+        "name": "position",
+        "type": "INT",
+        "default": 0
+      },
+      {
+        "name": "left",
+        "type": "INT",
+        "default": 0
+      },
+      {
+        "name": "right",
+        "type": "INT",
+        "default": 0
+      },
+      {
+        "name": "choices",
+        "type": "STRING",
+        "default": ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "position",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Position_summary": {
+    "node_id": "Position_summary",
+    "display_name": "Position summary",
+    "category": "Biopython/Sequence Annotation Objects",
+    "inputs": [
+      {
+        "name": "position",
+        "type": "STRING",
+        "default": ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "summary",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "SimpleLocation_create": {
+    "node_id": "SimpleLocation_create",
+    "display_name": "SimpleLocation create",
+    "category": "Biopython/Sequence Annotation Objects",
+    "inputs": [
+      {
+        "name": "start",
+        "type": "STRING",
+        "default": "0"
+      },
+      {
+        "name": "end",
+        "type": "STRING",
+        "default": "1"
+      },
+      {
+        "name": "strand",
+        "type": "INT",
+        "default": 1
+      },
+      {
+        "name": "ref",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "ref_db",
+        "type": "STRING",
+        "default": ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "location",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "CompoundLocation_create": {
+    "node_id": "CompoundLocation_create",
+    "display_name": "CompoundLocation create",
+    "category": "Biopython/Sequence Annotation Objects",
+    "inputs": [
+      {
+        "name": "parts",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "operator",
+        "type": "COMBO",
+        "default": "join"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "location",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Location_summary": {
+    "node_id": "Location_summary",
+    "display_name": "Location summary",
+    "category": "Biopython/Sequence Annotation Objects",
+    "inputs": [
+      {
+        "name": "location",
+        "type": "STRING",
+        "default": ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "summary",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Location_contains": {
+    "node_id": "Location_contains",
+    "display_name": "Location contains",
+    "category": "Biopython/Sequence Annotation Objects",
+    "inputs": [
+      {
+        "name": "location",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "coordinate",
+        "type": "INT",
+        "default": 0
+      }
+    ],
+    "outputs": [
+      {
+        "name": "contains",
+        "type": "BOOLEAN"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "SeqFeature_create": {
+    "node_id": "SeqFeature_create",
+    "display_name": "SeqFeature create",
+    "category": "Biopython/Sequence Annotation Objects",
+    "inputs": [
+      {
+        "name": "location",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "type",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "qualifiers",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "id",
+        "type": "STRING",
+        "default": "<unknown id>"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "feature",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "SeqFeature_summary": {
+    "node_id": "SeqFeature_summary",
+    "display_name": "SeqFeature summary",
+    "category": "Biopython/Sequence Annotation Objects",
+    "inputs": [
+      {
+        "name": "feature",
+        "type": "STRING",
+        "default": ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "summary",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "SeqFeature_contains": {
+    "node_id": "SeqFeature_contains",
+    "display_name": "SeqFeature contains",
+    "category": "Biopython/Sequence Annotation Objects",
+    "inputs": [
+      {
+        "name": "feature",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "coordinate",
+        "type": "INT",
+        "default": 0
+      }
+    ],
+    "outputs": [
+      {
+        "name": "contains",
+        "type": "BOOLEAN"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "SeqFeature_extract": {
+    "node_id": "SeqFeature_extract",
+    "display_name": "SeqFeature extract",
+    "category": "Biopython/Sequence Annotation Objects",
+    "inputs": [
+      {
+        "name": "sequence_or_record",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "feature",
+        "type": "STRING",
+        "default": ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "sequence",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Reference_create": {
+    "node_id": "Reference_create",
+    "display_name": "Reference create",
+    "category": "Biopython/Sequence Annotation Objects",
+    "inputs": [
+      {
+        "name": "authors",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "title",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "journal",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "medline_id",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "pubmed_id",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "comment",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "location",
+        "type": "STRING",
+        "default": ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "reference",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Reference_summary": {
+    "node_id": "Reference_summary",
+    "display_name": "Reference summary",
+    "category": "Biopython/Sequence Annotation Objects",
+    "inputs": [
+      {
+        "name": "reference",
+        "type": "STRING",
+        "default": ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "summary",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Seq_len": {
+    "node_id": "Seq_len",
+    "display_name": "Sequence Length",
+    "category": "Biopython/Sequence Objects",
+    "inputs": [
+      {
+        "name": "sequence",
+        "type": "STRING",
+        "default": ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "length",
+        "type": "INT"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Seq_element": {
+    "node_id": "Seq_element",
+    "display_name": "Sequence element",
+    "category": "Biopython/Sequence Objects",
+    "inputs": [
+      {
+        "name": "sequence",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "index",
+        "type": "INT",
+        "default": 1
+      }
+    ],
+    "outputs": [
+      {
+        "name": "element",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Seq_count": {
+    "node_id": "Seq_count",
+    "display_name": "Sequence count",
+    "category": "Biopython/Sequence Objects",
+    "inputs": [
+      {
+        "name": "sequence",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "amino_acid",
+        "type": "STRING",
+        "default": ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "count",
+        "type": "INT"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Seq_GC_percent": {
+    "node_id": "Seq_GC_percent",
+    "display_name": "Sequence GC%",
+    "category": "Biopython/Sequence Objects",
+    "inputs": [
+      {
+        "name": "sequence",
+        "type": "STRING",
+        "default": ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "gc_percent",
+        "type": "FLOAT"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Seq_slicing": {
+    "node_id": "Seq_slicing",
+    "display_name": "Sequence slicing",
+    "category": "Biopython/Sequence Objects",
+    "inputs": [
+      {
+        "name": "sequence",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "start",
+        "type": "INT",
+        "default": 1
+      },
+      {
+        "name": "end",
+        "type": "INT",
+        "default": 1
+      }
+    ],
+    "outputs": [
+      {
+        "name": "sequence",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Seq_reverse_complement": {
+    "node_id": "Seq_reverse_complement",
+    "display_name": "Sequence reverse complement",
+    "category": "Biopython/Sequence Objects",
+    "inputs": [
+      {
+        "name": "sequence",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "operation",
+        "type": "COMBO",
+        "default": "reverse"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "sequence",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Seq_adding": {
+    "node_id": "Seq_adding",
+    "display_name": "Sequence adding",
+    "category": "Biopython/Sequence Objects",
+    "inputs": [
+      {
+        "name": "sequence1",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "sequence2",
+        "type": "STRING",
+        "default": ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "sequence",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Seq_to_string": {
+    "node_id": "Seq_to_string",
+    "display_name": "Sequence to string",
+    "category": "Biopython/Sequence Objects",
+    "inputs": [
+      {
+        "name": "sequence",
+        "type": "STRING",
+        "default": ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "sequence",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Seq_join": {
+    "node_id": "Seq_join",
+    "display_name": "Sequence join",
+    "category": "Biopython/Sequence Objects",
+    "inputs": [
+      {
+        "name": "sequences",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "spacer_base",
+        "type": "STRING",
+        "default": "N"
+      },
+      {
+        "name": "spacer_count",
+        "type": "INT",
+        "default": 0
+      }
+    ],
+    "outputs": [
+      {
+        "name": "sequence",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Seq_change_case": {
+    "node_id": "Seq_change_case",
+    "display_name": "Sequence change case",
+    "category": "Biopython/Sequence Objects",
+    "inputs": [
+      {
+        "name": "sequence",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "case",
+        "type": "COMBO",
+        "default": "upper"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "sequence",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Seq_transcribe_ops": {
+    "node_id": "Seq_transcribe_ops",
+    "display_name": "Sequence transcription",
+    "category": "Biopython/Sequence Objects",
+    "inputs": [
+      {
+        "name": "sequence",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "operation",
+        "type": "COMBO",
+        "default": "transcribe"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "sequence",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Seq_translate": {
+    "node_id": "Seq_translate",
+    "display_name": "Sequence translate",
+    "category": "Biopython/Sequence Objects",
+    "inputs": [
+      {
+        "name": "sequence",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "table",
+        "type": "COMBO",
+        "default": "Standard"
+      },
+      {
+        "name": "to_stop",
+        "type": "BOOLEAN",
+        "default": false
+      },
+      {
+        "name": "stop_symbol",
+        "type": "STRING",
+        "default": "*"
+      },
+      {
+        "name": "cds",
+        "type": "BOOLEAN",
+        "default": false
+      }
+    ],
+    "outputs": [
+      {
+        "name": "sequence",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Codon_table": {
+    "node_id": "Codon_table",
+    "display_name": "Codon table",
+    "category": "Biopython/Sequence Objects",
+    "inputs": [
+      {
+        "name": "table",
+        "type": "COMBO",
+        "default": "Standard"
+      },
+      {
+        "name": "query_type",
+        "type": "COMBO",
+        "default": "full_table"
+      },
+      {
+        "name": "codon",
+        "type": "STRING",
+        "default": "ACG"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "value",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Mutable_seq_objects": {
+    "node_id": "Mutable_seq_objects",
+    "display_name": "Mutable seq objects",
+    "category": "Biopython/Sequence Objects",
+    "inputs": [
+      {
+        "name": "sequence",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "edit_type",
+        "type": "COMBO",
+        "default": "insert"
+      },
+      {
+        "name": "position",
+        "type": "INT",
+        "default": 1
+      },
+      {
+        "name": "base",
+        "type": "STRING",
+        "default": ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "sequence",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Finding_subsequences": {
+    "node_id": "Finding_subsequences",
+    "display_name": "Finding subsequences",
+    "category": "Biopython/Sequence Objects",
+    "inputs": [
+      {
+        "name": "sequence",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "subsequence",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "find_type",
+        "type": "COMBO",
+        "default": "find"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "result",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Seq_unknown": {
+    "node_id": "Seq_unknown",
+    "display_name": "Unknown sequence",
+    "category": "Biopython/Sequence Objects",
+    "inputs": [
+      {
+        "name": "length",
+        "type": "INT",
+        "default": 10
+      }
+    ],
+    "outputs": [
+      {
+        "name": "summary",
+        "type": "STRING"
+      },
+      {
+        "name": "length",
+        "type": "INT"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Seq_partial_slice": {
+    "node_id": "Seq_partial_slice",
+    "display_name": "Partial sequence slice",
+    "category": "Biopython/Sequence Objects",
+    "inputs": [
+      {
+        "name": "known_start",
+        "type": "INT",
+        "default": 0
+      },
+      {
+        "name": "known_sequence",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "total_length",
+        "type": "INT",
+        "default": 0
+      },
+      {
+        "name": "slice_start",
+        "type": "INT",
+        "default": 0
+      },
+      {
+        "name": "slice_end",
+        "type": "INT",
+        "default": 0
+      }
+    ],
+    "outputs": [
+      {
+        "name": "sequence",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Seq_search": {
+    "node_id": "Seq_search",
+    "display_name": "Sequence search",
+    "category": "Biopython/Sequence Objects",
+    "inputs": [
+      {
+        "name": "sequence",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "subsequences",
+        "type": "STRING",
+        "default": ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "matches",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Seq_module_function": {
+    "node_id": "Seq_module_function",
+    "display_name": "Sequence module function",
+    "category": "Biopython/Sequence Objects",
+    "inputs": [
+      {
+        "name": "sequence",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "function",
+        "type": "COMBO",
+        "default": "reverse_complement"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "sequence",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "SwissProt_read": {
+    "node_id": "SwissProt_read",
+    "display_name": "SwissProt read",
+    "category": "Biopython/UniProt",
+    "inputs": [
+      {
+        "name": "file_path",
+        "type": "STRING",
+        "default": ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "record",
+        "type": "STRING"
+      },
+      {
+        "name": "entry_name",
+        "type": "STRING"
+      },
+      {
+        "name": "description",
+        "type": "STRING"
+      },
+      {
+        "name": "organism",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": true,
+    "is_output_node": false
+  },
+  "SwissProt_parse": {
+    "node_id": "SwissProt_parse",
+    "display_name": "SwissProt parse",
+    "category": "Biopython/UniProt",
+    "inputs": [
+      {
+        "name": "file_path",
+        "type": "STRING",
+        "default": ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "records",
+        "type": "STRING"
+      },
+      {
+        "name": "count",
+        "type": "INT"
+      },
+      {
+        "name": "entry_names",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": true,
+    "is_output_node": false
+  },
+  "SwissProt_record_info": {
+    "node_id": "SwissProt_record_info",
+    "display_name": "SwissProt record info",
+    "category": "Biopython/UniProt",
+    "inputs": [
+      {
+        "name": "record",
+        "type": "STRING",
+        "default": ""
+      },
+      {
+        "name": "info_type",
+        "type": "COMBO",
+        "default": "description"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "info",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "ExPASy_get_sprot": {
+    "node_id": "ExPASy_get_sprot",
+    "display_name": "ExPASy get SwissProt",
+    "category": "Biopython/UniProt",
+    "inputs": [
+      {
+        "name": "accession",
+        "type": "STRING",
+        "default": "O23729"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "record",
+        "type": "STRING"
+      },
+      {
+        "name": "entry_name",
+        "type": "STRING"
+      },
+      {
+        "name": "description",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "UniProt_search": {
+    "node_id": "UniProt_search",
+    "display_name": "UniProt search",
+    "category": "Biopython/UniProt",
+    "inputs": [
+      {
+        "name": "query",
+        "type": "STRING",
+        "default": "Insulin AND (reviewed:true)"
+      },
+      {
+        "name": "max_results",
+        "type": "INT",
+        "default": 50
+      }
+    ],
+    "outputs": [
+      {
+        "name": "results",
+        "type": "STRING"
+      },
+      {
+        "name": "count",
+        "type": "INT"
+      },
+      {
+        "name": "ids",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  },
+  "Prosite_parse": {
+    "node_id": "Prosite_parse",
+    "display_name": "Prosite parse",
+    "category": "Biopython/UniProt",
+    "inputs": [
+      {
+        "name": "file_path",
+        "type": "STRING",
+        "default": "prosite.dat"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "records",
+        "type": "STRING"
+      },
+      {
+        "name": "count",
+        "type": "INT"
+      },
+      {
+        "name": "accessions",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": true,
+    "is_output_node": false
+  },
+  "ExEnzyme_read": {
+    "node_id": "ExEnzyme_read",
+    "display_name": "ExPASy Enzyme read",
+    "category": "Biopython/UniProt",
+    "inputs": [
+      {
+        "name": "file_path",
+        "type": "STRING",
+        "default": ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "record",
+        "type": "STRING"
+      },
+      {
+        "name": "ec_id",
+        "type": "STRING"
+      },
+      {
+        "name": "description",
+        "type": "STRING"
+      },
+      {
+        "name": "catalytic_activity",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": true,
+    "is_output_node": false
+  },
+  "ScanProsite_scan": {
+    "node_id": "ScanProsite_scan",
+    "display_name": "ScanProsite scan",
+    "category": "Biopython/UniProt",
+    "inputs": [
+      {
+        "name": "sequence",
+        "type": "STRING",
+        "default": ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "n_seq",
+        "type": "INT"
+      },
+      {
+        "name": "n_match",
+        "type": "INT"
+      },
+      {
+        "name": "hits",
+        "type": "STRING"
+      }
+    ],
+    "is_input_node": false,
+    "is_output_node": false
+  }
+}

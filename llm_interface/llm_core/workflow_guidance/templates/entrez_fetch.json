@@ -1,0 +1,11 @@
+{
+  "template_id": "entrez_fetch",
+  "intent": "entrez_fetch",
+  "description": "Search Entrez and fetch records for the resulting identifiers",
+  "required_nodes": ["Entrez_esearch", "Entrez_efetch"],
+  "required_edges": [
+    {"from_class": "Entrez_esearch", "from_port": "id_list", "to_class": "Entrez_efetch", "to_port": "ids"}
+  ],
+  "optional_nodes": ["Entrez_efetch_save"],
+  "forbidden_nodes": []
+}

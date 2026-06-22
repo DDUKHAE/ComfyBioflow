@@ -1,0 +1,11 @@
+{
+  "template_id": "pairwise_alignment",
+  "intent": "pairwise_alignment",
+  "description": "Generate pairwise alignments and inspect one alignment",
+  "required_nodes": ["Pairwise_align", "Pairwise_get_alignment"],
+  "required_edges": [
+    {"from_class": "Pairwise_align", "from_port": "alignments", "to_class": "Pairwise_get_alignment", "to_port": "alignments"}
+  ],
+  "optional_nodes": ["Pairwise_aligner_info"],
+  "forbidden_nodes": []
+}

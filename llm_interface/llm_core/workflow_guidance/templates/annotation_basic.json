@@ -1,0 +1,16 @@
+{
+  "template_id": "annotation_basic",
+  "intent": "annotation",
+  "description": "Create a sequence feature and inspect its annotation summary",
+  "required_nodes": ["SeqFeature_create", "SeqFeature_summary"],
+  "required_edges": [
+    {
+      "from_class": "SeqFeature_create",
+      "from_port": "feature",
+      "to_class": "SeqFeature_summary",
+      "to_port": "feature"
+    }
+  ],
+  "optional_nodes": ["SeqFeature_extract", "SeqRecord_add_feature"],
+  "forbidden_nodes": []
+}

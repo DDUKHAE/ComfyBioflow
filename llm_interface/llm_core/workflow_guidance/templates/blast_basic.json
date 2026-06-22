@@ -1,0 +1,28 @@
+{
+  "template_id": "blast_basic",
+  "intent": "blast_search",
+  "description": "Run BLAST and inspect parsed query results",
+  "required_nodes": ["BLAST_qblast", "SearchIO_parse", "SearchIO_get_qresult", "SearchIO_hit_info"],
+  "required_edges": [
+    {
+      "from_class": "BLAST_qblast",
+      "from_port": "file_path",
+      "to_class": "SearchIO_parse",
+      "to_port": "file_path"
+    },
+    {
+      "from_class": "SearchIO_parse",
+      "from_port": "qresults",
+      "to_class": "SearchIO_get_qresult",
+      "to_port": "qresults"
+    },
+    {
+      "from_class": "SearchIO_get_qresult",
+      "from_port": "qresult",
+      "to_class": "SearchIO_hit_info",
+      "to_port": "qresult"
+    }
+  ],
+  "optional_nodes": ["BLAST_read", "SearchIO_write"],
+  "forbidden_nodes": []
+}

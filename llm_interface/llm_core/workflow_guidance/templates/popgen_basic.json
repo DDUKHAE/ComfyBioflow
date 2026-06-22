@@ -1,0 +1,11 @@
+{
+  "template_id": "popgen_basic",
+  "intent": "popgen_basic",
+  "description": "Read a GenePop record and summarize population/loci information",
+  "required_nodes": ["PopGen_read", "PopGen_info"],
+  "required_edges": [
+    {"from_class": "PopGen_read", "from_port": "record", "to_class": "PopGen_info", "to_port": "record"}
+  ],
+  "optional_nodes": ["PopGen_split_in_loci", "PopGen_split_in_pops", "PopGen_remove_locus"],
+  "forbidden_nodes": []
+}

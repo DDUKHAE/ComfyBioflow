@@ -1,0 +1,12 @@
+{
+  "template_id": "sequence_annotation_edit",
+  "intent": "sequence_annotation_edit",
+  "description": "Create a feature and add it to a selected sequence record",
+  "required_nodes": ["SeqIO_get_record", "SeqFeature_create", "SeqRecord_add_feature"],
+  "required_edges": [
+    {"from_class": "SeqIO_get_record", "from_port": "record", "to_class": "SeqRecord_add_feature", "to_port": "record"},
+    {"from_class": "SeqFeature_create", "from_port": "feature", "to_class": "SeqRecord_add_feature", "to_port": "feature"}
+  ],
+  "optional_nodes": ["SeqFeature_summary", "SeqRecord_set_annotation"],
+  "forbidden_nodes": []
+}

@@ -1,0 +1,9 @@
+{
+  "template_id": "kegg_enzyme_file_basic",
+  "intent": "kegg_enzyme_file_basic",
+  "description": "Read a KEGG enzyme flatfile record",
+  "required_nodes": ["KEGG_enzyme_read"],
+  "required_edges": [],
+  "optional_nodes": ["KEGG_enzyme_parse"],
+  "forbidden_nodes": []
+}

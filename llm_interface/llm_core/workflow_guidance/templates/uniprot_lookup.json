@@ -1,0 +1,9 @@
+{
+  "template_id": "uniprot_lookup",
+  "intent": "uniprot_lookup",
+  "description": "Run a UniProt search and inspect returned identifiers",
+  "required_nodes": ["UniProt_search"],
+  "required_edges": [],
+  "optional_nodes": [],
+  "forbidden_nodes": []
+}

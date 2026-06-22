@@ -1,0 +1,12 @@
+{
+  "template_id": "searchio_analysis",
+  "intent": "searchio_analysis",
+  "description": "Parse SearchIO results and inspect a representative HSP",
+  "required_nodes": ["SearchIO_parse", "SearchIO_get_qresult", "SearchIO_hsp_info"],
+  "required_edges": [
+    {"from_class": "SearchIO_parse", "from_port": "qresults", "to_class": "SearchIO_get_qresult", "to_port": "qresults"},
+    {"from_class": "SearchIO_get_qresult", "from_port": "qresult", "to_class": "SearchIO_hsp_info", "to_port": "qresult"}
+  ],
+  "optional_nodes": ["SearchIO_hit_info", "SearchIO_write"],
+  "forbidden_nodes": []
+}

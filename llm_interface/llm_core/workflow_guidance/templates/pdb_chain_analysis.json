@@ -1,0 +1,11 @@
+{
+  "template_id": "pdb_chain_analysis",
+  "intent": "pdb_chain_analysis",
+  "description": "Read a PDB structure and extract one chain",
+  "required_nodes": ["PDB_read", "PDB_get_chain"],
+  "required_edges": [
+    {"from_class": "PDB_read", "from_port": "structure", "to_class": "PDB_get_chain", "to_port": "structure"}
+  ],
+  "optional_nodes": ["PDB_structure_info", "PDB_header"],
+  "forbidden_nodes": []
+}

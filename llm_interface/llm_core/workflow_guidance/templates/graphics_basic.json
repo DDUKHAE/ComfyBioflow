@@ -1,0 +1,11 @@
+{
+  "template_id": "graphics_basic",
+  "intent": "graphics_basic",
+  "description": "Read a SeqRecord and render a genome diagram from it",
+  "required_nodes": ["SeqRecord_read", "GenomeDiagram_from_seqrecord"],
+  "required_edges": [
+    {"from_class": "SeqRecord_read", "from_port": "record", "to_class": "GenomeDiagram_from_seqrecord", "to_port": "seqrecord"}
+  ],
+  "optional_nodes": ["GenomeDiagram_from_genbank", "GenomeDiagram_compare_regions"],
+  "forbidden_nodes": []
+}

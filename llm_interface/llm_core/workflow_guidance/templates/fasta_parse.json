@@ -1,0 +1,16 @@
+{
+  "template_id": "fasta_parse",
+  "intent": "fasta_parse",
+  "description": "Parse FASTA and summarize records",
+  "required_nodes": ["SeqIO_parse", "SeqIO_records_info"],
+  "required_edges": [
+    {
+      "from_class": "SeqIO_parse",
+      "from_port": "records",
+      "to_class": "SeqIO_records_info",
+      "to_port": "records"
+    }
+  ],
+  "optional_nodes": ["SeqIO_write", "SeqIO_filter_records"],
+  "forbidden_nodes": []
+}

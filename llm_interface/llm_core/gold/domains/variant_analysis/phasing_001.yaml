@@ -1,0 +1,21 @@
+query_id: phasing_001
+family: phasing
+nl_text: "I have a VCF with heterozygous variants from a sequenced individual and want to determine which variants are on the same chromosome (haplotype phasing) to understand compound heterozygosity."
+difficulty: medium
+tool_specificity: goal_specified
+context:
+  analysis_type: phasing
+
+gold:
+  tier_1_canonical:
+    tools: [SHAPEIT4]
+    expected_output_criteria:
+      has_phased_vcf: true
+
+  tier_2_alternative:
+    tools: [Eagle2, WhatsHap]
+    functional_equivalence_criteria:
+      has_phased_vcf: ">= 1.0"
+
+  tier_3_invalid:
+    tools: []

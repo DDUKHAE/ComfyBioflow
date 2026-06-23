@@ -1,0 +1,24 @@
+query_id: gwas_association_001
+family: gwas_association
+nl_text: "I have QC-passed genotype data from 2000 cases and 2000 controls. I need to run a genome-wide association study to identify variants associated with type 2 diabetes."
+difficulty: hard
+tool_specificity: goal_specified
+context:
+  phenotype_type: binary
+  n_cases: 2000
+  n_controls: 2000
+
+gold:
+  tier_1_canonical:
+    tools: [PLINK_logistic]
+    expected_output_criteria:
+      has_pvalue_column: true
+      n_snps_tested: ">= 1000"
+
+  tier_2_alternative:
+    tools: [REGENIE]
+    functional_equivalence_criteria:
+      has_pvalue_column: ">= 1.0"
+
+  tier_3_invalid:
+    tools: []

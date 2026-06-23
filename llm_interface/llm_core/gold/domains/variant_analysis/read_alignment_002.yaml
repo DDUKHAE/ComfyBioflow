@@ -1,0 +1,22 @@
+query_id: read_alignment_002
+family: read_alignment
+nl_text: "I have Oxford Nanopore long reads from a bacterial genome. I need to align them to a reference genome for downstream variant analysis."
+difficulty: medium
+tool_specificity: context_only
+context:
+  sequencer: nanopore
+  analysis_type: wgs
+
+gold:
+  tier_1_canonical:
+    tools: [minimap2]
+    expected_output_criteria:
+      mapping_rate: ">= 0.85"
+      has_sorted_bam: true
+
+  tier_2_alternative:
+    tools: []
+    functional_equivalence_criteria: {}
+
+  tier_3_invalid:
+    tools: [BWA-MEM2, Bowtie2]

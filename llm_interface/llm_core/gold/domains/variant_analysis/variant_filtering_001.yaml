@@ -1,0 +1,23 @@
+query_id: variant_filtering_001
+family: variant_filtering
+nl_text: "I have a VCF with variants called from 150 samples in a population cohort. I need to apply variant quality score recalibration to remove false positives."
+difficulty: medium
+tool_specificity: context_only
+context:
+  n_samples: 150
+  variant_type: SNP
+
+gold:
+  tier_1_canonical:
+    tools: [GATK_VQSR]
+    expected_output_criteria:
+      filter_applied: true
+      ts_tv_ratio: ">= 2.0"
+
+  tier_2_alternative:
+    tools: [bcftools_filter]
+    functional_equivalence_criteria:
+      filter_applied: ">= 1.0"
+
+  tier_3_invalid:
+    tools: []

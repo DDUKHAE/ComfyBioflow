@@ -1,0 +1,23 @@
+query_id: variant_calling_001
+family: variant_calling
+nl_text: "I have duplicate-marked BAM files from a healthy individual. I need to call germline SNPs and indels following GATK best practices."
+difficulty: medium
+tool_specificity: goal_specified
+context:
+  analysis_type: germline
+  n_samples: 1
+
+gold:
+  tier_1_canonical:
+    tools: [GATK_HaplotypeCaller]
+    expected_output_criteria:
+      has_vcf: true
+      n_variants: ">= 1"
+
+  tier_2_alternative:
+    tools: [DeepVariant, bcftools_call]
+    functional_equivalence_criteria:
+      has_vcf: ">= 1.0"
+
+  tier_3_invalid:
+    tools: []

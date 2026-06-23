@@ -1,0 +1,23 @@
+query_id: copy_number_001
+family: copy_number
+nl_text: "I have tumor whole-exome sequencing BAM files with a matched normal sample. I need to detect somatic copy number alterations and produce segmentation files."
+difficulty: hard
+tool_specificity: goal_specified
+context:
+  assay: wes
+  has_matched_normal: true
+
+gold:
+  tier_1_canonical:
+    tools: [CNVkit]
+    expected_output_criteria:
+      has_cnr_file: true
+      has_cns_file: true
+
+  tier_2_alternative:
+    tools: [GATK_CNV]
+    functional_equivalence_criteria:
+      has_cnr_file: ">= 1.0"
+
+  tier_3_invalid:
+    tools: []

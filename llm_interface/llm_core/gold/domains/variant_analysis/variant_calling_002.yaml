@@ -1,0 +1,23 @@
+query_id: variant_calling_002
+family: variant_calling
+nl_text: "I have tumor and matched normal BAM files from a breast cancer patient. I need to call somatic mutations to identify cancer-specific variants."
+difficulty: hard
+tool_specificity: goal_specified
+context:
+  analysis_type: somatic
+  has_matched_normal: true
+
+gold:
+  tier_1_canonical:
+    tools: [GATK_Mutect2]
+    expected_output_criteria:
+      has_vcf: true
+      has_somatic_filter: true
+
+  tier_2_alternative:
+    tools: [VarScan2]
+    functional_equivalence_criteria:
+      has_vcf: ">= 1.0"
+
+  tier_3_invalid:
+    tools: []

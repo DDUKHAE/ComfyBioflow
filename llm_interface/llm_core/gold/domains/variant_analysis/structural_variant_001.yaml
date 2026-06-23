@@ -1,0 +1,23 @@
+query_id: structural_variant_001
+family: structural_variant
+nl_text: "I have WGS BAM files from a patient with suspected chromosomal rearrangements. I want to detect large structural variants including deletions, duplications, inversions, and translocations."
+difficulty: hard
+tool_specificity: goal_specified
+context:
+  variant_type: structural
+  min_sv_size: 50
+
+gold:
+  tier_1_canonical:
+    tools: [DELLY]
+    expected_output_criteria:
+      has_sv_vcf: true
+      n_sv_calls: ">= 0"
+
+  tier_2_alternative:
+    tools: [Manta]
+    functional_equivalence_criteria:
+      has_sv_vcf: ">= 1.0"
+
+  tier_3_invalid:
+    tools: []

@@ -1,0 +1,20 @@
+query_id: variant_filtering_002
+family: variant_filtering
+nl_text: "I have a VCF from a trio study with only 3 samples (parents and child). I need to filter variants by quality score and read depth."
+difficulty: easy
+tool_specificity: context_only
+context:
+  n_samples: 3
+
+gold:
+  tier_1_canonical:
+    tools: [bcftools_filter]
+    expected_output_criteria:
+      filter_applied: true
+
+  tier_2_alternative:
+    tools: []
+    functional_equivalence_criteria: {}
+
+  tier_3_invalid:
+    tools: [GATK_VQSR]

@@ -1,0 +1,22 @@
+query_id: gwas_association_002
+family: gwas_association
+nl_text: "I have genotype data and BMI measurements for 3000 individuals from a population cohort. I need to run a GWAS to find genetic loci associated with body mass index."
+difficulty: hard
+tool_specificity: goal_specified
+context:
+  phenotype_type: continuous
+  n_samples: 3000
+
+gold:
+  tier_1_canonical:
+    tools: [PLINK_linear]
+    expected_output_criteria:
+      has_pvalue_column: true
+
+  tier_2_alternative:
+    tools: [BOLT-LMM]
+    functional_equivalence_criteria:
+      has_pvalue_column: ">= 1.0"
+
+  tier_3_invalid:
+    tools: []

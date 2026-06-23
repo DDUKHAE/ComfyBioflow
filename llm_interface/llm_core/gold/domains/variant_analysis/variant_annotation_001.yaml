@@ -1,0 +1,23 @@
+query_id: variant_annotation_001
+family: variant_annotation
+nl_text: "I have a filtered VCF file with germline variants. I need to annotate them with functional consequences, population allele frequencies from gnomAD, and ClinVar clinical significance."
+difficulty: medium
+tool_specificity: goal_specified
+context:
+  organism: homo_sapiens
+  genome_build: GRCh38
+
+gold:
+  tier_1_canonical:
+    tools: [VEP]
+    expected_output_criteria:
+      has_csq_field: true
+      n_annotated: ">= 1"
+
+  tier_2_alternative:
+    tools: [ANNOVAR, SnpEff]
+    functional_equivalence_criteria:
+      has_csq_field: ">= 1.0"
+
+  tier_3_invalid:
+    tools: []

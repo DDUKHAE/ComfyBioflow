@@ -1,0 +1,22 @@
+query_id: gwas_qc_001
+family: gwas_qc
+nl_text: "I have PLINK binary format genotype data from 5000 individuals. I need to perform standard quality control: filter for MAF > 1%, call rate > 95%, and HWE p > 1e-6."
+difficulty: easy
+tool_specificity: goal_specified
+context:
+  n_samples: 5000
+  data_format: plink_binary
+
+gold:
+  tier_1_canonical:
+    tools: [PLINK]
+    expected_output_criteria:
+      has_filtered_bfile: true
+
+  tier_2_alternative:
+    tools: [PLINK2]
+    functional_equivalence_criteria:
+      has_filtered_bfile: ">= 1.0"
+
+  tier_3_invalid:
+    tools: []

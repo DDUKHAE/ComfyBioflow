@@ -1,4 +1,10 @@
 {
+  "last_node_id": 12,
+  "last_link_id": 11,
+  "version": 0.4,
+  "config": {},
+  "extra": {},
+  "groups": [],
   "metadata": {
     "format": "comfyui_workflow_export",
     "route_id": "bulk_rna_seq_salmon_ref",
@@ -64,7 +70,7 @@
       "mode": 0,
       "inputs": [
         {
-          "name": "sample_metadata",
+          "name": "upstream",
           "type": "STRING",
           "link": 1
         }
@@ -112,7 +118,7 @@
       "mode": 0,
       "inputs": [
         {
-          "name": "fastq_1",
+          "name": "upstream",
           "type": "STRING",
           "link": 2
         }
@@ -163,7 +169,7 @@
       "mode": 0,
       "inputs": [
         {
-          "name": "fastq_1",
+          "name": "upstream",
           "type": "STRING",
           "link": 3
         }
@@ -214,7 +220,7 @@
       "mode": 0,
       "inputs": [
         {
-          "name": "transcriptome_fasta",
+          "name": "upstream",
           "type": "STRING",
           "link": 4
         }
@@ -264,7 +270,7 @@
       "mode": 0,
       "inputs": [
         {
-          "name": "index_dir",
+          "name": "upstream",
           "type": "STRING",
           "link": 5
         }
@@ -317,7 +323,7 @@
       "mode": 0,
       "inputs": [
         {
-          "name": "salmon_quant_dir",
+          "name": "upstream",
           "type": "STRING",
           "link": 6
         }
@@ -366,7 +372,7 @@
       "mode": 0,
       "inputs": [
         {
-          "name": "count_matrix",
+          "name": "upstream",
           "type": "STRING",
           "link": 7
         }
@@ -417,7 +423,7 @@
       "mode": 0,
       "inputs": [
         {
-          "name": "count_matrix",
+          "name": "upstream",
           "type": "STRING",
           "link": 8
         }
@@ -475,7 +481,7 @@
       "mode": 0,
       "inputs": [
         {
-          "name": "results_csv",
+          "name": "upstream",
           "type": "STRING",
           "link": 9
         }
@@ -525,7 +531,7 @@
       "mode": 0,
       "inputs": [
         {
-          "name": "workflow_json_path",
+          "name": "upstream",
           "type": "STRING",
           "link": 10
         }

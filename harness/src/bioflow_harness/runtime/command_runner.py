@@ -1,4 +1,5 @@
 import subprocess
+import shlex
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -51,3 +52,13 @@ class CondaCommandRunner:
 
 def conda_command(env_name: str, executable: str, *args: str) -> list[str]:
     return ["conda", "run", "-n", env_name, executable, *args]
+
+
+def parse_extra_command_tokens(extra_command: str) -> list[str]:
+    tokens: list[str] = []
+    for raw_line in extra_command.splitlines() or [extra_command]:
+        line = raw_line.strip()
+        if not line or line.startswith("#"):
+            continue
+        tokens.extend(shlex.split(line))
+    return tokens

@@ -76,6 +76,12 @@ class WorkflowBuilder:
         )
         links.append([preview_link_id, visualization_node_id, 1, preview_node_id, 0, "IMAGE"])
         workflow = {
+            "last_node_id": preview_node_id,
+            "last_link_id": preview_link_id,
+            "version": 0.4,
+            "config": {},
+            "extra": {},
+            "groups": [],
             "metadata": {
                 "format": "comfyui_workflow_export",
                 "route_id": plan.route_id,

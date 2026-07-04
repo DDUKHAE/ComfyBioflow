@@ -10,12 +10,13 @@ Validation rules:
 - LiteGraph link arrays must carry `[id, origin_id, origin_slot, target_id, target_slot, type]`
 - link `origin_id` and `target_id` must refer to existing nodes
 - node `inputs[].link` and `outputs[].links` must refer to existing link ids so ComfyUI draws visible edges
+- saved workflow fields `last_node_id`, `last_link_id`, `version`, `config`, `extra`, and `groups` should be present for ComfyUI UI compatibility
 - every custom node type must resolve through `bioflow_harness.custom_nodes.NODE_CLASS_MAPPINGS`
 - ComfyUI builtin display nodes such as `PreviewImage` may appear as graph consumers
 - each node must preserve stage metadata
 - output and link types must use ComfyUI-native MVP types: `STRING` or `IMAGE`
 
-The official workflow connects `DESeq2VisualizationNode` image output slot `1` to a builtin `PreviewImage` node so the visualization branch is visible when the JSON is opened in ComfyUI.
+The official workflow connects each stage through a forced `upstream` socket and connects `DESeq2VisualizationNode` image output slot `1` to a builtin `PreviewImage` node so both the main pipeline and visualization branch are visible when the JSON is opened in ComfyUI.
 
 Run validation:
 

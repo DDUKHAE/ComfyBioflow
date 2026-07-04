@@ -1,0 +1,416 @@
+{
+  "metadata": {
+    "format": "comfyui_workflow_export",
+    "route_id": "bulk_rna_seq_salmon_ref",
+    "domain": "bulk_rna_seq",
+    "manual_open_fallback": "Open this JSON file from ComfyUI if pending workflow loading is unavailable."
+  },
+  "nodes": [
+    {
+      "id": 1,
+      "type": "WorkflowRequestLoader",
+      "title": "Workflow Request",
+      "pos": [
+        80,
+        120
+      ],
+      "size": [
+        240,
+        120
+      ],
+      "widgets_values": {},
+      "outputs": [
+        {
+          "name": "request_payload",
+          "type": "STRING"
+        }
+      ],
+      "metadata": {
+        "stage_id": "request_loading",
+        "stage_label": "Prompt or request payload loading",
+        "selected_tool_id": "workflow_request_loader",
+        "selected_tier": "REF",
+        "source_operation": "load_request",
+        "restart_required": false
+      }
+    },
+    {
+      "id": 2,
+      "type": "SampleMetadataValidatorNode",
+      "title": "Validate Sample Metadata",
+      "pos": [
+        360,
+        120
+      ],
+      "size": [
+        240,
+        120
+      ],
+      "widgets_values": {},
+      "outputs": [
+        {
+          "name": "validated_metadata",
+          "type": "STRING"
+        }
+      ],
+      "metadata": {
+        "stage_id": "metadata_validation",
+        "stage_label": "Input asset and sample metadata validation",
+        "selected_tool_id": "sample_metadata_validator",
+        "selected_tier": "REF",
+        "source_operation": "validate_sample_metadata",
+        "restart_required": false
+      }
+    },
+    {
+      "id": 3,
+      "type": "FastpQCNode",
+      "title": "FASTQ QC",
+      "pos": [
+        640,
+        120
+      ],
+      "size": [
+        240,
+        120
+      ],
+      "widgets_values": {
+        "threads": 2
+      },
+      "outputs": [
+        {
+          "name": "qc_dir",
+          "type": "STRING"
+        }
+      ],
+      "metadata": {
+        "stage_id": "read_qc",
+        "stage_label": "FASTQ QC",
+        "selected_tool_id": "fastp_qc",
+        "selected_tier": "REF",
+        "source_operation": "fastq_qc",
+        "restart_required": false
+      }
+    },
+    {
+      "id": 4,
+      "type": "FastpTrimNode",
+      "title": "Optional FASTQ Trimming",
+      "pos": [
+        920,
+        120
+      ],
+      "size": [
+        240,
+        120
+      ],
+      "widgets_values": {
+        "threads": 2
+      },
+      "outputs": [
+        {
+          "name": "trimmed_fastq_dir",
+          "type": "STRING"
+        }
+      ],
+      "metadata": {
+        "stage_id": "trimming",
+        "stage_label": "Optional fastp trimming",
+        "selected_tool_id": "fastp_trim",
+        "selected_tier": "REF",
+        "source_operation": "fastq_trim",
+        "restart_required": false
+      }
+    },
+    {
+      "id": 5,
+      "type": "SalmonIndexNode",
+      "title": "Salmon Index",
+      "pos": [
+        1200,
+        120
+      ],
+      "size": [
+        240,
+        120
+      ],
+      "widgets_values": {
+        "threads": 2
+      },
+      "outputs": [
+        {
+          "name": "salmon_index_dir",
+          "type": "STRING"
+        }
+      ],
+      "metadata": {
+        "stage_id": "salmon_index",
+        "stage_label": "salmon index",
+        "selected_tool_id": "salmon_index",
+        "selected_tier": "REF",
+        "source_operation": "salmon_index",
+        "restart_required": false
+      }
+    },
+    {
+      "id": 6,
+      "type": "SalmonQuantNode",
+      "title": "Salmon Quant",
+      "pos": [
+        1480,
+        120
+      ],
+      "size": [
+        240,
+        120
+      ],
+      "widgets_values": {
+        "threads": 2
+      },
+      "outputs": [
+        {
+          "name": "salmon_quant_dir",
+          "type": "STRING"
+        }
+      ],
+      "metadata": {
+        "stage_id": "salmon_quant",
+        "stage_label": "salmon quant",
+        "selected_tool_id": "salmon_quant",
+        "selected_tier": "REF",
+        "source_operation": "salmon_quant",
+        "restart_required": false
+      }
+    },
+    {
+      "id": 7,
+      "type": "TximportNode",
+      "title": "Import Counts For DESeq2",
+      "pos": [
+        1760,
+        120
+      ],
+      "size": [
+        240,
+        120
+      ],
+      "widgets_values": {},
+      "outputs": [
+        {
+          "name": "deseq2_count_matrix",
+          "type": "STRING"
+        }
+      ],
+      "metadata": {
+        "stage_id": "tximport_import",
+        "stage_label": "tximport-compatible import",
+        "selected_tool_id": "tximport_import",
+        "selected_tier": "REF",
+        "source_operation": "tximport_import",
+        "restart_required": false
+      }
+    },
+    {
+      "id": 8,
+      "type": "DESeq2AnalysisNode",
+      "title": "DESeq2 Analysis",
+      "pos": [
+        2040,
+        120
+      ],
+      "size": [
+        240,
+        120
+      ],
+      "widgets_values": {
+        "design_formula": "~ condition"
+      },
+      "outputs": [
+        {
+          "name": "deseq2_results_table",
+          "type": "STRING"
+        }
+      ],
+      "metadata": {
+        "stage_id": "deseq2_analysis",
+        "stage_label": "DESeq2 differential expression analysis",
+        "selected_tool_id": "deseq2_analysis",
+        "selected_tier": "REF",
+        "source_operation": "deseq2_analysis",
+        "restart_required": false
+      }
+    },
+    {
+      "id": 9,
+      "type": "DESeq2VisualizationNode",
+      "title": "DESeq2 Visualization",
+      "pos": [
+        2320,
+        120
+      ],
+      "size": [
+        240,
+        120
+      ],
+      "widgets_values": {
+        "plots": "pca,ma,volcano,heatmap"
+      },
+      "outputs": [
+        {
+          "name": "plot_dir",
+          "type": "STRING"
+        },
+        {
+          "name": "preview_plot",
+          "type": "IMAGE"
+        }
+      ],
+      "metadata": {
+        "stage_id": "deseq2_visualization",
+        "stage_label": "DESeq2 visualization artifact generation",
+        "selected_tool_id": "comfybio_deseq2_visualization",
+        "selected_tier": "REF",
+        "source_operation": "deseq2_visualization",
+        "restart_required": false
+      }
+    },
+    {
+      "id": 10,
+      "type": "ComfyBIOReportNode",
+      "title": "ComfyBIO Report",
+      "pos": [
+        2600,
+        120
+      ],
+      "size": [
+        240,
+        120
+      ],
+      "widgets_values": {},
+      "outputs": [
+        {
+          "name": "report_path",
+          "type": "STRING"
+        }
+      ],
+      "metadata": {
+        "stage_id": "reporting",
+        "stage_label": "Summary and report output",
+        "selected_tool_id": "comfybio_report",
+        "selected_tier": "REF",
+        "source_operation": "report",
+        "restart_required": false
+      }
+    },
+    {
+      "id": 11,
+      "type": "WorkflowJSONOutput",
+      "title": "Workflow JSON Export",
+      "pos": [
+        2880,
+        120
+      ],
+      "size": [
+        240,
+        120
+      ],
+      "widgets_values": {},
+      "outputs": [
+        {
+          "name": "workflow_json_path",
+          "type": "STRING"
+        }
+      ],
+      "metadata": {
+        "stage_id": "workflow_export",
+        "stage_label": "ComfyUI workflow JSON export",
+        "selected_tool_id": "workflow_json_output",
+        "selected_tier": "REF",
+        "source_operation": "workflow_json_export",
+        "restart_required": false
+      }
+    }
+  ],
+  "links": [
+    {
+      "id": 1,
+      "origin_id": 1,
+      "origin_slot": 0,
+      "target_id": 2,
+      "target_slot": 0,
+      "type": "STRING"
+    },
+    {
+      "id": 2,
+      "origin_id": 2,
+      "origin_slot": 0,
+      "target_id": 3,
+      "target_slot": 0,
+      "type": "STRING"
+    },
+    {
+      "id": 3,
+      "origin_id": 3,
+      "origin_slot": 0,
+      "target_id": 4,
+      "target_slot": 0,
+      "type": "STRING"
+    },
+    {
+      "id": 4,
+      "origin_id": 4,
+      "origin_slot": 0,
+      "target_id": 5,
+      "target_slot": 0,
+      "type": "STRING"
+    },
+    {
+      "id": 5,
+      "origin_id": 5,
+      "origin_slot": 0,
+      "target_id": 6,
+      "target_slot": 0,
+      "type": "STRING"
+    },
+    {
+      "id": 6,
+      "origin_id": 6,
+      "origin_slot": 0,
+      "target_id": 7,
+      "target_slot": 0,
+      "type": "STRING"
+    },
+    {
+      "id": 7,
+      "origin_id": 7,
+      "origin_slot": 0,
+      "target_id": 8,
+      "target_slot": 0,
+      "type": "STRING"
+    },
+    {
+      "id": 8,
+      "origin_id": 8,
+      "origin_slot": 0,
+      "target_id": 9,
+      "target_slot": 0,
+      "type": "STRING"
+    },
+    {
+      "id": 9,
+      "origin_id": 9,
+      "origin_slot": 0,
+      "target_id": 10,
+      "target_slot": 0,
+      "type": "STRING"
+    },
+    {
+      "id": 10,
+      "origin_id": 10,
+      "origin_slot": 0,
+      "target_id": 11,
+      "target_slot": 0,
+      "type": "STRING"
+    }
+  ]
+}

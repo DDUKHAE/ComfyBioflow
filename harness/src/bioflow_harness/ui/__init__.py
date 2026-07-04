@@ -1,0 +1,2 @@
+"""Prompt-entry UI contracts."""
+

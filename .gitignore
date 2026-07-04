@@ -1,0 +1,8 @@
+.DS_Store
+__pycache__/
+*.pyc
+.pytest_cache/
+harness/.pytest_cache/
+harness/tests/
+harness/examples/runs/
+docs/superpowers/

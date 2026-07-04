@@ -1,0 +1,2 @@
+Run bulk RNA-seq for paired-end FASTQ files from human samples. Use salmon quantification, then DESeq2 differential expression with PCA, MA plot, volcano plot, heatmap, and a final report.
+

@@ -1,0 +1,10 @@
+[project]
+name = "comfybio-harness"
+version = "0.1.0"
+description = "Registry-driven ComfyBIO workflow harness MVP"
+requires-python = ">=3.11"
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+

@@ -1,0 +1,2 @@
+"""Shared ComfyBIO harness contracts."""
+

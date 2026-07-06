@@ -9,7 +9,10 @@ Use this skill to convert an analysis brief into the official ComfyBIO staged wo
 
 ## Output
 
-Return a stage list for `bulk_rna_seq_salmon_ref`, including fastp, salmon, tximport-compatible import, DESeq2, DESeq2 visualization, report, and workflow export stages.
+Return a stage list for the selected implemented route:
+
+- `bulk_rna_seq_salmon_ref`: fastp, salmon, tximport-compatible import, DESeq2, DESeq2 visualization, report, and workflow export stages.
+- `scrna_seq_scanpy_ref`: 10x count, Scanpy QC, normalization, clustering, marker genes, scRNA visualization, report, and workflow export stages.
 
 ## Rules
 

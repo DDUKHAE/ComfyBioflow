@@ -10,19 +10,23 @@ class WorkflowBuilder:
     def build(self, plan: WorkflowPlan) -> dict:
         nodes = []
         links = []
-        visualization_node_id = None
+        preview_source_node_id = None
+        preview_source_slot = None
         preview_link_id = len(plan.stages)
         next_x = 80
         for index, stage in enumerate(plan.stages, start=1):
             if stage.node_type not in self.node_catalog:
                 raise ValueError(f"Node type {stage.node_type} is missing from the node catalog.")
             definition = self.node_catalog[stage.node_type]
+            widgets = self._widgets_for_stage(definition, plan)
             incoming_link_id = index - 1 if index > 1 else None
             output_links_by_slot = {0: [index] if index < len(plan.stages) else []}
-            if stage.node_type == "DESeq2VisualizationNode":
-                visualization_node_id = index
-                output_links_by_slot[1] = [preview_link_id]
-            size = self._node_size(definition.widgets)
+            image_output_slot = self._image_output_slot(definition)
+            if image_output_slot is not None and preview_source_node_id is None:
+                preview_source_node_id = index
+                preview_source_slot = image_output_slot
+                output_links_by_slot[image_output_slot] = [preview_link_id]
+            size = self._node_size(widgets)
             nodes.append(
                 {
                     "id": index,
@@ -36,7 +40,7 @@ class WorkflowBuilder:
                     "inputs": self._inputs_with_link(definition.inputs, incoming_link_id),
                     "outputs": self._outputs_with_links(definition.outputs, output_links_by_slot),
                     "properties": {"Node name for S&R": definition.node_type},
-                    "widgets_values": definition.widgets,
+                    "widgets_values": widgets,
                     "metadata": {
                         "stage_id": stage.stage_id,
                         "stage_label": stage.stage_label,
@@ -50,15 +54,15 @@ class WorkflowBuilder:
             next_x += size[0] + 100
             if index > 1:
                 links.append([index - 1, index - 1, 0, index, 0, "STRING"])
-        if visualization_node_id is None:
-            raise ValueError("Official workflow is missing DESeq2VisualizationNode.")
+        if preview_source_node_id is None or preview_source_slot is None:
+            raise ValueError("Official workflow is missing a visualization node with IMAGE output.")
         preview_node_id = len(plan.stages) + 1
         nodes.append(
             {
                 "id": preview_node_id,
                 "type": "PreviewImage",
-                "title": "Preview DESeq2 Plot",
-                "pos": [nodes[visualization_node_id - 1]["pos"][0], 420],
+                "title": self._preview_title(plan),
+                "pos": [nodes[preview_source_node_id - 1]["pos"][0], 420],
                 "size": [280, 120],
                 "flags": {},
                 "order": preview_node_id - 1,
@@ -68,8 +72,8 @@ class WorkflowBuilder:
                 "properties": {"Node name for S&R": "PreviewImage"},
                 "widgets_values": [],
                 "metadata": {
-                    "stage_id": "deseq2_preview",
-                    "stage_label": "DESeq2 visualization preview",
+                    "stage_id": f"{plan.domain}_preview",
+                    "stage_label": f"{plan.domain} visualization preview",
                     "selected_tool_id": "comfyui_preview_image",
                     "selected_tier": "BUILTIN",
                     "source_operation": "preview_image",
@@ -77,7 +81,7 @@ class WorkflowBuilder:
                 },
             }
         )
-        links.append([preview_link_id, visualization_node_id, 1, preview_node_id, 0, "IMAGE"])
+        links.append([preview_link_id, preview_source_node_id, preview_source_slot, preview_node_id, 0, "IMAGE"])
         workflow = {
             "last_node_id": preview_node_id,
             "last_link_id": preview_link_id,
@@ -97,6 +101,23 @@ class WorkflowBuilder:
         validate_workflow_export(workflow)
         return workflow
 
+    def _widgets_for_stage(self, definition: NodeDefinition, plan: WorkflowPlan) -> list[str | int | bool]:
+        if definition.node_type == "WorkflowRequestLoader":
+            return [self._request_text(plan)]
+        if definition.node_type == "WorkflowJSONOutput":
+            return [f"harness/examples/workflows/{plan.route_id}.json"]
+        return list(definition.widgets)
+
+    def _request_text(self, plan: WorkflowPlan) -> str:
+        if plan.domain == "scrna_seq":
+            return "Single-cell RNA-seq through 10x count, Scanpy QC, normalization, clustering, UMAP, marker genes, plots, and report."
+        return "Bulk RNA-seq through salmon, DESeq2, plots, and report."
+
+    def _preview_title(self, plan: WorkflowPlan) -> str:
+        if plan.domain == "scrna_seq":
+            return "Preview scRNA Plot"
+        return "Preview DESeq2 Plot"
+
     def _node_size(self, widgets: list[str | int | bool]) -> list[int]:
         string_values = [value for value in widgets if isinstance(value, str)]
         longest_value = max((len(value) for value in string_values), default=0)
@@ -106,6 +127,12 @@ class WorkflowBuilder:
             width = max(520, min(760, 260 + longest_value * 6))
         height = max(140, 110 + len(widgets) * 24)
         return [width, height]
+
+    def _image_output_slot(self, definition: NodeDefinition) -> int | None:
+        for slot_index, output in enumerate(definition.outputs):
+            if output.get("type") == "IMAGE":
+                return slot_index
+        return None
 
     def _inputs_with_link(self, inputs: list[dict[str, str]], link_id: int | None) -> list[dict]:
         copied_inputs = [dict(input_def) for input_def in inputs]

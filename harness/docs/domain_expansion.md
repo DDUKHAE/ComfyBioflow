@@ -1,6 +1,6 @@
 # Domain Expansion Workflow
 
-ComfyBIO currently has one runnable supported domain: `bulk_rna_seq`.
+ComfyBIO currently has two runnable supported domains: `bulk_rna_seq` and `scrna_seq`.
 
 Domains that are not implemented must not be silently routed to an existing workflow. When a prompt asks for a planned or unmodeled domain, the harness should stop workflow generation and return a `planning_required` response.
 
@@ -38,6 +38,17 @@ Before a new domain can generate workflow JSON, complete these steps:
 
 Only after those steps should the domain move from `planned_domains` to `supported_domains`.
 
+## Completed Expansion Example
+
+`scrna_seq` is the first completed domain-expansion test case. It now has:
+
+- domain exploration and workflow design documented in `docs/scrna_seq.md`
+- a supported route, `scrna_seq_scanpy_ref`
+- registered REF nodes for 10x count, Scanpy QC, normalization, clustering, marker-gene detection, visualization, reporting, and workflow export
+- workflow generation tests that assert a prompt produces scRNA workflow JSON instead of a planning-only payload
+
+The current scRNA route proves the harness can move from unmodeled-domain discovery to documentation, route selection, node implementation, workflow export, and validation. Real execution fixtures are still a separate readiness gate.
+
 ## Planned-Domain Behavior
 
 A planned domain prompt should produce a machine-readable response like:
@@ -45,7 +56,7 @@ A planned domain prompt should produce a machine-readable response like:
 ```json
 {
   "status": "planning_required",
-  "domain": "scrna_seq",
+  "domain": "metagenome",
   "route_id": null,
   "next_steps": [
     "create a domain exploration document",

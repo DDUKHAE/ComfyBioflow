@@ -4,9 +4,16 @@ from bioflow_harness.custom_nodes.ref_nodes import (
     DESeq2VisualizationNode,
     FastpQCNode,
     FastpTrimNode,
+    ScRNAReportNode,
+    ScRNAVisualizationNode,
     SalmonIndexNode,
     SalmonQuantNode,
     SampleMetadataValidatorNode,
+    ScanpyClusterNode,
+    ScanpyMarkerGenesNode,
+    ScanpyNormalizeNode,
+    ScanpyQCNode,
+    TenxCountNode,
     TximportNode,
     WorkflowJSONOutput,
     WorkflowRequestLoader,
@@ -18,6 +25,13 @@ NODE_CLASS_MAPPINGS = {
     "SampleMetadataValidatorNode": SampleMetadataValidatorNode,
     "FastpQCNode": FastpQCNode,
     "FastpTrimNode": FastpTrimNode,
+    "TenxCountNode": TenxCountNode,
+    "ScanpyQCNode": ScanpyQCNode,
+    "ScanpyNormalizeNode": ScanpyNormalizeNode,
+    "ScanpyClusterNode": ScanpyClusterNode,
+    "ScanpyMarkerGenesNode": ScanpyMarkerGenesNode,
+    "ScRNAVisualizationNode": ScRNAVisualizationNode,
+    "ScRNAReportNode": ScRNAReportNode,
     "SalmonIndexNode": SalmonIndexNode,
     "SalmonQuantNode": SalmonQuantNode,
     "TximportNode": TximportNode,
@@ -38,4 +52,3 @@ def resolve_node_class(node_type: str):
         return NODE_CLASS_MAPPINGS[node_type]
     except KeyError as error:
         raise KeyError(f"No ComfyBIO custom node class registered for {node_type}") from error
-

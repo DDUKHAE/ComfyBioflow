@@ -7,7 +7,7 @@ def parse_prompt(request_text: str) -> AnalysisBrief:
     scrna_tokens = ["single-cell", "single cell", "scrna", "10x", "cell ranger", "starsolo", "umap", "marker genes"]
     if any(token in text for token in scrna_tokens):
         domain = "scrna_seq"
-        analysis_type = "workflow_expansion_required"
+        analysis_type = "single_cell_analysis"
     else:
         domain = "bulk_rna_seq" if any(token in text for token in ["bulk rna", "rna-seq", "rnaseq"]) else "unsupported"
         analysis_type = "differential_expression" if any(token in text for token in ["deseq2", "differential", "de "]) else "workflow_generation"
@@ -32,7 +32,13 @@ def parse_prompt(request_text: str) -> AnalysisBrief:
             if output not in expected_outputs:
                 expected_outputs.append(output)
 
-    preferred_tools = [tool for tool in ["fastp", "salmon", "tximport", "deseq2"] if tool in text]
+    preferred_tools = [
+        tool
+        for tool in ["fastp", "salmon", "tximport", "deseq2", "cell ranger", "scanpy", "starsolo"]
+        if tool in text
+    ]
+    if domain == "scrna_seq" and "scanpy" not in preferred_tools:
+        preferred_tools.append("scanpy")
 
     organism = None
     if "human" in text or "homo sapiens" in text:
@@ -45,10 +51,6 @@ def parse_prompt(request_text: str) -> AnalysisBrief:
     confidence_notes = []
     if domain == "unsupported":
         confidence_notes.append("No supported domain keyword was found.")
-    if domain == "scrna_seq":
-        confidence_notes.append(
-            "scRNA-seq was detected, but this domain is not yet implemented; domain exploration, workflow design, and node implementation are required."
-        )
 
     return AnalysisBrief(
         analysis_type=analysis_type,

@@ -40,6 +40,16 @@ The official `bulk_rna_seq_salmon_ref` workflow has Python classes for every nod
 - `ComfyBIOReportNode`
 - `WorkflowJSONOutput`
 
+The expanded `scrna_seq_scanpy_ref` workflow also has registered node classes:
+
+- `TenxCountNode`
+- `ScanpyQCNode`
+- `ScanpyNormalizeNode`
+- `ScanpyClusterNode`
+- `ScanpyMarkerGenesNode`
+- `ScRNAVisualizationNode`
+- `ScRNAReportNode`
+
 External-tool nodes expose an `extra_command` string input alongside core path and parameter inputs. `extra_command` is declared with `multiline: True`, so ComfyUI opens it as an expanded text area. The harness parses it with shell-style tokenization:
 
 - one-line input such as `--threads 4 --length_required 1`

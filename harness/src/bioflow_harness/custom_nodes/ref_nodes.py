@@ -159,6 +159,125 @@ class DESeq2VisualizationNode(_BaseComfyBIONode):
         }
 
 
+class TenxCountNode(_BaseComfyBIONode):
+    CATEGORY = "ComfyBIO/scRNA-seq"
+
+    @classmethod
+    def INPUT_TYPES(cls) -> dict:
+        return {
+            "required": {
+                "upstream": cls._upstream_input(),
+                "fastq_dir": cls._string_input("fastqs"),
+                "sample_id": cls._string_input("sample"),
+                "reference_dir": cls._string_input("cellranger_reference"),
+                "output_matrix_dir": cls._string_input("cellranger_count/filtered_feature_bc_matrix"),
+                "threads": ("INT", {"default": 8, "min": 1, "max": 128}),
+                "extra_command": cls._extra_command_input(),
+            }
+        }
+
+
+class ScanpyQCNode(_BaseComfyBIONode):
+    CATEGORY = "ComfyBIO/scRNA-seq"
+
+    @classmethod
+    def INPUT_TYPES(cls) -> dict:
+        return {
+            "required": {
+                "upstream": cls._upstream_input(),
+                "matrix_dir": cls._string_input("filtered_feature_bc_matrix"),
+                "output_h5ad": cls._string_input("scanpy/qc.h5ad"),
+                "min_genes": ("INT", {"default": 200, "min": 0, "max": 10000}),
+                "max_mito_pct": ("FLOAT", {"default": 20.0, "min": 0.0, "max": 100.0}),
+                "extra_command": cls._extra_command_input(),
+            }
+        }
+
+
+class ScanpyNormalizeNode(_BaseComfyBIONode):
+    CATEGORY = "ComfyBIO/scRNA-seq"
+
+    @classmethod
+    def INPUT_TYPES(cls) -> dict:
+        return {
+            "required": {
+                "upstream": cls._upstream_input(),
+                "input_h5ad": cls._string_input("scanpy/qc.h5ad"),
+                "output_h5ad": cls._string_input("scanpy/normalized.h5ad"),
+                "target_sum": ("INT", {"default": 10000, "min": 1, "max": 1000000}),
+                "extra_command": cls._extra_command_input(),
+            }
+        }
+
+
+class ScanpyClusterNode(_BaseComfyBIONode):
+    CATEGORY = "ComfyBIO/scRNA-seq"
+
+    @classmethod
+    def INPUT_TYPES(cls) -> dict:
+        return {
+            "required": {
+                "upstream": cls._upstream_input(),
+                "input_h5ad": cls._string_input("scanpy/normalized.h5ad"),
+                "output_h5ad": cls._string_input("scanpy/clustered.h5ad"),
+                "n_pcs": ("INT", {"default": 30, "min": 1, "max": 200}),
+                "resolution": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 10.0}),
+                "extra_command": cls._extra_command_input(),
+            }
+        }
+
+
+class ScanpyMarkerGenesNode(_BaseComfyBIONode):
+    CATEGORY = "ComfyBIO/scRNA-seq"
+
+    @classmethod
+    def INPUT_TYPES(cls) -> dict:
+        return {
+            "required": {
+                "upstream": cls._upstream_input(),
+                "input_h5ad": cls._string_input("scanpy/clustered.h5ad"),
+                "markers_csv": cls._string_input("scanpy/markers.csv"),
+                "groupby": cls._string_input("leiden"),
+                "method": cls._string_input("wilcoxon"),
+                "extra_command": cls._extra_command_input(),
+            }
+        }
+
+
+class ScRNAVisualizationNode(_BaseComfyBIONode):
+    CATEGORY = "ComfyBIO/scRNA-seq"
+    RETURN_TYPES = ("STRING", "IMAGE")
+
+    @classmethod
+    def INPUT_TYPES(cls) -> dict:
+        return {
+            "required": {
+                "upstream": cls._upstream_input(),
+                "input_h5ad": cls._string_input("scanpy/clustered.h5ad"),
+                "markers_csv": cls._string_input("scanpy/markers.csv"),
+                "plot_dir": cls._string_input("scanpy/plots"),
+                "extra_command": cls._extra_command_input(),
+            }
+        }
+
+
+class ScRNAReportNode(_BaseComfyBIONode):
+    CATEGORY = "ComfyBIO/scRNA-seq"
+
+    @classmethod
+    def INPUT_TYPES(cls) -> dict:
+        return {
+            "required": {
+                "upstream": cls._upstream_input(),
+                "input_h5ad": cls._string_input("scanpy/clustered.h5ad"),
+                "markers_csv": cls._string_input("scanpy/markers.csv"),
+                "plot_dir": cls._string_input("scanpy/plots"),
+                "report_path": cls._string_input("report/scrna_report.md"),
+                "extra_command": cls._extra_command_input(),
+            }
+        }
+
+
 class ComfyBIOReportNode(_BaseComfyBIONode):
     CATEGORY = "ComfyBIO/Reporting"
 

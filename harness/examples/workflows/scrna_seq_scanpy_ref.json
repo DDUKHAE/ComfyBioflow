@@ -1,0 +1,576 @@
+{
+  "last_node_id": 10,
+  "last_link_id": 9,
+  "version": 0.4,
+  "config": {},
+  "extra": {},
+  "groups": [],
+  "metadata": {
+    "format": "comfyui_workflow_export",
+    "route_id": "scrna_seq_scanpy_ref",
+    "domain": "scrna_seq",
+    "manual_open_fallback": "Open this JSON file from ComfyUI if pending workflow loading is unavailable."
+  },
+  "nodes": [
+    {
+      "id": 1,
+      "type": "WorkflowRequestLoader",
+      "title": "Workflow Request",
+      "pos": [
+        80,
+        120
+      ],
+      "size": [
+        280,
+        140
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "request_payload",
+          "type": "STRING",
+          "slot_index": 0,
+          "links": [
+            1
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "WorkflowRequestLoader"
+      },
+      "widgets_values": [
+        "Single-cell RNA-seq through 10x count, Scanpy QC, normalization, clustering, UMAP, marker genes, plots, and report."
+      ],
+      "metadata": {
+        "stage_id": "request_loading",
+        "stage_label": "Prompt or request payload loading",
+        "selected_tool_id": "workflow_request_loader",
+        "selected_tier": "REF",
+        "source_operation": "load_request",
+        "restart_required": false
+      }
+    },
+    {
+      "id": 2,
+      "type": "TenxCountNode",
+      "title": "10x Count Matrix Generation",
+      "pos": [
+        460,
+        120
+      ],
+      "size": [
+        686,
+        254
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "upstream",
+          "type": "STRING",
+          "link": 1
+        }
+      ],
+      "outputs": [
+        {
+          "name": "filtered_matrix_dir",
+          "type": "STRING",
+          "slot_index": 0,
+          "links": [
+            2
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "TenxCountNode"
+      },
+      "widgets_values": [
+        "harness/examples/fixtures/scrna/fastqs",
+        "sample_001",
+        "harness/examples/fixtures/scrna/cellranger_reference",
+        "harness/examples/runs/scrna/cellranger_count/filtered_feature_bc_matrix",
+        8,
+        ""
+      ],
+      "metadata": {
+        "stage_id": "tenx_count",
+        "stage_label": "10x count matrix generation",
+        "selected_tool_id": "tenx_count",
+        "selected_tier": "REF",
+        "source_operation": "tenx_count",
+        "restart_required": false
+      }
+    },
+    {
+      "id": 3,
+      "type": "ScanpyQCNode",
+      "title": "Scanpy Cell QC",
+      "pos": [
+        1246,
+        120
+      ],
+      "size": [
+        686,
+        230
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "upstream",
+          "type": "STRING",
+          "link": 2
+        }
+      ],
+      "outputs": [
+        {
+          "name": "qc_h5ad",
+          "type": "STRING",
+          "slot_index": 0,
+          "links": [
+            3
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ScanpyQCNode"
+      },
+      "widgets_values": [
+        "harness/examples/runs/scrna/cellranger_count/filtered_feature_bc_matrix",
+        "harness/examples/runs/scrna/scanpy/qc.h5ad",
+        200,
+        20,
+        ""
+      ],
+      "metadata": {
+        "stage_id": "scrna_qc",
+        "stage_label": "Single-cell QC and filtering",
+        "selected_tool_id": "scanpy_qc",
+        "selected_tier": "REF",
+        "source_operation": "scanpy_qc",
+        "restart_required": false
+      }
+    },
+    {
+      "id": 4,
+      "type": "ScanpyNormalizeNode",
+      "title": "Scanpy Normalize",
+      "pos": [
+        2032,
+        120
+      ],
+      "size": [
+        560,
+        206
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "upstream",
+          "type": "STRING",
+          "link": 3
+        }
+      ],
+      "outputs": [
+        {
+          "name": "normalized_h5ad",
+          "type": "STRING",
+          "slot_index": 0,
+          "links": [
+            4
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ScanpyNormalizeNode"
+      },
+      "widgets_values": [
+        "harness/examples/runs/scrna/scanpy/qc.h5ad",
+        "harness/examples/runs/scrna/scanpy/normalized.h5ad",
+        10000,
+        ""
+      ],
+      "metadata": {
+        "stage_id": "scrna_normalization",
+        "stage_label": "Normalization and highly-variable gene selection",
+        "selected_tool_id": "scanpy_normalize",
+        "selected_tier": "REF",
+        "source_operation": "scanpy_normalize",
+        "restart_required": false
+      }
+    },
+    {
+      "id": 5,
+      "type": "ScanpyClusterNode",
+      "title": "Scanpy Cluster",
+      "pos": [
+        2692,
+        120
+      ],
+      "size": [
+        560,
+        230
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "upstream",
+          "type": "STRING",
+          "link": 4
+        }
+      ],
+      "outputs": [
+        {
+          "name": "clustered_h5ad",
+          "type": "STRING",
+          "slot_index": 0,
+          "links": [
+            5
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ScanpyClusterNode"
+      },
+      "widgets_values": [
+        "harness/examples/runs/scrna/scanpy/normalized.h5ad",
+        "harness/examples/runs/scrna/scanpy/clustered.h5ad",
+        30,
+        1,
+        ""
+      ],
+      "metadata": {
+        "stage_id": "scrna_clustering",
+        "stage_label": "PCA, neighbor graph, UMAP, and clustering",
+        "selected_tool_id": "scanpy_cluster",
+        "selected_tier": "REF",
+        "source_operation": "scanpy_cluster",
+        "restart_required": false
+      }
+    },
+    {
+      "id": 6,
+      "type": "ScanpyMarkerGenesNode",
+      "title": "Scanpy Marker Genes",
+      "pos": [
+        3352,
+        120
+      ],
+      "size": [
+        554,
+        230
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "upstream",
+          "type": "STRING",
+          "link": 5
+        }
+      ],
+      "outputs": [
+        {
+          "name": "markers_csv",
+          "type": "STRING",
+          "slot_index": 0,
+          "links": [
+            6
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ScanpyMarkerGenesNode"
+      },
+      "widgets_values": [
+        "harness/examples/runs/scrna/scanpy/clustered.h5ad",
+        "harness/examples/runs/scrna/scanpy/markers.csv",
+        "leiden",
+        "wilcoxon",
+        ""
+      ],
+      "metadata": {
+        "stage_id": "scrna_marker_genes",
+        "stage_label": "Marker gene ranking",
+        "selected_tool_id": "scanpy_marker_genes",
+        "selected_tier": "REF",
+        "source_operation": "scanpy_marker_genes",
+        "restart_required": false
+      }
+    },
+    {
+      "id": 7,
+      "type": "ScRNAVisualizationNode",
+      "title": "scRNA Visualization",
+      "pos": [
+        4006,
+        120
+      ],
+      "size": [
+        554,
+        206
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "upstream",
+          "type": "STRING",
+          "link": 6
+        }
+      ],
+      "outputs": [
+        {
+          "name": "plot_dir",
+          "type": "STRING",
+          "slot_index": 0,
+          "links": [
+            7
+          ]
+        },
+        {
+          "name": "preview_plot",
+          "type": "IMAGE",
+          "slot_index": 1,
+          "links": [
+            9
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ScRNAVisualizationNode"
+      },
+      "widgets_values": [
+        "harness/examples/runs/scrna/scanpy/clustered.h5ad",
+        "harness/examples/runs/scrna/scanpy/markers.csv",
+        "harness/examples/runs/scrna/scanpy/plots",
+        "umap,clusters,marker_dotplot"
+      ],
+      "metadata": {
+        "stage_id": "scrna_visualization",
+        "stage_label": "UMAP and marker visualization",
+        "selected_tool_id": "comfybio_scrna_visualization",
+        "selected_tier": "REF",
+        "source_operation": "scrna_visualization",
+        "restart_required": false
+      }
+    },
+    {
+      "id": 8,
+      "type": "ScRNAReportNode",
+      "title": "scRNA Report",
+      "pos": [
+        4660,
+        120
+      ],
+      "size": [
+        560,
+        230
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "upstream",
+          "type": "STRING",
+          "link": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "report_path",
+          "type": "STRING",
+          "slot_index": 0,
+          "links": [
+            8
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ScRNAReportNode"
+      },
+      "widgets_values": [
+        "harness/examples/runs/scrna/scanpy/clustered.h5ad",
+        "harness/examples/runs/scrna/scanpy/markers.csv",
+        "harness/examples/runs/scrna/scanpy/plots",
+        "harness/examples/runs/scrna/report/scrna_report.md",
+        ""
+      ],
+      "metadata": {
+        "stage_id": "scrna_reporting",
+        "stage_label": "Single-cell report output",
+        "selected_tool_id": "comfybio_scrna_report",
+        "selected_tier": "REF",
+        "source_operation": "scrna_report",
+        "restart_required": false
+      }
+    },
+    {
+      "id": 9,
+      "type": "WorkflowJSONOutput",
+      "title": "Workflow JSON Export",
+      "pos": [
+        5320,
+        120
+      ],
+      "size": [
+        572,
+        140
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "upstream",
+          "type": "STRING",
+          "link": 8
+        }
+      ],
+      "outputs": [
+        {
+          "name": "workflow_json_path",
+          "type": "STRING",
+          "slot_index": 0,
+          "links": []
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "WorkflowJSONOutput"
+      },
+      "widgets_values": [
+        "harness/examples/workflows/scrna_seq_scanpy_ref.json"
+      ],
+      "metadata": {
+        "stage_id": "workflow_export",
+        "stage_label": "ComfyUI workflow JSON export",
+        "selected_tool_id": "workflow_json_output",
+        "selected_tier": "REF",
+        "source_operation": "workflow_json_export",
+        "restart_required": false
+      }
+    },
+    {
+      "id": 10,
+      "type": "PreviewImage",
+      "title": "Preview scRNA Plot",
+      "pos": [
+        4006,
+        420
+      ],
+      "size": [
+        280,
+        120
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 9
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "PreviewImage"
+      },
+      "widgets_values": [],
+      "metadata": {
+        "stage_id": "scrna_seq_preview",
+        "stage_label": "scrna_seq visualization preview",
+        "selected_tool_id": "comfyui_preview_image",
+        "selected_tier": "BUILTIN",
+        "source_operation": "preview_image",
+        "restart_required": false
+      }
+    }
+  ],
+  "links": [
+    [
+      1,
+      1,
+      0,
+      2,
+      0,
+      "STRING"
+    ],
+    [
+      2,
+      2,
+      0,
+      3,
+      0,
+      "STRING"
+    ],
+    [
+      3,
+      3,
+      0,
+      4,
+      0,
+      "STRING"
+    ],
+    [
+      4,
+      4,
+      0,
+      5,
+      0,
+      "STRING"
+    ],
+    [
+      5,
+      5,
+      0,
+      6,
+      0,
+      "STRING"
+    ],
+    [
+      6,
+      6,
+      0,
+      7,
+      0,
+      "STRING"
+    ],
+    [
+      7,
+      7,
+      0,
+      8,
+      0,
+      "STRING"
+    ],
+    [
+      8,
+      8,
+      0,
+      9,
+      0,
+      "STRING"
+    ],
+    [
+      9,
+      7,
+      1,
+      10,
+      0,
+      "IMAGE"
+    ]
+  ]
+}

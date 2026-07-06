@@ -1,0 +1,1 @@
+Generate a single-cell RNA-seq workflow for 10x FASTQ inputs with QC, normalization, clustering, UMAP, marker genes, visualization, and report.

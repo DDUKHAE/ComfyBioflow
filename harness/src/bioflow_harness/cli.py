@@ -24,9 +24,10 @@ def build_workflow(
     generated_node_paths: list[Path] | None = None,
 ) -> Path:
     brief = parse_prompt(prompt)
-    if brief.domain != "bulk_rna_seq":
-        raise WorkflowPlanningRequired(brief.domain, brief.confidence_notes)
-    plan = WorkflowPlanner(load_registry(registry_path)).plan(brief)
+    try:
+        plan = WorkflowPlanner(load_registry(registry_path)).plan(brief)
+    except ValueError as error:
+        raise WorkflowPlanningRequired(brief.domain, brief.confidence_notes) from error
     workflow = WorkflowBuilder(default_node_catalog()).build(plan)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(json.dumps(workflow, indent=2), encoding="utf-8")

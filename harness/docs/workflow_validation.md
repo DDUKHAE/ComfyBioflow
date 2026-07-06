@@ -25,3 +25,30 @@ Run validation:
 ```bash
 PYTHONPATH=harness/src python3 harness/skills/workflow-json-generation/scripts/validate_workflow_json.py harness/examples/workflows/bulk_rna_seq_salmon_ref.json
 ```
+
+## Domain Readiness Audit
+
+Schema validation only proves that ComfyUI can load and draw the workflow. The domain readiness audit checks whether the workflow is credible as an analysis plan and whether its artifacts can be reproduced from the graph itself.
+
+The audit currently checks:
+
+- sample coverage: metadata samples must be represented by sample-processing nodes, not only by pre-existing output directories
+- artifact contract: workflow output paths must match runtime sidecar/report expectations
+- reference readiness: toy transcriptomes and demo Salmon index parameters are flagged for execution
+- DESeq2 readiness: design, contrast direction, reference level, covariates, and filtering policy must be explicit for real analysis
+- trimming policy: demo-only permissive settings such as `--length_required 1` are flagged
+- report contract: reports should include sample table, QC summaries, Salmon QC, DESeq2 diagnostics, significant gene summary, and software/session provenance
+
+The audit has two modes:
+
+- `demo`: demo shortcuts are warnings, so quickstart workflows can remain useful as small examples
+- `execution`: analysis-readiness issues become failures when the workflow is intended for real data
+
+Run the audit:
+
+```bash
+PYTHONPATH=harness/src python3 -m bioflow_harness.cli \
+  --audit-workflow harness/examples/workflows/bulk_rna_seq_salmon_ref.json \
+  --audit-mode execution \
+  --fixture-dir harness/examples/fixtures/quickstart
+```

@@ -33,7 +33,7 @@ def audit_workflow(
     metadata_samples = _metadata_sample_ids(workflow, fixture_dir)
 
     _audit_sample_coverage(nodes, metadata_samples, mode, issues)
-    _audit_qc_artifact_contract(nodes, mode, issues)
+    _audit_qc_artifact_contract(nodes, metadata_samples, mode, issues)
     _audit_reference_readiness(nodes, mode, issues)
     _audit_deseq2_design(nodes, mode, issues)
     _audit_trimming_policy(nodes, mode, issues)
@@ -101,10 +101,18 @@ def _audit_sample_coverage(
         )
 
 
-def _audit_qc_artifact_contract(nodes: list[dict], mode: str, issues: list[WorkflowAuditIssue]) -> None:
-    qc_node = _first_node(nodes, "FastpQCNode")
-    if not qc_node:
+def _audit_qc_artifact_contract(
+    nodes: list[dict],
+    metadata_samples: list[str],
+    mode: str,
+    issues: list[WorkflowAuditIssue],
+) -> None:
+    qc_nodes = [node for node in nodes if node.get("type") == "FastpQCNode"]
+    if not qc_nodes:
         return
+    if len(qc_nodes) > 1 and _sample_qc_outputs_match_metadata(qc_nodes, metadata_samples):
+        return
+    qc_node = qc_nodes[0]
     widgets = _widgets(qc_node)
     if len(widgets) < 3:
         return
@@ -124,6 +132,20 @@ def _audit_qc_artifact_contract(nodes: list[dict], mode: str, issues: list[Workf
             node_type=qc_node.get("type"),
             evidence={"workflow_output_json": output_json, "expected_suffix": expected_suffix},
         )
+    )
+
+
+def _sample_qc_outputs_match_metadata(qc_nodes: list[dict], metadata_samples: list[str]) -> bool:
+    if not metadata_samples or len(qc_nodes) < len(metadata_samples):
+        return False
+    output_values = []
+    for node in qc_nodes:
+        widgets = _widgets(node)
+        if len(widgets) >= 3:
+            output_values.append(str(widgets[2]).replace("\\", "/"))
+    return all(
+        any(output.endswith(f"qc/{sample_id}.fastp.json") for output in output_values)
+        for sample_id in metadata_samples
     )
 
 

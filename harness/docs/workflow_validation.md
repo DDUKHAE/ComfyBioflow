@@ -86,3 +86,20 @@ PYTHONPATH=harness/src python3 -m bioflow_harness.cli \
   --apply-workflow-repairs \
   --repair-output harness/examples/workflows/bulk_rna_seq_salmon_ref.repaired.json
 ```
+
+Regenerate the workflow graph from the audit context:
+
+```bash
+PYTHONPATH=harness/src python3 -m bioflow_harness.cli \
+  --audit-workflow harness/examples/workflows/bulk_rna_seq_salmon_ref.json \
+  --audit-mode execution \
+  --fixture-dir harness/examples/fixtures/quickstart \
+  --validation-loop \
+  --apply-workflow-repairs \
+  --regenerate-workflow \
+  --repair-output harness/examples/workflows/bulk_rna_seq_salmon_ref.regenerated.json
+```
+
+Regeneration reads `sample_metadata.csv` and expands sample-level processing so QC, trimming, and Salmon quantification nodes are created for every metadata sample. It also recalculates node ids, link ids, visible LiteGraph connections, node positions, and workflow metadata before writing the regenerated JSON.
+
+The regenerated quickstart workflow can remove sample coverage, QC artifact contract, trimming, DESeq2, and report-contract issues. It still flags the toy Salmon reference in `execution` mode until the user supplies a real transcriptome/reference bundle.

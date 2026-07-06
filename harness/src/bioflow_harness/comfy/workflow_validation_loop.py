@@ -3,6 +3,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from bioflow_harness.comfy.workflow_auditor import WorkflowAuditReport, audit_workflow
+from bioflow_harness.comfy.workflow_regenerator import regenerate_bulk_rna_seq_workflow
 
 
 @dataclass(frozen=True)
@@ -31,13 +32,24 @@ def run_workflow_validation_loop(
     fixture_dir: Path | None = None,
     mode: str = "demo",
     apply_fixes: bool = False,
+    regenerate_workflow: bool = False,
 ) -> WorkflowValidationLoopResult:
     repaired_workflow = copy.deepcopy(workflow)
     initial_report = audit_workflow(repaired_workflow, fixture_dir=fixture_dir, mode=mode)
     suggestions = suggest_workflow_repairs(initial_report)
     applied_suggestions: list[WorkflowRepairSuggestion] = []
 
-    if apply_fixes:
+    if regenerate_workflow:
+        if fixture_dir is None:
+            raise ValueError("fixture_dir is required when regenerate_workflow=True")
+        repaired_workflow = regenerate_bulk_rna_seq_workflow(
+            repaired_workflow,
+            fixture_dir=fixture_dir,
+            apply_safe_defaults=apply_fixes,
+        )
+        if apply_fixes:
+            applied_suggestions = [suggestion for suggestion in suggestions if suggestion.autofixable]
+    elif apply_fixes:
         for suggestion in suggestions:
             if suggestion.autofixable and _apply_suggestion(repaired_workflow, suggestion):
                 applied_suggestions.append(suggestion)

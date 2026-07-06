@@ -54,6 +54,7 @@ def main() -> None:
     parser.add_argument("--audit-mode", choices=["demo", "execution"], default="demo")
     parser.add_argument("--validation-loop", action="store_true")
     parser.add_argument("--apply-workflow-repairs", action="store_true")
+    parser.add_argument("--regenerate-workflow", action="store_true")
     parser.add_argument("--repair-output", type=Path)
     parser.add_argument("--fixture-dir", type=Path, default=Path("examples/fixtures/quickstart"))
     parser.add_argument("--run-output-dir", type=Path, default=Path("examples/runs/quickstart"))
@@ -66,6 +67,7 @@ def main() -> None:
                 fixture_dir=args.fixture_dir,
                 mode=args.audit_mode,
                 apply_fixes=args.apply_workflow_repairs,
+                regenerate_workflow=args.regenerate_workflow,
             )
             payload = asdict(result)
             payload.pop("workflow", None)

@@ -18,6 +18,8 @@ Validation rules:
 
 The official workflow connects each stage through a forced `upstream` socket and connects `DESeq2VisualizationNode` image output slot `1` to a builtin `PreviewImage` node so both the main pipeline and visualization branch are visible when the JSON is opened in ComfyUI.
 
+Nodes with file-path widgets are widened automatically during workflow generation. This keeps long path values readable enough to identify which parameter holds which input or output path, while compact display nodes such as `PreviewImage` stay narrow.
+
 Run validation:
 
 ```bash

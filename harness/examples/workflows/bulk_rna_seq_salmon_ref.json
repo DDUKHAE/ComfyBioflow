@@ -21,8 +21,8 @@
         120
       ],
       "size": [
-        240,
-        120
+        280,
+        140
       ],
       "flags": {},
       "order": 0,
@@ -58,12 +58,12 @@
       "type": "SampleMetadataValidatorNode",
       "title": "Validate Sample Metadata",
       "pos": [
-        360,
+        460,
         120
       ],
       "size": [
-        240,
-        120
+        596,
+        158
       ],
       "flags": {},
       "order": 1,
@@ -106,12 +106,12 @@
       "type": "FastpQCNode",
       "title": "FASTQ QC",
       "pos": [
-        640,
+        1156,
         120
       ],
       "size": [
-        240,
-        120
+        590,
+        230
       ],
       "flags": {},
       "order": 2,
@@ -157,12 +157,12 @@
       "type": "FastpTrimNode",
       "title": "Optional FASTQ Trimming",
       "pos": [
-        920,
+        1846,
         120
       ],
       "size": [
-        240,
-        120
+        584,
+        230
       ],
       "flags": {},
       "order": 3,
@@ -208,12 +208,12 @@
       "type": "SalmonIndexNode",
       "title": "Salmon Index",
       "pos": [
-        1200,
+        2530,
         120
       ],
       "size": [
-        240,
-        120
+        620,
+        206
       ],
       "flags": {},
       "order": 4,
@@ -258,12 +258,12 @@
       "type": "SalmonQuantNode",
       "title": "Salmon Quant",
       "pos": [
-        1480,
+        3250,
         120
       ],
       "size": [
-        240,
-        120
+        608,
+        278
       ],
       "flags": {},
       "order": 5,
@@ -311,12 +311,12 @@
       "type": "TximportNode",
       "title": "Import Counts For DESeq2",
       "pos": [
-        1760,
+        3958,
         120
       ],
       "size": [
-        240,
-        120
+        596,
+        182
       ],
       "flags": {},
       "order": 6,
@@ -360,12 +360,12 @@
       "type": "DESeq2AnalysisNode",
       "title": "DESeq2 Analysis",
       "pos": [
-        2040,
+        4654,
         120
       ],
       "size": [
-        240,
-        120
+        596,
+        230
       ],
       "flags": {},
       "order": 7,
@@ -411,12 +411,12 @@
       "type": "DESeq2VisualizationNode",
       "title": "DESeq2 Visualization",
       "pos": [
-        2320,
+        5350,
         120
       ],
       "size": [
-        240,
-        120
+        596,
+        206
       ],
       "flags": {},
       "order": 8,
@@ -469,12 +469,12 @@
       "type": "ComfyBIOReportNode",
       "title": "ComfyBIO Report",
       "pos": [
-        2600,
+        6046,
         120
       ],
       "size": [
-        240,
-        120
+        608,
+        206
       ],
       "flags": {},
       "order": 9,
@@ -519,12 +519,12 @@
       "type": "WorkflowJSONOutput",
       "title": "Workflow JSON Export",
       "pos": [
-        2880,
+        6754,
         120
       ],
       "size": [
-        240,
-        120
+        590,
+        140
       ],
       "flags": {},
       "order": 10,
@@ -564,11 +564,11 @@
       "type": "PreviewImage",
       "title": "Preview DESeq2 Plot",
       "pos": [
-        2880,
-        360
+        5350,
+        420
       ],
       "size": [
-        240,
+        280,
         120
       ],
       "flags": {},

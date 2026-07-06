@@ -12,6 +12,7 @@ class WorkflowBuilder:
         links = []
         visualization_node_id = None
         preview_link_id = len(plan.stages)
+        next_x = 80
         for index, stage in enumerate(plan.stages, start=1):
             if stage.node_type not in self.node_catalog:
                 raise ValueError(f"Node type {stage.node_type} is missing from the node catalog.")
@@ -21,13 +22,14 @@ class WorkflowBuilder:
             if stage.node_type == "DESeq2VisualizationNode":
                 visualization_node_id = index
                 output_links_by_slot[1] = [preview_link_id]
+            size = self._node_size(definition.widgets)
             nodes.append(
                 {
                     "id": index,
                     "type": definition.node_type,
                     "title": definition.title,
-                    "pos": [80 + (index - 1) * 280, 120],
-                    "size": [240, 120],
+                    "pos": [next_x, 120],
+                    "size": size,
                     "flags": {},
                     "order": index - 1,
                     "mode": 0,
@@ -45,6 +47,7 @@ class WorkflowBuilder:
                     },
                 }
             )
+            next_x += size[0] + 100
             if index > 1:
                 links.append([index - 1, index - 1, 0, index, 0, "STRING"])
         if visualization_node_id is None:
@@ -55,8 +58,8 @@ class WorkflowBuilder:
                 "id": preview_node_id,
                 "type": "PreviewImage",
                 "title": "Preview DESeq2 Plot",
-                "pos": [80 + (preview_node_id - 2) * 280, 360],
-                "size": [240, 120],
+                "pos": [nodes[visualization_node_id - 1]["pos"][0], 420],
+                "size": [280, 120],
                 "flags": {},
                 "order": preview_node_id - 1,
                 "mode": 0,
@@ -93,6 +96,16 @@ class WorkflowBuilder:
         }
         validate_workflow_export(workflow)
         return workflow
+
+    def _node_size(self, widgets: list[str | int | bool]) -> list[int]:
+        string_values = [value for value in widgets if isinstance(value, str)]
+        longest_value = max((len(value) for value in string_values), default=0)
+        path_count = sum(1 for value in string_values if "/" in value)
+        width = 280
+        if path_count:
+            width = max(520, min(760, 260 + longest_value * 6))
+        height = max(140, 110 + len(widgets) * 24)
+        return [width, height]
 
     def _inputs_with_link(self, inputs: list[dict[str, str]], link_id: int | None) -> list[dict]:
         copied_inputs = [dict(input_def) for input_def in inputs]

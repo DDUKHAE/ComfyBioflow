@@ -31,8 +31,8 @@ def run_workflow_validation_loop(
     workflow: dict,
     fixture_dir: Path | None = None,
     mode: str = "demo",
-    apply_fixes: bool = False,
-    regenerate_workflow: bool = False,
+    apply_fixes: bool = True,
+    regenerate_workflow: bool = True,
 ) -> WorkflowValidationLoopResult:
     repaired_workflow = copy.deepcopy(workflow)
     initial_report = audit_workflow(repaired_workflow, fixture_dir=fixture_dir, mode=mode)

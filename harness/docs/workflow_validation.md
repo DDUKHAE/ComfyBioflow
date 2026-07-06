@@ -65,17 +65,7 @@ The validation loop turns audit issues into repair suggestions. Each suggestion 
 
 Safe automatic fixes are limited to deterministic widget edits. The loop can currently patch QC artifact paths, trimming policy, DESeq2 contrast/filter settings, and report section declarations. Issues that require real user/reference data or graph expansion remain manual suggestions, such as replacing the toy Salmon reference or expanding sample-level QC/trim/quant branches for every metadata sample.
 
-Run the validation agent loop without editing the workflow:
-
-```bash
-PYTHONPATH=harness/src python3 -m bioflow_harness.cli \
-  --audit-workflow harness/examples/workflows/bulk_rna_seq_salmon_ref.json \
-  --audit-mode execution \
-  --fixture-dir harness/examples/fixtures/quickstart \
-  --validation-loop
-```
-
-Write a repaired workflow JSON with safe fixes applied:
+Run the validation agent loop:
 
 ```bash
 PYTHONPATH=harness/src python3 -m bioflow_harness.cli \
@@ -83,11 +73,24 @@ PYTHONPATH=harness/src python3 -m bioflow_harness.cli \
   --audit-mode execution \
   --fixture-dir harness/examples/fixtures/quickstart \
   --validation-loop \
-  --apply-workflow-repairs \
+  --repair-output harness/examples/workflows/bulk_rna_seq_salmon_ref.regenerated.json
+```
+
+The validation loop is connected by default. It audits the workflow, creates repair suggestions, applies deterministic safe fixes, regenerates the graph from the audit context, writes the regenerated workflow when `--repair-output` is provided, and audits the regenerated workflow again.
+
+For debugging only, the automatic repair or graph regeneration stages can be disabled:
+
+```bash
+PYTHONPATH=harness/src python3 -m bioflow_harness.cli \
+  --audit-workflow harness/examples/workflows/bulk_rna_seq_salmon_ref.json \
+  --audit-mode execution \
+  --fixture-dir harness/examples/fixtures/quickstart \
+  --validation-loop \
+  --no-regenerate-workflow \
   --repair-output harness/examples/workflows/bulk_rna_seq_salmon_ref.repaired.json
 ```
 
-Regenerate the workflow graph from the audit context:
+To inspect suggestions without applying deterministic fixes:
 
 ```bash
 PYTHONPATH=harness/src python3 -m bioflow_harness.cli \
@@ -95,9 +98,8 @@ PYTHONPATH=harness/src python3 -m bioflow_harness.cli \
   --audit-mode execution \
   --fixture-dir harness/examples/fixtures/quickstart \
   --validation-loop \
-  --apply-workflow-repairs \
-  --regenerate-workflow \
-  --repair-output harness/examples/workflows/bulk_rna_seq_salmon_ref.regenerated.json
+  --no-apply-workflow-repairs \
+  --no-regenerate-workflow
 ```
 
 Regeneration reads `sample_metadata.csv` and expands sample-level processing so QC, trimming, and Salmon quantification nodes are created for every metadata sample. It also recalculates node ids, link ids, visible LiteGraph connections, node positions, and workflow metadata before writing the regenerated JSON.

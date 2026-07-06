@@ -7,6 +7,7 @@ from bioflow_harness.comfy.node_catalog import default_node_catalog
 from bioflow_harness.comfy.pending_workflow import write_pending_workflow_record
 from bioflow_harness.comfy.workflow_auditor import audit_workflow
 from bioflow_harness.comfy.workflow_builder import WorkflowBuilder
+from bioflow_harness.comfy.workflow_validation_loop import run_workflow_validation_loop
 from bioflow_harness.parser.prompt_parser import parse_prompt
 from bioflow_harness.planner.tool_selector import load_registry
 from bioflow_harness.planner.workflow_planner import WorkflowPlanner
@@ -51,11 +52,29 @@ def main() -> None:
     parser.add_argument("--check-env", action="store_true")
     parser.add_argument("--audit-workflow", type=Path)
     parser.add_argument("--audit-mode", choices=["demo", "execution"], default="demo")
+    parser.add_argument("--validation-loop", action="store_true")
+    parser.add_argument("--apply-workflow-repairs", action="store_true")
+    parser.add_argument("--repair-output", type=Path)
     parser.add_argument("--fixture-dir", type=Path, default=Path("examples/fixtures/quickstart"))
     parser.add_argument("--run-output-dir", type=Path, default=Path("examples/runs/quickstart"))
     args = parser.parse_args()
     if args.audit_workflow:
         workflow = json.loads(args.audit_workflow.read_text(encoding="utf-8"))
+        if args.validation_loop:
+            result = run_workflow_validation_loop(
+                workflow,
+                fixture_dir=args.fixture_dir,
+                mode=args.audit_mode,
+                apply_fixes=args.apply_workflow_repairs,
+            )
+            payload = asdict(result)
+            payload.pop("workflow", None)
+            if args.repair_output:
+                args.repair_output.parent.mkdir(parents=True, exist_ok=True)
+                args.repair_output.write_text(json.dumps(result.workflow, indent=2), encoding="utf-8")
+                payload["repair_output"] = str(args.repair_output)
+            print(json.dumps(payload, indent=2))
+            return
         report = audit_workflow(workflow, fixture_dir=args.fixture_dir, mode=args.audit_mode)
         print(json.dumps(asdict(report), indent=2))
         return

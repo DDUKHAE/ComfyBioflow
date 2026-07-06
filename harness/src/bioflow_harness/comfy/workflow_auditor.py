@@ -148,7 +148,7 @@ def _audit_reference_readiness(
             ),
             node_id=index_node.get("id"),
             node_type=index_node.get("type"),
-            evidence={"widgets": _widgets(index_node)},
+            evidence={"widgets": list(_widgets(index_node))},
         )
     )
 
@@ -202,7 +202,7 @@ def _audit_trimming_policy(
             ),
             node_id=trim_node.get("id"),
             node_type=trim_node.get("type"),
-            evidence={"widgets": _widgets(trim_node)},
+            evidence={"widgets": list(_widgets(trim_node))},
         )
     )
 

@@ -52,3 +52,37 @@ PYTHONPATH=harness/src python3 -m bioflow_harness.cli \
   --audit-mode execution \
   --fixture-dir harness/examples/fixtures/quickstart
 ```
+
+## Validation Agent Loop
+
+The validation loop turns audit issues into repair suggestions. Each suggestion records:
+
+- the issue id it responds to
+- the node type to change, when the issue maps to a specific node
+- the recommended action and rationale
+- whether the fix can be applied automatically
+- the concrete widget-level changes for safe fixes
+
+Safe automatic fixes are limited to deterministic widget edits. The loop can currently patch QC artifact paths, trimming policy, DESeq2 contrast/filter settings, and report section declarations. Issues that require real user/reference data or graph expansion remain manual suggestions, such as replacing the toy Salmon reference or expanding sample-level QC/trim/quant branches for every metadata sample.
+
+Run the validation agent loop without editing the workflow:
+
+```bash
+PYTHONPATH=harness/src python3 -m bioflow_harness.cli \
+  --audit-workflow harness/examples/workflows/bulk_rna_seq_salmon_ref.json \
+  --audit-mode execution \
+  --fixture-dir harness/examples/fixtures/quickstart \
+  --validation-loop
+```
+
+Write a repaired workflow JSON with safe fixes applied:
+
+```bash
+PYTHONPATH=harness/src python3 -m bioflow_harness.cli \
+  --audit-workflow harness/examples/workflows/bulk_rna_seq_salmon_ref.json \
+  --audit-mode execution \
+  --fixture-dir harness/examples/fixtures/quickstart \
+  --validation-loop \
+  --apply-workflow-repairs \
+  --repair-output harness/examples/workflows/bulk_rna_seq_salmon_ref.repaired.json
+```

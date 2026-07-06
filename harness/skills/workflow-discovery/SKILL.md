@@ -25,6 +25,7 @@ Return an analysis brief with:
 ## Rules
 
 - Map bulk RNA-seq prompts to `bulk_rna_seq`.
+- Detect planned or unmodeled domains separately. Do not route them to `bulk_rna_seq` just because the prompt contains `RNA-seq`.
+- For planned domains, return a domain value and confidence note that workflow expansion is required.
 - Treat DESeq2 result tables and visualization artifacts as required outputs when the prompt asks for the official REF path.
 - Record uncertainty in `confidence_notes` rather than silently guessing.
-

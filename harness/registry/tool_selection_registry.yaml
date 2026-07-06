@@ -4,7 +4,8 @@
     "version": "0.1.0",
     "official_route_id": "bulk_rna_seq_salmon_ref"
   },
-  "supported_domains": ["bulk_rna_seq", "scRNA-seq", "metagenome", "WGS"],
+  "supported_domains": ["bulk_rna_seq"],
+  "planned_domains": ["scRNA-seq", "metagenome", "WGS"],
   "routes": {
     "bulk_rna_seq_salmon_ref": [
       {"stage_id": "request_loading", "stage_label": "Prompt or request payload loading", "tool_id": "workflow_request_loader", "operation_id": "load_request"},
@@ -251,4 +252,3 @@
     }
   ]
 }
-

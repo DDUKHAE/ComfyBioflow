@@ -24,6 +24,8 @@ def build_workflow(
     generated_node_paths: list[Path] | None = None,
 ) -> Path:
     brief = parse_prompt(prompt)
+    if brief.domain != "bulk_rna_seq":
+        raise WorkflowPlanningRequired(brief.domain, brief.confidence_notes)
     plan = WorkflowPlanner(load_registry(registry_path)).plan(brief)
     workflow = WorkflowBuilder(default_node_catalog()).build(plan)
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -37,6 +39,30 @@ def build_workflow(
             output_dir=output_path.parent,
         )
     return output_path
+
+
+class WorkflowPlanningRequired(ValueError):
+    def __init__(self, domain: str, confidence_notes: list[str]) -> None:
+        super().__init__(f"Workflow planning is required before generating domain: {domain}")
+        self.domain = domain
+        self.confidence_notes = confidence_notes
+
+
+def _planning_required_payload(error: WorkflowPlanningRequired) -> dict:
+    return {
+        "status": "planning_required",
+        "domain": error.domain,
+        "route_id": None,
+        "message": str(error),
+        "confidence_notes": error.confidence_notes,
+        "next_steps": [
+            "create a domain exploration document",
+            "design the workflow stages and artifact contract",
+            "add registry route and tool entries",
+            "implement and register ComfyBIO nodes",
+            "add fixtures, validation rules, and workflow generation tests",
+        ],
+    }
 
 
 def main() -> None:
@@ -125,13 +151,17 @@ def main() -> None:
         return
     if not args.prompt:
         parser.error("prompt is required unless an inspection or fixture command is used")
-    build_workflow(
-        args.prompt,
-        args.registry,
-        args.output,
-        write_pending_record=args.write_pending_record,
-        generated_node_paths=args.generated_node_path,
-    )
+    try:
+        build_workflow(
+            args.prompt,
+            args.registry,
+            args.output,
+            write_pending_record=args.write_pending_record,
+            generated_node_paths=args.generated_node_path,
+        )
+    except WorkflowPlanningRequired as error:
+        print(json.dumps(_planning_required_payload(error), indent=2))
+        raise SystemExit(2) from error
 
 
 if __name__ == "__main__":

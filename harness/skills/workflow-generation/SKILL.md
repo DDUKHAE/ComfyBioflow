@@ -16,4 +16,4 @@ Return a stage list for `bulk_rna_seq_salmon_ref`, including fastp, salmon, txim
 - The official route must only contain `REF` tools.
 - The official route must reject planned or stubbed nodes.
 - Multi-step tools must remain decomposed by operation.
-
+- If the analysis brief is for a domain without an implemented route, stop generation and require domain exploration, workflow design, registry updates, and node implementation before emitting workflow JSON.

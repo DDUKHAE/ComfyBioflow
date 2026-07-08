@@ -1,0 +1,2185 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ComfyBIO Harness Core Console Mockup</title>
+  <style>
+    :root {
+      --bg: #1c1c1c;
+      --panel: #252525;
+      --panel-2: #2f2f2f;
+      --line: #3a3a3a;
+      --text: #f9fafb;
+      --muted: #9ca3af;
+      --soft: #e5e7eb;
+      --green: #41c287;
+      --teal: #20b2aa;
+      --teal-hover: #1a9b93;
+      --source: #183331;
+      --amber: #e8b04e;
+      --red: #e06565;
+      --blue: #00b4d8;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: 0;
+    }
+
+    button, textarea, select, input {
+      font: inherit;
+    }
+
+    button:focus-visible,
+    textarea:focus-visible,
+    select:focus-visible,
+    input:focus-visible {
+      outline: 2px solid var(--teal);
+      outline-offset: 2px;
+      box-shadow: 0 0 0 4px rgba(249, 250, 251, 0.16);
+    }
+
+    .shell {
+      display: block;
+      min-height: 100vh;
+    }
+
+    .canvas {
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(var(--line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--line) 1px, transparent 1px),
+        #1c1c1c;
+      background-size: 32px 32px;
+      padding: 24px;
+      min-height: 100vh;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 44px;
+      padding: 0 14px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #252525;
+      color: var(--soft);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 650;
+    }
+
+    .brand-mark {
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--teal);
+      border-radius: 5px;
+      display: grid;
+      place-items: center;
+      color: var(--teal);
+      font-size: 12px;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 8px;
+    }
+
+    .icon-button {
+      width: 30px;
+      height: 30px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #2f2f2f;
+      color: var(--soft);
+    }
+
+    .workflow {
+      position: absolute;
+      inset: 92px 32px 32px 32px;
+    }
+
+    .node {
+      position: absolute;
+      width: 210px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #252525;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.28);
+    }
+
+    .node header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 9px 10px;
+      border-bottom: 1px solid var(--line);
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    .node-body {
+      padding: 10px;
+      display: grid;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .socket-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      white-space: nowrap;
+    }
+
+    .socket {
+      color: var(--teal);
+    }
+
+    .node:nth-child(1) { left: 20px; top: 20px; }
+    .node:nth-child(2) { left: 285px; top: 20px; }
+    .node:nth-child(3) { left: 550px; top: 20px; }
+    .node:nth-child(4) { left: 815px; top: 20px; }
+    .node:nth-child(5) { left: 550px; top: 210px; }
+
+    .link {
+      position: absolute;
+      height: 2px;
+      background: var(--teal);
+      opacity: 0.85;
+      transform-origin: left center;
+    }
+
+    .l1 { left: 230px; top: 75px; width: 55px; }
+    .l2 { left: 495px; top: 75px; width: 55px; }
+    .l3 { left: 760px; top: 75px; width: 55px; }
+    .l4 { left: 655px; top: 196px; width: 125px; transform: rotate(90deg); }
+
+    .assistant {
+      position: fixed;
+      left: var(--panel-left, auto);
+      top: var(--panel-top, 18px);
+      height: var(--panel-height, min(720px, calc(100vh - 36px)));
+      width: var(--panel-width, min(460px, calc(100vw - 36px)));
+      z-index: 20;
+      border-left: 1px solid var(--line);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--panel);
+      display: grid;
+      grid-template-rows: auto 1fr;
+      min-height: 0;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.36);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(10px) scale(0.98);
+      transform-origin: top left;
+      transition: opacity 160ms ease, transform 160ms ease;
+    }
+
+    .assistant.is-open {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0) scale(1);
+    }
+
+    .assistant-header {
+      min-height: 56px;
+      padding: 12px 16px 12px 72px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .assistant-title {
+      display: grid;
+      gap: 3px;
+    }
+
+    .assistant-title strong {
+      font-size: 15px;
+    }
+
+    .assistant-title span {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .panel-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      border: 1px solid rgba(65, 194, 135, 0.45);
+      color: var(--green);
+      background: rgba(65, 194, 135, 0.08);
+      border-radius: 999px;
+      padding: 5px 9px;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .content {
+      overflow: auto;
+      padding: 16px;
+      display: grid;
+      gap: 16px;
+      align-content: start;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .assistant *,
+    .assistant {
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .assistant::-webkit-scrollbar,
+    .assistant *::-webkit-scrollbar,
+    .content::-webkit-scrollbar,
+    .mini-code::-webkit-scrollbar {
+      display: none;
+    }
+
+    .resize-handle {
+      position: absolute;
+      z-index: 3;
+      background: transparent;
+      touch-action: none;
+    }
+
+    .resize-handle.n,
+    .resize-handle.s {
+      left: 12px;
+      right: 12px;
+      height: 8px;
+      cursor: ns-resize;
+    }
+
+    .resize-handle.n {
+      top: -4px;
+    }
+
+    .resize-handle.s {
+      bottom: -4px;
+    }
+
+    .resize-handle.e,
+    .resize-handle.w {
+      top: 12px;
+      bottom: 12px;
+      width: 8px;
+      cursor: ew-resize;
+    }
+
+    .resize-handle.e {
+      right: -4px;
+    }
+
+    .resize-handle.w {
+      left: -4px;
+    }
+
+    .resize-handle.ne,
+    .resize-handle.nw,
+    .resize-handle.se,
+    .resize-handle.sw {
+      width: 16px;
+      height: 16px;
+    }
+
+    .resize-handle.ne,
+    .resize-handle.sw {
+      cursor: nesw-resize;
+    }
+
+    .resize-handle.nw,
+    .resize-handle.se {
+      cursor: nwse-resize;
+    }
+
+    .resize-handle.ne {
+      top: -6px;
+      right: -6px;
+    }
+
+    .resize-handle.nw {
+      top: -6px;
+      left: -6px;
+    }
+
+    .resize-handle.se {
+      right: -6px;
+      bottom: -6px;
+    }
+
+    .resize-handle.sw {
+      left: -6px;
+      bottom: -6px;
+    }
+
+    .section {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+    }
+
+    .section.flat-panel {
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+    }
+
+    .tabs {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 6px;
+      padding: 6px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #252525;
+      box-shadow: 0 10px 18px rgba(28, 28, 28, 0.88);
+    }
+
+    .tab {
+      min-width: 0;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--muted);
+      padding: 8px 6px;
+      font-size: 12px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .tab.active {
+      border-color: rgba(32, 178, 170, 0.48);
+      background: rgba(32, 178, 170, 0.12);
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    .section header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 11px 12px;
+      border-bottom: 1px solid var(--line);
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    .section-body {
+      padding: 16px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .message {
+      display: grid;
+      gap: 8px;
+      padding: 12px;
+      border-radius: 12px;
+      background: #2f2f2f;
+      border: 1px solid var(--line);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .message.user {
+      border-color: rgba(32, 178, 170, 0.45);
+      font-size: 15px;
+      font-weight: 650;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .form-field {
+      min-width: 0;
+      display: grid;
+      gap: 6px;
+    }
+
+    .form-field.full {
+      grid-column: 1 / -1;
+    }
+
+    .form-field label {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .text-input {
+      width: 100%;
+      min-height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #1c1c1c;
+      color: var(--text);
+      padding: 10px;
+    }
+
+    .text-input[readonly] {
+      color: var(--muted);
+      background: #252525;
+      cursor: not-allowed;
+    }
+
+    .settings-section,
+    .request-section,
+    .resource-section {
+      grid-column: 1 / -1;
+      display: grid;
+      gap: 10px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #252525;
+    }
+
+    .settings-fields {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .settings-header,
+    .request-header,
+    .resource-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .settings-header span,
+    .request-header span,
+    .resource-header span {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .resource-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .resource-row {
+      display: grid;
+      grid-template-columns: minmax(90px, 0.8fr) minmax(92px, 0.7fr) minmax(0, 1.5fr) 92px 72px;
+      gap: 8px;
+      align-items: end;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #2f2f2f;
+    }
+
+    .resource-row.path-resource-row {
+      grid-template-columns: minmax(100px, 0.8fr) minmax(0, 1.6fr) 92px 72px;
+    }
+
+    .resource-row .form-field {
+      gap: 4px;
+    }
+
+    .path-picker-button {
+      min-height: 42px;
+      border: 1px solid rgba(32, 178, 170, 0.5);
+      border-radius: 8px;
+      background: rgba(32, 178, 170, 0.1);
+      color: var(--soft);
+      padding: 8px 10px;
+    }
+
+    .path-picker-cell {
+      position: relative;
+      display: grid;
+    }
+
+    .path-picker-popover {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: calc(100% + 6px);
+      z-index: 5;
+      min-width: 132px;
+      padding: 6px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #252525;
+      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.32);
+      gap: 6px;
+    }
+
+    .path-picker-cell.is-open .path-picker-popover {
+      display: grid;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .chip {
+      padding: 4px 7px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      color: var(--soft);
+      background: #252525;
+      font-size: 11px;
+    }
+
+    .chip.green {
+      border-color: rgba(65, 194, 135, 0.45);
+      color: var(--green);
+    }
+
+    .chip.amber {
+      border-color: rgba(232, 176, 78, 0.45);
+      color: var(--amber);
+    }
+
+    .fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .field {
+      min-width: 0;
+      display: grid;
+      gap: 4px;
+      padding: 8px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #2f2f2f;
+    }
+
+    .task-card {
+      display: grid;
+      gap: 6px;
+      padding: 12px;
+      border: 1px solid rgba(32, 178, 170, 0.45);
+      border-radius: 12px;
+      background: rgba(32, 178, 170, 0.08);
+    }
+
+    .task-card span {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .task-card strong {
+      font-size: 14px;
+    }
+
+    .field span {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .field strong {
+      overflow-wrap: anywhere;
+      font-size: 12px;
+      font-weight: 620;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 8px;
+    }
+
+    .stage {
+      display: grid;
+      grid-template-columns: 26px 1fr auto;
+      align-items: center;
+      gap: 8px;
+      padding: 8px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #2f2f2f;
+      font-size: 12px;
+    }
+
+    .stage strong {
+      display: block;
+      margin-bottom: 2px;
+      font-size: 12px;
+    }
+
+    .stage span {
+      color: var(--muted);
+    }
+
+    .severity {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 3px 7px;
+      border: 1px solid rgba(232, 176, 78, 0.45);
+      color: var(--amber);
+      font-size: 11px;
+    }
+
+    .mini-code {
+      overflow: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      max-height: 132px;
+      margin: 0;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #1c1c1c;
+      color: var(--soft);
+      font: 11px/1.45 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      white-space: pre;
+    }
+
+    .workflow-overview {
+      display: grid;
+      gap: 10px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #252525;
+    }
+
+    .overview-meta {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .step-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .step-list.drag-active {
+      user-select: none;
+    }
+
+    .step-item {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #2f2f2f;
+      display: grid;
+      overflow: hidden;
+    }
+
+    .step-item.is-expanded {
+      border-color: rgba(32, 178, 170, 0.58);
+      background: #303636;
+    }
+
+    .step-item.is-dragging {
+      opacity: 0.58;
+      box-shadow: 0 16px 34px rgba(0, 0, 0, 0.28);
+    }
+
+    .step-summary {
+      display: grid;
+      grid-template-columns: 24px 24px minmax(0, 1fr) minmax(80px, 0.72fr) 28px;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      min-height: 48px;
+      padding: 8px 10px;
+      border: 0;
+      background: transparent;
+      color: var(--text);
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .drag-handle {
+      width: 24px;
+      height: 24px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      color: var(--muted);
+      cursor: grab;
+      font-size: 14px;
+      line-height: 1;
+      touch-action: none;
+    }
+
+    .drag-handle:active {
+      cursor: grabbing;
+    }
+
+    .step-badge {
+      width: 20px;
+      height: 20px;
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      border: 1px solid rgba(32, 178, 170, 0.45);
+      color: var(--teal);
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .step-label {
+      color: var(--muted);
+      font-size: 10px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .step-tool {
+      font-size: 12px;
+      font-weight: 700;
+      overflow-wrap: anywhere;
+    }
+
+    .step-remove {
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #252525;
+      color: var(--soft);
+      font-size: 14px;
+    }
+
+    .step-remove:hover {
+      border-color: rgba(255, 112, 112, 0.55);
+      color: #ff8d8d;
+    }
+
+    .step-detail {
+      display: grid;
+      max-height: 0;
+      overflow: hidden;
+      padding: 0 10px;
+      opacity: 0;
+      border-top: 1px solid transparent;
+      font-size: 12px;
+      gap: 8px;
+      transition: max-height 220ms ease, opacity 180ms ease, padding 220ms ease, border-color 220ms ease;
+    }
+
+    .step-item.is-expanded .step-detail {
+      max-height: 520px;
+      padding: 10px;
+      opacity: 1;
+      border-top-color: var(--line);
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .tool-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .tiny-button {
+      min-height: 40px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #252525;
+      color: var(--soft);
+      font-size: 11px;
+      padding: 7px 9px;
+    }
+
+    .tool-replace-popover {
+      display: none;
+      margin-top: 2px;
+      padding: 8px;
+      border: 1px solid rgba(32, 178, 170, 0.48);
+      border-radius: 7px;
+      background: #1d2228;
+      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.28);
+      gap: 7px;
+    }
+
+    .step-item.replace-open .tool-replace-popover {
+      display: grid;
+    }
+
+    .replace-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      color: var(--soft);
+      font-size: 11px;
+    }
+
+    .replace-option {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #2f2f2f;
+      color: var(--text);
+      padding: 10px;
+      display: grid;
+      gap: 6px;
+      text-align: left;
+    }
+
+    .replace-option.recommended {
+      border-color: rgba(32, 178, 170, 0.72);
+      background: rgba(32, 178, 170, 0.1);
+    }
+
+    .replace-option strong {
+      font-size: 12px;
+    }
+
+    .replace-option span {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    .replace-option.compatible {
+      border-color: rgba(65, 194, 135, 0.5);
+    }
+
+    .replace-option.disabled {
+      opacity: 0.55;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+    }
+
+    textarea {
+      min-height: 78px;
+      resize: vertical;
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #1c1c1c;
+      color: var(--text);
+      padding: 10px;
+      line-height: 1.4;
+    }
+
+    select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #1c1c1c;
+      color: var(--text);
+      padding: 8px;
+    }
+
+    .actions {
+      display: grid;
+      gap: 8px;
+      align-content: start;
+    }
+
+    .button {
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      color: var(--text);
+      background: #2f2f2f;
+      min-height: 44px;
+      padding: 10px 12px;
+      min-width: 92px;
+    }
+
+    .button.primary {
+      background: var(--teal);
+      border-color: var(--teal);
+      color: #081013;
+      font-weight: 700;
+    }
+
+    .button.apply {
+      background: var(--teal);
+      border-color: var(--teal);
+      color: #081013;
+      font-weight: 700;
+    }
+
+    .footer-actions {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    .secondary-actions {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .sticky-actions {
+      position: sticky;
+      bottom: 0;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      align-items: center;
+      gap: 10px;
+      margin: 0 -16px -16px;
+      padding: 12px 16px;
+      border-top: 1px solid var(--line);
+      background: rgba(37, 37, 37, 0.96);
+      backdrop-filter: blur(8px);
+    }
+
+    .add-step-wrap {
+      position: relative;
+    }
+
+    .add-step-menu {
+      position: absolute;
+      right: 0;
+      bottom: calc(100% + 8px);
+      width: min(280px, calc(100vw - 40px));
+      display: none;
+      gap: 6px;
+      padding: 8px;
+      border: 1px solid rgba(32, 178, 170, 0.48);
+      border-radius: 8px;
+      background: #1d2228;
+      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.32);
+    }
+
+    .add-step-wrap.is-open .add-step-menu {
+      display: grid;
+    }
+
+    .add-step-option {
+      display: grid;
+      gap: 3px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #2f2f2f;
+      color: var(--text);
+      padding: 8px;
+      text-align: left;
+      font-size: 12px;
+    }
+
+    .add-step-option span {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .readiness-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .readiness-item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: center;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #2f2f2f;
+      font-size: 12px;
+    }
+
+    .readiness-item span {
+      color: var(--muted);
+    }
+
+    .launcher {
+      position: fixed;
+      left: var(--launcher-left, calc(100vw - 78px));
+      top: var(--launcher-top, calc(100vh - 78px));
+      z-index: 25;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 56px;
+      height: 56px;
+      border: 1px solid rgba(32, 178, 170, 0.65);
+      border-radius: 999px;
+      background: #183331;
+      color: var(--text);
+      padding: 0;
+      box-shadow: 0 16px 34px rgba(0, 0, 0, 0.3);
+      cursor: grab;
+      touch-action: none;
+      user-select: none;
+      transition: border-radius 160ms ease, background 160ms ease, box-shadow 160ms ease;
+    }
+
+    .launcher.dragging {
+      cursor: grabbing;
+    }
+
+    .launcher.panel-open {
+      border-radius: 10px 0 10px 0;
+      background: #2b3037;
+      box-shadow: none;
+    }
+
+    .dna-icon {
+      width: 30px;
+      height: 30px;
+      color: var(--teal);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+      }
+    }
+
+    @media (max-width: 980px) {
+      .canvas {
+        min-height: 520px;
+      }
+
+      .assistant {
+        height: calc(100vh - 24px);
+        width: calc(100vw - 24px);
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="canvas" aria-label="ComfyUI canvas mockup">
+      <div class="topbar">
+        <div class="brand"><span class="brand-mark">C</span> ComfyUI / ComfyBIO</div>
+        <div class="toolbar" aria-label="Canvas toolbar">
+          <button class="icon-button" title="Fit view">[]</button>
+          <button class="icon-button" title="Validate">?</button>
+          <button class="icon-button" title="Save">S</button>
+        </div>
+      </div>
+
+      <div class="workflow">
+        <div class="link l1"></div>
+        <div class="link l2"></div>
+        <div class="link l3"></div>
+        <div class="link l4"></div>
+
+        <article class="node">
+          <header><span>RNASeq InputValidator</span><span class="socket">STRING</span></header>
+          <div class="node-body">
+            <div class="socket-row"><span>in</span><span class="socket">input_data</span></div>
+            <div class="socket-row"><span>out</span><span class="socket">RESULT</span></div>
+            <div>species=human, genome_build=GRCh38</div>
+          </div>
+        </article>
+
+        <article class="node">
+          <header><span>RNASeq FastQC</span><span class="socket">STRING</span></header>
+          <div class="node-body">
+            <div class="socket-row"><span>in</span><span class="socket">input_data</span></div>
+            <div class="socket-row"><span>out</span><span class="socket">RESULT</span></div>
+            <div>compiled from canonical spec edge</div>
+          </div>
+        </article>
+
+        <article class="node">
+          <header><span>RNASeq STAR</span><span class="socket">STRING</span></header>
+          <div class="node-body">
+            <div class="socket-row"><span>in</span><span class="socket">input_data</span></div>
+            <div class="socket-row"><span>out</span><span class="socket">RESULT</span></div>
+            <div>threads=4 via widget_mapping</div>
+          </div>
+        </article>
+
+        <article class="node">
+          <header><span>RNASeq DESeq2</span><span class="socket">STRING</span></header>
+          <div class="node-body">
+            <div class="socket-row"><span>in</span><span class="socket">input_data</span></div>
+            <div class="socket-row"><span>out</span><span class="socket">RESULT</span></div>
+            <div>comparison=treated_vs_control</div>
+          </div>
+        </article>
+
+        <article class="node">
+          <header><span>Interactive Report</span><span class="socket">STRING</span></header>
+          <div class="node-body">
+            <div class="socket-row"><span>in</span><span class="socket">input_data</span></div>
+            <div class="socket-row"><span>out</span><span class="socket">RESULT</span></div>
+            <div>run_manifest links artifacts</div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <button class="launcher" id="openAssistant" type="button" aria-label="Open ComfyBIO panel" aria-controls="assistantPanel" aria-expanded="false">
+      <svg class="dna-icon" viewBox="0 0 32 32" aria-hidden="true">
+        <path d="M9 4c10 5 10 19 0 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+        <path d="M23 4c-10 5-10 19 0 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+        <path d="M11 8h10M9 14h14M9 20h14M11 26h10" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" opacity="0.88"/>
+        <circle cx="9" cy="4" r="1.6" fill="currentColor"/>
+        <circle cx="23" cy="28" r="1.6" fill="currentColor"/>
+      </svg>
+    </button>
+
+    <aside class="assistant" id="assistantPanel" aria-label="ComfyBIO Harness Core console panel" aria-hidden="true">
+      <span class="resize-handle n" data-resize="n" aria-hidden="true"></span>
+      <span class="resize-handle e" data-resize="e" aria-hidden="true"></span>
+      <span class="resize-handle s" data-resize="s" aria-hidden="true"></span>
+      <span class="resize-handle w" data-resize="w" aria-hidden="true"></span>
+      <span class="resize-handle ne" data-resize="ne" aria-hidden="true"></span>
+      <span class="resize-handle nw" data-resize="nw" aria-hidden="true"></span>
+      <span class="resize-handle se" data-resize="se" aria-hidden="true"></span>
+      <span class="resize-handle sw" data-resize="sw" aria-hidden="true"></span>
+      <header class="assistant-header">
+        <div class="assistant-title">
+          <strong>Harness Core Console</strong>
+          <span>Research-backed workflow generation</span>
+        </div>
+        <div class="panel-actions">
+          <span class="status">Spec valid</span>
+          <button class="icon-button" id="closeAssistant" type="button" title="Close">x</button>
+        </div>
+      </header>
+
+      <section class="content">
+        <nav class="tabs" role="tablist" aria-label="Harness console tabs">
+          <button class="tab" id="tab-prompt" role="tab" type="button" data-tab="prompt" aria-selected="false" aria-controls="panel-prompt">Prompt</button>
+          <button class="tab active" id="tab-workflow-step" role="tab" type="button" data-tab="workflow-step" aria-selected="true" aria-controls="panel-workflow-step">Tool Select</button>
+          <button class="tab" id="tab-workflow-generate" role="tab" type="button" data-tab="workflow-generate" aria-selected="false" aria-controls="panel-workflow-generate">Generate Graph</button>
+        </nav>
+
+        <section class="section flat-panel tab-panel" id="panel-prompt" role="tabpanel" aria-labelledby="tab-prompt" data-panel="prompt" hidden>
+          <div class="section-body">
+            <div class="form-grid">
+              <div class="settings-section">
+                <div class="settings-header">
+                  <div>
+                    <strong>LLM settings</strong>
+                    <span>Select the provider and model used to interpret the request.</span>
+                  </div>
+                </div>
+                <div class="settings-fields">
+                  <div class="form-field">
+                    <label for="provider">LLM provider</label>
+                    <select id="provider">
+                      <option value="codex">codex</option>
+                      <option value="claude">claude</option>
+                      <option value="gemini">gemini</option>
+                    </select>
+                  </div>
+                  <div class="form-field">
+                    <label for="model">Model</label>
+                    <select id="model"></select>
+                  </div>
+                </div>
+              </div>
+              <div class="resource-section">
+                <div class="resource-header">
+                  <div>
+                    <strong>Analysis resources</strong>
+                    <span>Label input, output, metadata, index, reference, or annotation paths.</span>
+                  </div>
+                  <button class="button" id="addResource" type="button">+ Add resource</button>
+                </div>
+                <div class="resource-list" id="resourceList">
+                  <div class="resource-row path-resource-row">
+                    <div class="form-field">
+                      <label>Label</label>
+                      <input class="text-input resource-label" value="input_path" readonly />
+                    </div>
+                    <div class="form-field">
+                      <label>Path</label>
+                      <input type="hidden" class="resource-type" value="input" />
+                      <input class="text-input resource-path" id="inputPath" value="/data/project/fastq" />
+                    </div>
+                    <div class="path-picker-cell is-open">
+                      <button class="path-picker-button" type="button" data-picker-target="inputPath">Browse</button>
+                      <div class="path-picker-popover">
+                        <button class="tiny-button path-choice" type="button" data-kind="file">File</button>
+                        <button class="tiny-button path-choice" type="button" data-kind="folder">Folder</button>
+                      </div>
+                    </div>
+                    <button class="tiny-button" type="button" disabled>required</button>
+                  </div>
+                  <div class="resource-row path-resource-row">
+                    <div class="form-field">
+                      <label>Label</label>
+                      <input class="text-input resource-label" value="output_path" readonly />
+                    </div>
+                    <div class="form-field">
+                      <label>Path</label>
+                      <input type="hidden" class="resource-type" value="output" />
+                      <input class="text-input resource-path" id="outputPath" value="/data/project/results" />
+                    </div>
+                    <div class="path-picker-cell">
+                      <button class="path-picker-button" type="button" data-picker-target="outputPath">Browse</button>
+                      <div class="path-picker-popover">
+                        <button class="tiny-button path-choice" type="button" data-kind="file">File</button>
+                        <button class="tiny-button path-choice" type="button" data-kind="folder">Folder</button>
+                      </div>
+                    </div>
+                    <button class="tiny-button" type="button" disabled>required</button>
+                  </div>
+                  <div class="resource-row">
+                    <div class="form-field">
+                      <label>Label</label>
+                      <input class="text-input resource-label" value="sample_metadata" />
+                    </div>
+                    <div class="form-field">
+                      <label>Type</label>
+                      <select class="resource-type">
+                        <option>input</option>
+                        <option>output</option>
+                        <option>metadata</option>
+                        <option>index</option>
+                        <option>reference</option>
+                        <option>annotation</option>
+                        <option>contrast</option>
+                        <option>other</option>
+                      </select>
+                    </div>
+                    <div class="form-field">
+                      <label>Path</label>
+                      <input class="text-input resource-path" value="/data/project/sample_metadata.csv" />
+                    </div>
+                    <div class="path-picker-cell">
+                      <button class="path-picker-button" type="button">Browse</button>
+                      <div class="path-picker-popover">
+                        <button class="tiny-button path-choice" type="button" data-kind="file">File</button>
+                        <button class="tiny-button path-choice" type="button" data-kind="folder">Folder</button>
+                      </div>
+                    </div>
+                    <button class="tiny-button remove-resource" type="button" title="Remove resource">x</button>
+                  </div>
+                  <div class="resource-row">
+                    <div class="form-field">
+                      <label>Label</label>
+                      <input class="text-input resource-label" value="gtf_annotation" />
+                    </div>
+                    <div class="form-field">
+                      <label>Type</label>
+                      <select class="resource-type">
+                        <option>input</option>
+                        <option>output</option>
+                        <option>metadata</option>
+                        <option>index</option>
+                        <option>reference</option>
+                        <option selected>annotation</option>
+                        <option>contrast</option>
+                        <option>other</option>
+                      </select>
+                    </div>
+                    <div class="form-field">
+                      <label>Path</label>
+                      <input class="text-input resource-path" value="/refs/gencode.v44.annotation.gtf" />
+                    </div>
+                    <div class="path-picker-cell">
+                      <button class="path-picker-button" type="button">Browse</button>
+                      <div class="path-picker-popover">
+                        <button class="tiny-button path-choice" type="button" data-kind="file">File</button>
+                        <button class="tiny-button path-choice" type="button" data-kind="folder">Folder</button>
+                      </div>
+                    </div>
+                    <button class="tiny-button remove-resource" type="button" title="Remove resource">x</button>
+                  </div>
+                </div>
+              </div>
+              <div class="request-section">
+                <div class="request-header">
+                  <div>
+                    <strong>Analysis request</strong>
+                    <span>Describe the analysis after configuring resources.</span>
+                  </div>
+                </div>
+                <div class="form-field full">
+                  <label for="analysisPrompt">Request</label>
+                  <textarea id="analysisPrompt">Analyze this FASTQ folder as RNA-seq, human GRCh38, treated vs control.</textarea>
+                </div>
+              </div>
+            </div>
+            <div class="footer-actions">
+              <button class="button apply" id="submitPrompt" type="button">Submit</button>
+              <button class="button" type="button">Clear</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="section flat-panel tab-panel active" id="panel-workflow-step" role="tabpanel" aria-labelledby="tab-workflow-step" data-panel="workflow-step">
+          <div class="section-body timeline">
+            <div class="workflow-overview" aria-label="Selected workflow overview">
+              <div class="overview-meta">
+                <div class="field"><span>Analysis domain</span><strong>Bulk RNA-seq</strong></div>
+                <div class="field"><span>Workflow route</span><strong>Genome alignment + count matrix</strong></div>
+              </div>
+            </div>
+            <div class="message">
+              Review the generated workflow. Drag a handle to reorder a step, click a step to inspect details, or approve the spec for graph generation.
+            </div>
+            <div class="step-list" aria-label="Workflow steps">
+              <div class="step-item">
+                <div class="step-summary" role="button" tabindex="0" aria-expanded="false">
+                  <span class="drag-handle" title="Drag to reorder" aria-hidden="true">::</span>
+                  <span class="step-badge">1</span>
+                  <span class="step-label">Validate inputs</span>
+                  <span class="step-tool">InputValidator</span>
+                  <button class="step-remove" type="button" aria-label="Remove step">x</button>
+                </div>
+                <div class="step-detail">
+                  <div class="detail-grid">
+                    <div class="field"><span>Input</span><strong>folder path, metadata CSV</strong></div>
+                    <div class="field"><span>Output</span><strong>sample manifest</strong></div>
+                  </div>
+                  <div class="tool-actions"><button class="tiny-button replace-trigger" type="button">Replace</button></div>
+                  <div class="tool-replace-popover" aria-label="Replacement tool candidates">
+                    <div class="replace-title"><strong>TSR candidates for input validation</strong><span>Input path / sample manifest output</span></div>
+                    <button class="replace-option recommended" type="button"><strong>RNASeq_InputValidator <span class="chip">Recommended</span></strong><span>Validates FASTQ folder, metadata, species, and genome build.</span></button>
+                    <button class="replace-option" type="button"><strong>Generic_FileManifest <span class="chip">Needs review</span></strong><span>Creates a sample table, but reference checks become manual.</span></button>
+                  </div>
+                </div>
+              </div>
+              <div class="step-item">
+                <div class="step-summary" role="button" tabindex="0" aria-expanded="false">
+                  <span class="drag-handle" title="Drag to reorder" aria-hidden="true">::</span>
+                  <span class="step-badge">2</span>
+                  <span class="step-label">Raw QC</span>
+                  <span class="step-tool">FastQC</span>
+                  <button class="step-remove" type="button" aria-label="Remove step">x</button>
+                </div>
+                <div class="step-detail">
+                  <div class="detail-grid">
+                    <div class="field"><span>Input</span><strong>FASTQ</strong></div>
+                    <div class="field"><span>Output</span><strong>raw-read QC artifacts</strong></div>
+                  </div>
+                  <div class="tool-actions"><button class="tiny-button replace-trigger" type="button">Replace</button></div>
+                  <div class="tool-replace-popover" aria-label="Replacement tool candidates">
+                    <div class="replace-title"><strong>TSR candidates for raw-read QC</strong><span>FASTQ / QC artifact output</span></div>
+                    <button class="replace-option recommended" type="button"><strong>FastQC <span class="chip">Recommended</span></strong><span>Produces per-sample raw-read quality reports.</span></button>
+                    <button class="replace-option" type="button"><strong>fastp QC mode <span class="chip amber">Review</span></strong><span>Can produce QC metrics, but trimming behavior must be disabled or separated.</span></button>
+                  </div>
+                </div>
+              </div>
+              <div class="step-item">
+                <div class="step-summary" role="button" tabindex="0" aria-expanded="false">
+                  <span class="drag-handle" title="Drag to reorder" aria-hidden="true">::</span>
+                  <span class="step-badge">3</span>
+                  <span class="step-label">Trim reads</span>
+                  <span class="step-tool">fastp</span>
+                  <button class="step-remove" type="button" aria-label="Remove step">x</button>
+                </div>
+                <div class="step-detail">
+                  <div class="detail-grid">
+                    <div class="field"><span>Input</span><strong>FASTQ</strong></div>
+                    <div class="field"><span>Output</span><strong>trimmed FASTQ</strong></div>
+                  </div>
+                  <div class="tool-actions"><button class="tiny-button replace-trigger" type="button">Replace</button></div>
+                  <div class="tool-replace-popover" aria-label="Replacement tool candidates">
+                    <div class="replace-title"><strong>TSR candidates for read trimming</strong><span>FASTQ / trimmed FASTQ output</span></div>
+                    <button class="replace-option recommended" type="button"><strong>fastp <span class="chip">Recommended</span></strong><span>Trims adapters and low-quality bases while producing trim metrics.</span></button>
+                    <button class="replace-option" type="button"><strong>Trimmomatic <span class="chip amber">Review</span></strong><span>Requires adapter file and minimum-length policy.</span></button>
+                  </div>
+                </div>
+              </div>
+              <div class="step-item is-expanded replace-open">
+                <div class="step-summary" role="button" tabindex="0" aria-expanded="true">
+                  <span class="drag-handle" title="Drag to reorder" aria-hidden="true">::</span>
+                  <span class="step-badge">4</span>
+                  <span class="step-label">Align reads</span>
+                  <span class="step-tool">STAR</span>
+                  <button class="step-remove" type="button" aria-label="Remove step">x</button>
+                </div>
+                <div class="step-detail">
+                  <div class="detail-grid">
+                    <div class="field"><span>Input</span><strong>trimmed FASTQ</strong></div>
+                    <div class="field"><span>Output</span><strong>aligned BAM</strong></div>
+                  </div>
+                  <div class="tool-actions"><button class="tiny-button replace-trigger" type="button">Replace</button></div>
+                  <div class="tool-replace-popover" aria-label="Replacement tool candidates">
+                    <div class="replace-title"><strong>TSR candidates for read alignment</strong><span>trimmed FASTQ / aligned BAM output</span></div>
+                    <button class="replace-option recommended" type="button"><strong>STAR <span class="chip">Recommended</span></strong><span>Genome alignment route for downstream gene counting.</span></button>
+                    <button class="replace-option compatible" type="button"><strong>HISAT2 <span class="chip amber">Review</span></strong><span>Compatible aligned output, but index and strandedness settings require review.</span></button>
+                    <button class="replace-option disabled" type="button"><strong>Salmon <span class="chip amber">Different route</span></strong><span>Produces transcript quantification instead of aligned BAM.</span></button>
+                  </div>
+                </div>
+              </div>
+              <div class="step-item">
+                <div class="step-summary" role="button" tabindex="0" aria-expanded="false">
+                  <span class="drag-handle" title="Drag to reorder" aria-hidden="true">::</span>
+                  <span class="step-badge">5</span>
+                  <span class="step-label">Count genes</span>
+                  <span class="step-tool">featureCounts</span>
+                  <button class="step-remove" type="button" aria-label="Remove step">x</button>
+                </div>
+                <div class="step-detail">
+                  <div class="detail-grid">
+                    <div class="field"><span>Input</span><strong>aligned BAM</strong></div>
+                    <div class="field"><span>Output</span><strong>gene count matrix</strong></div>
+                  </div>
+                  <div class="tool-actions"><button class="tiny-button replace-trigger" type="button">Replace</button></div>
+                  <div class="tool-replace-popover" aria-label="Replacement tool candidates">
+                    <div class="replace-title"><strong>TSR candidates for gene counting</strong><span>aligned BAM / count matrix output</span></div>
+                    <button class="replace-option recommended" type="button"><strong>featureCounts <span class="chip">Recommended</span></strong><span>Generates gene-level counts for DESeq2.</span></button>
+                    <button class="replace-option" type="button"><strong>HTSeq-count <span class="chip amber">Review</span></strong><span>Alternative counting engine with stricter annotation and strandedness settings.</span></button>
+                  </div>
+                </div>
+              </div>
+              <div class="step-item">
+                <div class="step-summary" role="button" tabindex="0" aria-expanded="false">
+                  <span class="drag-handle" title="Drag to reorder" aria-hidden="true">::</span>
+                  <span class="step-badge">6</span>
+                  <span class="step-label">DE analysis</span>
+                  <span class="step-tool">DESeq2</span>
+                  <button class="step-remove" type="button" aria-label="Remove step">x</button>
+                </div>
+                <div class="step-detail">
+                  <div class="detail-grid">
+                    <div class="field"><span>Input</span><strong>count matrix, metadata</strong></div>
+                    <div class="field"><span>Output</span><strong>DE table and plots</strong></div>
+                  </div>
+                  <div class="tool-actions"><button class="tiny-button replace-trigger" type="button">Replace</button></div>
+                  <div class="tool-replace-popover" aria-label="Replacement tool candidates">
+                    <div class="replace-title"><strong>TSR candidates for differential expression</strong><span>count matrix / DE results output</span></div>
+                    <button class="replace-option recommended" type="button"><strong>DESeq2 <span class="chip">Recommended</span></strong><span>Default route for normalization, contrast testing, and DE statistics.</span></button>
+                    <button class="replace-option" type="button"><strong>edgeR <span class="chip amber">Model review</span></strong><span>Alternative DE engine. Requires dispersion, contrast, and filtering parameter review.</span></button>
+                  </div>
+                </div>
+              </div>
+              <div class="step-item">
+                <div class="step-summary" role="button" tabindex="0" aria-expanded="false">
+                  <span class="drag-handle" title="Drag to reorder" aria-hidden="true">::</span>
+                  <span class="step-badge">7</span>
+                  <span class="step-label">Report</span>
+                  <span class="step-tool">InteractiveReport</span>
+                  <button class="step-remove" type="button" aria-label="Remove step">x</button>
+                </div>
+                <div class="step-detail">
+                  <div class="detail-grid">
+                    <div class="field"><span>Input</span><strong>QC artifacts, DE results</strong></div>
+                    <div class="field"><span>Output</span><strong>analysis report</strong></div>
+                  </div>
+                  <div class="tool-actions"><button class="tiny-button replace-trigger" type="button">Replace</button></div>
+                  <div class="tool-replace-popover" aria-label="Replacement tool candidates">
+                    <div class="replace-title"><strong>TSR candidates for reporting</strong><span>analysis artifacts / report output</span></div>
+                    <button class="replace-option recommended" type="button"><strong>InteractiveReport <span class="chip">Recommended</span></strong><span>Builds a final report from QC, quantification, and DE artifacts.</span></button>
+                    <button class="replace-option" type="button"><strong>MultiQC <span class="chip amber">QC only</span></strong><span>Useful for QC summary, but does not cover DE interpretation alone.</span></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="sticky-actions">
+              <span class="chip">Spec edited, not approved</span>
+              <div class="add-step-wrap">
+                <button class="button" id="addWorkflowStep" type="button" aria-expanded="false">Add Step</button>
+                <div class="add-step-menu" aria-label="Add workflow step">
+                  <button class="add-step-option" type="button" data-step="input-validator"><strong>InputValidator</strong><span>Validate inputs</span></button>
+                  <button class="add-step-option" type="button" data-step="fastqc"><strong>FastQC</strong><span>Raw QC</span></button>
+                  <button class="add-step-option" type="button" data-step="fastp"><strong>fastp</strong><span>Trim reads</span></button>
+                  <button class="add-step-option" type="button" data-step="star"><strong>STAR</strong><span>Align reads</span></button>
+                  <button class="add-step-option" type="button" data-step="featurecounts"><strong>featureCounts</strong><span>Count genes</span></button>
+                  <button class="add-step-option" type="button" data-step="deseq2"><strong>DESeq2</strong><span>DE analysis</span></button>
+                  <button class="add-step-option" type="button" data-step="report"><strong>InteractiveReport</strong><span>Report</span></button>
+                </div>
+              </div>
+              <button class="button apply" type="button">Approve Spec</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="section flat-panel tab-panel" id="panel-workflow-generate" role="tabpanel" aria-labelledby="tab-workflow-generate" data-panel="workflow-generate" hidden>
+          <div class="section-body">
+            <div class="message">
+              <span class="severity">generation summary</span>
+              This graph will be generated from the prompt resources and the approved tool sequence.
+            </div>
+            <div class="readiness-list">
+              <div class="readiness-item"><strong>LLM</strong><span>codex / gpt-5.5</span></div>
+              <div class="readiness-item"><strong>Input path</strong><span>/data/project/fastq</span></div>
+              <div class="readiness-item"><strong>Output path</strong><span>/data/project/results</span></div>
+              <div class="readiness-item"><strong>Resources</strong><span>metadata_csv, genome_index, gtf_annotation</span></div>
+              <div class="readiness-item"><strong>Analysis domain</strong><span>Bulk RNA-seq</span></div>
+              <div class="readiness-item"><strong>Tool sequence</strong><span>InputValidator, FastQC, fastp, STAR, featureCounts, DESeq2, InteractiveReport</span></div>
+            </div>
+            <div class="footer-actions">
+              <button class="button apply">Generate Graph</button>
+            </div>
+          </div>
+        </section>
+      </section>
+
+    </aside>
+  </main>
+  <script>
+    const openButton = document.querySelector("#openAssistant");
+    const closeButton = document.querySelector("#closeAssistant");
+    const panel = document.querySelector("#assistantPanel");
+    const resizeHandles = Array.from(document.querySelectorAll(".resize-handle"));
+    const tabs = Array.from(document.querySelectorAll(".tab"));
+    const panels = Array.from(document.querySelectorAll(".tab-panel"));
+    const stepList = document.querySelector(".step-list");
+    const addWorkflowStepButton = document.querySelector("#addWorkflowStep");
+    const addStepWrap = document.querySelector(".add-step-wrap");
+    const providerSelect = document.querySelector("#provider");
+    const modelSelect = document.querySelector("#model");
+    const addResourceButton = document.querySelector("#addResource");
+    const resourceList = document.querySelector("#resourceList");
+    const submitPromptButton = document.querySelector("#submitPrompt");
+    const statusChip = document.querySelector(".status");
+    const providerModels = {
+      codex: ["gpt-5.5", "gpt-5.4", "gpt-5.4-mini"],
+      claude: ["claude-opus-4.1", "claude-sonnet-4.5", "claude-haiku-4.5"],
+      gemini: ["gemini-2.5-pro", "gemini-2.5-flash", "gemini-2.5-flash-lite"]
+    };
+    const workflowStepCatalog = {
+      "input-validator": {
+        stage: "Validate inputs",
+        tool: "InputValidator",
+        input: "folder path, metadata CSV",
+        output: "sample manifest",
+        title: "TSR candidates for input validation",
+        subtitle: "Input path / sample manifest output",
+        candidates: [
+          { name: "RNASeq_InputValidator", badge: "Recommended", tone: "", detail: "Validates FASTQ folder, metadata, species, and genome build." },
+          { name: "Generic_FileManifest", badge: "Needs review", tone: "", detail: "Creates a sample table, but reference checks become manual." }
+        ]
+      },
+      fastqc: {
+        stage: "Raw QC",
+        tool: "FastQC",
+        input: "FASTQ",
+        output: "raw-read QC artifacts",
+        title: "TSR candidates for raw-read QC",
+        subtitle: "FASTQ / QC artifact output",
+        candidates: [
+          { name: "FastQC", badge: "Recommended", tone: "", detail: "Produces per-sample raw-read quality reports." },
+          { name: "fastp QC mode", badge: "Review", tone: " amber", detail: "Can produce QC metrics, but trimming behavior must be disabled or separated." }
+        ]
+      },
+      fastp: {
+        stage: "Trim reads",
+        tool: "fastp",
+        input: "FASTQ",
+        output: "trimmed FASTQ",
+        title: "TSR candidates for read trimming",
+        subtitle: "FASTQ / trimmed FASTQ output",
+        candidates: [
+          { name: "fastp", badge: "Recommended", tone: "", detail: "Trims adapters and low-quality bases while producing trim metrics." },
+          { name: "Trimmomatic", badge: "Review", tone: " amber", detail: "Requires adapter file and minimum-length policy." }
+        ]
+      },
+      star: {
+        stage: "Align reads",
+        tool: "STAR",
+        input: "trimmed FASTQ",
+        output: "aligned BAM",
+        title: "TSR candidates for read alignment",
+        subtitle: "trimmed FASTQ / aligned BAM output",
+        candidates: [
+          { name: "STAR", badge: "Recommended", tone: "", detail: "Genome alignment route for downstream gene counting." },
+          { name: "HISAT2", badge: "Review", tone: " amber", detail: "Compatible aligned output, but index and strandedness settings require review." },
+          { name: "Salmon", badge: "Different route", tone: " amber", detail: "Produces transcript quantification instead of aligned BAM." }
+        ]
+      },
+      featurecounts: {
+        stage: "Count genes",
+        tool: "featureCounts",
+        input: "aligned BAM",
+        output: "gene count matrix",
+        title: "TSR candidates for gene counting",
+        subtitle: "aligned BAM / count matrix output",
+        candidates: [
+          { name: "featureCounts", badge: "Recommended", tone: "", detail: "Generates gene-level counts for DESeq2." },
+          { name: "HTSeq-count", badge: "Review", tone: " amber", detail: "Alternative counting engine with stricter annotation and strandedness settings." }
+        ]
+      },
+      deseq2: {
+        stage: "DE analysis",
+        tool: "DESeq2",
+        input: "count matrix, metadata",
+        output: "DE table and plots",
+        title: "TSR candidates for differential expression",
+        subtitle: "count matrix / DE results output",
+        candidates: [
+          { name: "DESeq2", badge: "Recommended", tone: "", detail: "Default route for normalization, contrast testing, and DE statistics." },
+          { name: "edgeR", badge: "Model review", tone: " amber", detail: "Alternative DE engine. Requires dispersion, contrast, and filtering parameter review." }
+        ]
+      },
+      report: {
+        stage: "Report",
+        tool: "InteractiveReport",
+        input: "QC artifacts, DE results",
+        output: "analysis report",
+        title: "TSR candidates for reporting",
+        subtitle: "analysis artifacts / report output",
+        candidates: [
+          { name: "InteractiveReport", badge: "Recommended", tone: "", detail: "Builds a final report from QC, quantification, and DE artifacts." },
+          { name: "MultiQC", badge: "QC only", tone: " amber", detail: "Useful for QC summary, but does not cover DE interpretation alone." }
+        ]
+      }
+    };
+    const viewportMargin = 12;
+    const launcherSize = 56;
+    const launcherState = {
+      pointerId: null,
+      startX: 0,
+      startY: 0,
+      left: window.innerWidth - 78,
+      top: window.innerHeight - 78,
+      moved: false,
+      suppressClick: false
+    };
+    const panelState = {
+      width: 460,
+      height: 720,
+      minWidth: 360,
+      minHeight: 420,
+      resize: null
+    };
+
+    function clamp(value, min, max) {
+      return Math.min(Math.max(value, min), max);
+    }
+
+    function updateModelOptions() {
+      const models = providerModels[providerSelect.value] || [];
+      modelSelect.replaceChildren(...models.map((model) => {
+        const option = document.createElement("option");
+        option.value = model;
+        option.textContent = model;
+        return option;
+      }));
+    }
+
+    function createResourceRow() {
+      const row = document.createElement("div");
+      row.className = "resource-row";
+      row.innerHTML = `
+        <div class="form-field">
+          <label>Label</label>
+          <input class="text-input resource-label" value="reference_fasta" />
+        </div>
+        <div class="form-field">
+          <label>Type</label>
+          <select class="resource-type">
+            <option>input</option>
+            <option>output</option>
+            <option>metadata</option>
+            <option>index</option>
+            <option selected>reference</option>
+            <option>annotation</option>
+            <option>contrast</option>
+            <option>other</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label>Path</label>
+          <input class="text-input resource-path" value="/refs/GRCh38.primary_assembly.fa" />
+        </div>
+        <div class="path-picker-cell">
+          <button class="path-picker-button" type="button">Browse</button>
+          <div class="path-picker-popover">
+            <button class="tiny-button path-choice" type="button" data-kind="file">File</button>
+            <button class="tiny-button path-choice" type="button" data-kind="folder">Folder</button>
+          </div>
+        </div>
+        <button class="tiny-button remove-resource" type="button" title="Remove resource">x</button>
+      `;
+      return row;
+    }
+
+    function createWorkflowStep(stepData) {
+      const item = document.createElement("div");
+      item.className = "step-item";
+      const candidates = stepData.candidates.map((candidate, index) => {
+        const className = index === 0 ? "replace-option recommended" : "replace-option";
+        return `
+          <button class="${className}" type="button">
+            <strong>${candidate.name} <span class="chip${candidate.tone}">${candidate.badge}</span></strong>
+            <span>${candidate.detail}</span>
+          </button>
+        `;
+      }).join("");
+
+      item.innerHTML = `
+        <div class="step-summary" role="button" tabindex="0" aria-expanded="false">
+          <span class="drag-handle" title="Drag to reorder" aria-hidden="true">::</span>
+          <span class="step-badge">0</span>
+          <span class="step-label">${stepData.stage}</span>
+          <span class="step-tool">${stepData.tool}</span>
+          <button class="step-remove" type="button" aria-label="Remove step">x</button>
+        </div>
+        <div class="step-detail">
+          <div class="detail-grid">
+            <div class="field"><span>Input</span><strong>${stepData.input}</strong></div>
+            <div class="field"><span>Output</span><strong>${stepData.output}</strong></div>
+          </div>
+          <div class="tool-actions"><button class="tiny-button replace-trigger" type="button">Replace</button></div>
+          <div class="tool-replace-popover" aria-label="Replacement tool candidates">
+            <div class="replace-title"><strong>${stepData.title}</strong><span>${stepData.subtitle}</span></div>
+            ${candidates}
+          </div>
+        </div>
+      `;
+      return item;
+    }
+
+    function collectPromptPayload() {
+      const resources = Array.from(resourceList.querySelectorAll(".resource-row")).map((row) => ({
+        label: row.querySelector(".resource-label").value.trim(),
+        type: row.querySelector(".resource-type").value,
+        path: row.querySelector(".resource-path").value.trim()
+      })).filter((resource) => resource.label || resource.path);
+
+      return {
+        provider: providerSelect.value,
+        model: modelSelect.value,
+        request_text: document.querySelector("#analysisPrompt").value.trim(),
+        input_path: document.querySelector("#inputPath").value.trim(),
+        output_path: document.querySelector("#outputPath").value.trim(),
+        resources
+      };
+    }
+
+    function setLauncherPosition(left, top, updatePanel = true) {
+      launcherState.left = clamp(left, viewportMargin, window.innerWidth - launcherSize - viewportMargin);
+      launcherState.top = clamp(top, viewportMargin, window.innerHeight - launcherSize - viewportMargin);
+      openButton.style.setProperty("--launcher-left", `${launcherState.left}px`);
+      openButton.style.setProperty("--launcher-top", `${launcherState.top}px`);
+      if (updatePanel && panel.classList.contains("is-open")) {
+        positionPanelFromLauncher();
+      }
+    }
+
+    function positionPanelFromLauncher() {
+      panelState.width = clamp(panelState.width, panelState.minWidth, window.innerWidth - viewportMargin * 2);
+      panelState.height = clamp(panelState.height, panelState.minHeight, window.innerHeight - viewportMargin * 2);
+      const panelWidth = panelState.width;
+      const panelHeight = panelState.height;
+      const panelLeft = clamp(launcherState.left, viewportMargin, window.innerWidth - panelWidth - viewportMargin);
+      const panelTop = clamp(launcherState.top, viewportMargin, window.innerHeight - panelHeight - viewportMargin);
+
+      setLauncherPosition(panelLeft, panelTop, false);
+      panel.style.setProperty("--panel-left", `${panelLeft}px`);
+      panel.style.setProperty("--panel-top", `${panelTop}px`);
+      panel.style.setProperty("--panel-width", `${panelState.width}px`);
+      panel.style.setProperty("--panel-height", `${panelState.height}px`);
+    }
+
+    function resizePanel(direction, dx, dy) {
+      let left = launcherState.left;
+      let top = launcherState.top;
+      let width = panelState.width;
+      let height = panelState.height;
+      const maxRight = window.innerWidth - viewportMargin;
+      const maxBottom = window.innerHeight - viewportMargin;
+
+      if (direction.includes("e")) {
+        width = clamp(width + dx, panelState.minWidth, maxRight - left);
+      }
+      if (direction.includes("s")) {
+        height = clamp(height + dy, panelState.minHeight, maxBottom - top);
+      }
+      if (direction.includes("w")) {
+        const nextLeft = clamp(left + dx, viewportMargin, left + width - panelState.minWidth);
+        width = clamp(width + left - nextLeft, panelState.minWidth, maxRight - nextLeft);
+        left = nextLeft;
+      }
+      if (direction.includes("n")) {
+        const nextTop = clamp(top + dy, viewportMargin, top + height - panelState.minHeight);
+        height = clamp(height + top - nextTop, panelState.minHeight, maxBottom - nextTop);
+        top = nextTop;
+      }
+
+      panelState.width = width;
+      panelState.height = height;
+      setLauncherPosition(left, top, false);
+      panel.style.setProperty("--panel-left", `${left}px`);
+      panel.style.setProperty("--panel-top", `${top}px`);
+      panel.style.setProperty("--panel-width", `${width}px`);
+      panel.style.setProperty("--panel-height", `${height}px`);
+    }
+
+    function setPanelOpen(isOpen) {
+      if (isOpen) {
+        positionPanelFromLauncher();
+      }
+      panel.classList.toggle("is-open", isOpen);
+      openButton.classList.toggle("panel-open", isOpen);
+      panel.setAttribute("aria-hidden", String(!isOpen));
+      openButton.setAttribute("aria-expanded", String(isOpen));
+      openButton.setAttribute("aria-label", isOpen ? "Collapse ComfyBIO assistant" : "Open ComfyBIO assistant");
+      openButton.setAttribute("title", isOpen ? "Collapse assistant" : "Drag or open assistant");
+      if (isOpen) {
+        tabs.find((tab) => tab.classList.contains("active"))?.focus();
+      } else {
+        openButton.focus();
+      }
+    }
+
+    updateModelOptions();
+    providerSelect.addEventListener("change", updateModelOptions);
+    addResourceButton.addEventListener("click", () => {
+      resourceList.append(createResourceRow());
+    });
+    resourceList.addEventListener("click", (event) => {
+      const pickerButton = event.target.closest(".path-picker-button");
+      if (pickerButton) {
+        const cell = pickerButton.closest(".path-picker-cell");
+        resourceList.querySelectorAll(".path-picker-cell.is-open").forEach((candidate) => {
+          if (candidate !== cell) {
+            candidate.classList.remove("is-open");
+          }
+        });
+        cell.classList.toggle("is-open");
+        return;
+      }
+
+      const pathChoice = event.target.closest(".path-choice");
+      if (pathChoice) {
+        const cell = pathChoice.closest(".path-picker-cell");
+        const button = cell.querySelector(".path-picker-button");
+        button.textContent = pathChoice.dataset.kind === "file" ? "File" : "Folder";
+        cell.classList.remove("is-open");
+        return;
+      }
+
+      const removeButton = event.target.closest(".remove-resource");
+      if (!removeButton) {
+        return;
+      }
+      removeButton.closest(".resource-row")?.remove();
+    });
+    submitPromptButton.addEventListener("click", () => {
+      window.comfyBioLastRequest = collectPromptPayload();
+      statusChip.textContent = "Context ready";
+    });
+    setLauncherPosition(launcherState.left, launcherState.top);
+
+    openButton.addEventListener("pointerdown", (event) => {
+      launcherState.pointerId = event.pointerId;
+      launcherState.startX = event.clientX;
+      launcherState.startY = event.clientY;
+      launcherState.moved = false;
+      openButton.classList.add("dragging");
+      openButton.setPointerCapture(event.pointerId);
+    });
+
+    openButton.addEventListener("pointermove", (event) => {
+      if (launcherState.pointerId !== event.pointerId) {
+        return;
+      }
+      const dx = event.clientX - launcherState.startX;
+      const dy = event.clientY - launcherState.startY;
+      if (Math.abs(dx) + Math.abs(dy) > 4) {
+        launcherState.moved = true;
+      }
+      setLauncherPosition(launcherState.left + dx, launcherState.top + dy);
+      launcherState.startX = event.clientX;
+      launcherState.startY = event.clientY;
+    });
+
+    openButton.addEventListener("pointerup", (event) => {
+      if (launcherState.pointerId !== event.pointerId) {
+        return;
+      }
+      openButton.classList.remove("dragging");
+      openButton.releasePointerCapture(event.pointerId);
+      launcherState.pointerId = null;
+      launcherState.suppressClick = launcherState.moved;
+    });
+
+    openButton.addEventListener("pointercancel", () => {
+      openButton.classList.remove("dragging");
+      launcherState.pointerId = null;
+      launcherState.suppressClick = false;
+    });
+
+    openButton.addEventListener("click", () => {
+      if (launcherState.suppressClick) {
+        launcherState.suppressClick = false;
+        return;
+      }
+      setPanelOpen(!panel.classList.contains("is-open"));
+    });
+    closeButton.addEventListener("click", () => setPanelOpen(false));
+
+    resizeHandles.forEach((handle) => {
+      handle.addEventListener("pointerdown", (event) => {
+        if (!panel.classList.contains("is-open")) {
+          return;
+        }
+        event.preventDefault();
+        panelState.resize = {
+          pointerId: event.pointerId,
+          direction: handle.dataset.resize,
+          x: event.clientX,
+          y: event.clientY
+        };
+        handle.setPointerCapture(event.pointerId);
+      });
+
+      handle.addEventListener("pointermove", (event) => {
+        if (!panelState.resize || panelState.resize.pointerId !== event.pointerId) {
+          return;
+        }
+        const dx = event.clientX - panelState.resize.x;
+        const dy = event.clientY - panelState.resize.y;
+        resizePanel(panelState.resize.direction, dx, dy);
+        panelState.resize.x = event.clientX;
+        panelState.resize.y = event.clientY;
+      });
+
+      function finishResize(event) {
+        if (!panelState.resize || panelState.resize.pointerId !== event.pointerId) {
+          return;
+        }
+        if (handle.hasPointerCapture(event.pointerId)) {
+          handle.releasePointerCapture(event.pointerId);
+        }
+        panelState.resize = null;
+      }
+
+      handle.addEventListener("pointerup", finishResize);
+      handle.addEventListener("pointercancel", finishResize);
+    });
+
+    window.addEventListener("resize", () => {
+      setLauncherPosition(launcherState.left, launcherState.top);
+      if (panel.classList.contains("is-open")) {
+        positionPanelFromLauncher();
+      }
+    });
+
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        const selected = tab.dataset.tab;
+        tabs.forEach((candidate) => {
+          const isActive = candidate === tab;
+          candidate.classList.toggle("active", isActive);
+          candidate.setAttribute("aria-selected", String(isActive));
+        });
+        panels.forEach((candidate) => {
+          const isActive = candidate.dataset.panel === selected;
+          candidate.classList.toggle("active", isActive);
+          candidate.toggleAttribute("hidden", !isActive);
+        });
+      });
+    });
+
+    function renumberStepItems() {
+      document.querySelectorAll(".step-list .step-item").forEach((item, index) => {
+        const badge = item.querySelector(".step-badge");
+        if (badge) {
+          badge.textContent = String(index + 1);
+        }
+      });
+    }
+
+    function setExpandedStep(item, shouldExpand) {
+      document.querySelectorAll(".step-item.is-expanded").forEach((candidate) => {
+        if (candidate !== item) {
+          candidate.classList.remove("is-expanded", "replace-open");
+          candidate.querySelector(".step-summary")?.setAttribute("aria-expanded", "false");
+        }
+      });
+      item.classList.toggle("is-expanded", shouldExpand);
+      item.querySelector(".step-summary")?.setAttribute("aria-expanded", String(shouldExpand));
+      if (!shouldExpand) {
+        item.classList.remove("replace-open");
+      }
+    }
+
+    if (stepList) {
+      let dragState = null;
+
+      stepList.addEventListener("click", (event) => {
+        const removeButton = event.target.closest(".step-remove");
+        if (removeButton) {
+          removeButton.closest(".step-item")?.remove();
+          renumberStepItems();
+          return;
+        }
+
+        const replaceTrigger = event.target.closest(".replace-trigger");
+        if (replaceTrigger) {
+          const step = replaceTrigger.closest(".step-item");
+          document.querySelectorAll(".step-item.replace-open").forEach((candidate) => {
+            if (candidate !== step) {
+              candidate.classList.remove("replace-open");
+            }
+          });
+          step.classList.toggle("replace-open");
+          return;
+        }
+
+        const summary = event.target.closest(".step-summary");
+        if (!summary || event.target.closest(".drag-handle")) {
+          return;
+        }
+        const item = summary.closest(".step-item");
+        setExpandedStep(item, !item.classList.contains("is-expanded"));
+      });
+
+      stepList.addEventListener("keydown", (event) => {
+        if (event.key !== "Enter" && event.key !== " ") {
+          return;
+        }
+        const summary = event.target.closest(".step-summary");
+        if (!summary) {
+          return;
+        }
+        event.preventDefault();
+        const item = summary.closest(".step-item");
+        setExpandedStep(item, !item.classList.contains("is-expanded"));
+      });
+
+      stepList.addEventListener("pointerdown", (event) => {
+        const handle = event.target.closest(".drag-handle");
+        if (!handle) {
+          return;
+        }
+        event.preventDefault();
+        const item = handle.closest(".step-item");
+        dragState = {
+          item,
+          pointerId: event.pointerId,
+          startX: event.clientX,
+          startY: event.clientY
+        };
+        stepList.classList.add("drag-active");
+        item.classList.add("is-dragging");
+        handle.setPointerCapture(event.pointerId);
+      });
+
+      stepList.addEventListener("pointermove", (event) => {
+        if (!dragState || dragState.pointerId !== event.pointerId) {
+          return;
+        }
+        const dx = Math.abs(event.clientX - dragState.startX);
+        const dy = Math.abs(event.clientY - dragState.startY);
+        if (dx + dy <= 3) {
+          return;
+        }
+        const target = document.elementFromPoint(event.clientX, event.clientY)?.closest(".step-item");
+        if (!target || target === dragState.item || !stepList.contains(target)) {
+          return;
+        }
+        const rect = target.getBoundingClientRect();
+        const shouldInsertAfter = event.clientY > rect.top + rect.height / 2;
+        stepList.insertBefore(dragState.item, shouldInsertAfter ? target.nextSibling : target);
+      });
+
+      function finishStepDrag(event) {
+        if (!dragState || dragState.pointerId !== event.pointerId) {
+          return;
+        }
+        const handle = dragState.item.querySelector(".drag-handle");
+        if (handle?.hasPointerCapture(event.pointerId)) {
+          handle.releasePointerCapture(event.pointerId);
+        }
+        dragState.item.classList.remove("is-dragging");
+        stepList.classList.remove("drag-active");
+        dragState = null;
+        renumberStepItems();
+      }
+
+      stepList.addEventListener("pointerup", finishStepDrag);
+      stepList.addEventListener("pointercancel", finishStepDrag);
+    }
+
+    addWorkflowStepButton.addEventListener("click", (event) => {
+      event.stopPropagation();
+      const isOpen = addStepWrap.classList.toggle("is-open");
+      addWorkflowStepButton.setAttribute("aria-expanded", String(isOpen));
+    });
+
+    addStepWrap.addEventListener("click", (event) => {
+      const option = event.target.closest(".add-step-option");
+      if (!option) {
+        return;
+      }
+      const stepData = workflowStepCatalog[option.dataset.step];
+      if (!stepData) {
+        return;
+      }
+      const item = createWorkflowStep(stepData);
+      stepList.append(item);
+      renumberStepItems();
+      setExpandedStep(item, true);
+      addStepWrap.classList.remove("is-open");
+      addWorkflowStepButton.setAttribute("aria-expanded", "false");
+    });
+
+    document.addEventListener("click", (event) => {
+      if (!event.target.closest(".add-step-wrap")) {
+        addStepWrap.classList.remove("is-open");
+        addWorkflowStepButton.setAttribute("aria-expanded", "false");
+      }
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && panel.classList.contains("is-open")) {
+        setPanelOpen(false);
+      }
+    });
+  </script>
+</body>
+</html>

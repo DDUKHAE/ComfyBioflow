@@ -22,9 +22,13 @@ The repository-root `__init__.py` adds `harness/src` to `sys.path` and re-export
 ```python
 NODE_CLASS_MAPPINGS
 NODE_DISPLAY_NAME_MAPPINGS
+WEB_DIRECTORY
 ```
 
 This is the entrypoint ComfyUI expects when loading `/custom_nodes/ComfyBIO`.
+`WEB_DIRECTORY = "./web"` exposes the ComfyBIO browser extension under
+`web/js/comfybio_panel.js`, which renders the draggable DNA launcher and the
+Prompt, Tool Select, and Generate Graph panel inside ComfyUI.
 
 The official `bulk_rna_seq_salmon_ref` workflow has Python classes for every node type emitted by the default workflow builder:
 

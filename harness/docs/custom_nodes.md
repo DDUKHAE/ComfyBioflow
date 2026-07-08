@@ -26,7 +26,7 @@ WEB_DIRECTORY
 ```
 
 This is the entrypoint ComfyUI expects when loading `/custom_nodes/ComfyBIO`.
-`WEB_DIRECTORY = "./web"` exposes the ComfyBIO browser extension under
+`WEB_DIRECTORY = "./web/js"` exposes the ComfyBIO browser extension under
 `web/js/comfybio_panel.js`, which renders the draggable DNA launcher and the
 Prompt, Tool Select, and Generate Graph panel inside ComfyUI.
 

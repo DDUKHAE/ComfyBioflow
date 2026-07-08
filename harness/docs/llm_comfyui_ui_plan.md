@@ -232,7 +232,7 @@ Repair response:
 
 Add a ComfyUI web extension under the custom-node `WEB_DIRECTORY` path.
 The current implementation is `web/js/comfybio_panel.js`, exposed by the
-repository-root `WEB_DIRECTORY = "./web"`.
+repository-root `WEB_DIRECTORY = "./web/js"`.
 
 Responsibilities:
 

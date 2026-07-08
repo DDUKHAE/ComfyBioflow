@@ -62,4 +62,4 @@ External-tool nodes expose an `extra_command` string input alongside core path a
 
 Blank lines and lines starting with `#` are ignored.
 
-The official workflow also gives every downstream ComfyBIO node an `upstream` `STRING` input with `forceInput: True`. This socket carries the visible graph edge between nodes, while file paths and command options remain editable widgets. Normal bioinformatics artifacts return `STRING` paths. Visualization nodes may additionally return `IMAGE` previews.
+The official workflow gives every downstream ComfyBIO node one connected `STRING` input with `forceInput: True`. The visible socket names use artifact formats such as `fastp_qc_json`, `salmon_quant_dir`, `deseq2_count_matrix`, `filtered_feature_bc_matrix`, `qc_h5ad`, and `marker_genes_csv` instead of a generic `upstream` label. The connected value is still a file or directory path encoded as `STRING`; detailed file paths and command options remain editable widgets. Normal bioinformatics artifacts return `STRING` paths. Visualization nodes may additionally return `IMAGE` previews.

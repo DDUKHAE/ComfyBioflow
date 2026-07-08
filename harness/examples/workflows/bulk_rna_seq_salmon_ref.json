@@ -30,7 +30,7 @@
       "inputs": [],
       "outputs": [
         {
-          "name": "request_payload",
+          "name": "workflow_request",
           "type": "STRING",
           "slot_index": 0,
           "links": [
@@ -70,14 +70,14 @@
       "mode": 0,
       "inputs": [
         {
-          "name": "upstream",
+          "name": "workflow_request",
           "type": "STRING",
           "link": 1
         }
       ],
       "outputs": [
         {
-          "name": "validated_metadata",
+          "name": "sample_metadata_csv",
           "type": "STRING",
           "slot_index": 0,
           "links": [
@@ -118,14 +118,14 @@
       "mode": 0,
       "inputs": [
         {
-          "name": "upstream",
+          "name": "fastq_pair",
           "type": "STRING",
           "link": 2
         }
       ],
       "outputs": [
         {
-          "name": "qc_dir",
+          "name": "fastp_qc_json",
           "type": "STRING",
           "slot_index": 0,
           "links": [
@@ -169,7 +169,7 @@
       "mode": 0,
       "inputs": [
         {
-          "name": "upstream",
+          "name": "fastp_qc_json",
           "type": "STRING",
           "link": 3
         }
@@ -220,7 +220,7 @@
       "mode": 0,
       "inputs": [
         {
-          "name": "upstream",
+          "name": "transcriptome_fasta_path",
           "type": "STRING",
           "link": 4
         }
@@ -270,7 +270,7 @@
       "mode": 0,
       "inputs": [
         {
-          "name": "upstream",
+          "name": "salmon_index_dir",
           "type": "STRING",
           "link": 5
         }
@@ -323,7 +323,7 @@
       "mode": 0,
       "inputs": [
         {
-          "name": "upstream",
+          "name": "salmon_quant_dir_path",
           "type": "STRING",
           "link": 6
         }
@@ -372,7 +372,7 @@
       "mode": 0,
       "inputs": [
         {
-          "name": "upstream",
+          "name": "deseq2_count_matrix",
           "type": "STRING",
           "link": 7
         }
@@ -423,7 +423,7 @@
       "mode": 0,
       "inputs": [
         {
-          "name": "upstream",
+          "name": "deseq2_results_table",
           "type": "STRING",
           "link": 8
         }
@@ -481,14 +481,14 @@
       "mode": 0,
       "inputs": [
         {
-          "name": "upstream",
+          "name": "plot_dir_path",
           "type": "STRING",
           "link": 9
         }
       ],
       "outputs": [
         {
-          "name": "report_path",
+          "name": "report_markdown",
           "type": "STRING",
           "slot_index": 0,
           "links": [
@@ -531,14 +531,14 @@
       "mode": 0,
       "inputs": [
         {
-          "name": "upstream",
+          "name": "report_markdown",
           "type": "STRING",
           "link": 10
         }
       ],
       "outputs": [
         {
-          "name": "workflow_json_path",
+          "name": "workflow_json",
           "type": "STRING",
           "slot_index": 0,
           "links": []
@@ -587,8 +587,8 @@
       },
       "widgets_values": [],
       "metadata": {
-        "stage_id": "deseq2_preview",
-        "stage_label": "DESeq2 visualization preview",
+        "stage_id": "bulk_rna_seq_preview",
+        "stage_label": "bulk_rna_seq visualization preview",
         "selected_tool_id": "comfyui_preview_image",
         "selected_tier": "BUILTIN",
         "source_operation": "preview_image",

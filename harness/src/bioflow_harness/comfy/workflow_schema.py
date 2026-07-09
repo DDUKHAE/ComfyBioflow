@@ -19,15 +19,13 @@ def validate_workflow_export(workflow: dict) -> dict:
     if node_ids != expected_ids:
         raise WorkflowValidationError(f"Workflow node ids must be sequential starting at 1: {node_ids}")
 
-    try:
-        from bioflow_harness.custom_nodes.registry import NODE_CLASS_MAPPINGS
-    except ImportError as error:
-        raise WorkflowValidationError("Could not import ComfyBIO custom node registry.") from error
+    from bioflow_harness.comfy.node_catalog import default_node_catalog
 
+    known_node_types = set(default_node_catalog().keys())
     node_id_set = set(node_ids)
     for node in workflow["nodes"]:
         node_type = node.get("type")
-        if node_type not in NODE_CLASS_MAPPINGS and node_type not in BUILTIN_NODE_TYPES:
+        if node_type not in known_node_types and node_type not in BUILTIN_NODE_TYPES:
             raise WorkflowValidationError(f"Workflow references unregistered node type: {node_type}")
         if not node.get("title"):
             raise WorkflowValidationError(f"Node {node.get('id')} is missing a title.")

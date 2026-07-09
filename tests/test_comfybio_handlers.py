@@ -41,4 +41,4 @@ def test_generate_workflow_returns_valid_export():
 def test_generate_workflow_unsupported_is_planning_required():
     result = generate_workflow({"request_text": "assemble a bacterial genome"})
     assert result["status"] == "planning_required"
-    assert result["workflow"] is None if "workflow" in result else True
+    assert result["workflow"] is None

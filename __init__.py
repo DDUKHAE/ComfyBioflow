@@ -16,6 +16,22 @@ if str(HARNESS_SRC) not in sys.path:
 from bioflow_harness.custom_nodes import NODE_CLASS_MAPPINGS, NODE_DISPLAY_NAME_MAPPINGS  # noqa: E402
 
 
+def _register_comfybio_routes() -> None:
+    try:
+        from server import PromptServer  # ComfyUI's top-level server module
+    except Exception:
+        return
+    instance = getattr(PromptServer, "instance", None)
+    if instance is None:
+        return
+    from bioflow_harness.server.routes import register_routes
+
+    register_routes(instance)
+
+
+_register_comfybio_routes()
+
+
 WEB_DIRECTORY = "./web/js"
 
 

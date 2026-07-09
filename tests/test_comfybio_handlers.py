@@ -1,4 +1,6 @@
 from bioflow_harness.server.handlers import compile_spec
+from bioflow_harness.comfy.workflow_schema import validate_workflow_export
+from bioflow_harness.server.handlers import generate_workflow
 
 
 def test_compile_spec_bulk_rna_seq_returns_salmon_route():
@@ -25,3 +27,18 @@ def test_compile_spec_unsupported_domain_is_planning_required():
     assert result["status"] == "planning_required"
     assert result["route_id"] is None
     assert "planning is required" in result["message"].lower()
+
+
+def test_generate_workflow_returns_valid_export():
+    result = generate_workflow({"request_text": "bulk RNA-seq human treated vs control with DESeq2 plots and report"})
+    assert result["status"] == "ok"
+    assert result["route_id"] == "bulk_rna_seq_salmon_ref"
+    workflow = result["workflow"]
+    assert workflow["metadata"]["format"] == "comfyui_workflow_export"
+    validate_workflow_export(workflow)  # raises if malformed
+
+
+def test_generate_workflow_unsupported_is_planning_required():
+    result = generate_workflow({"request_text": "assemble a bacterial genome"})
+    assert result["status"] == "planning_required"
+    assert result["workflow"] is None if "workflow" in result else True

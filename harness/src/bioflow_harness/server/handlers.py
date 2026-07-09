@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from bioflow_harness.comfy.node_catalog import default_node_catalog
+from bioflow_harness.comfy.workflow_builder import WorkflowBuilder
 from bioflow_harness.models.registry_contract import ToolRegistry
 from bioflow_harness.parser.prompt_parser import parse_prompt
 from bioflow_harness.planner.stage_mapper import route_for_domain
@@ -11,6 +13,7 @@ from bioflow_harness.server.dto import (
     CandidateDTO,
     CompileRequest,
     CompileResponse,
+    GenerateRequest,
     StepDTO,
 )
 
@@ -66,3 +69,27 @@ def compile_spec(payload: dict, registry_path: Path | None = None) -> dict:
         message=None,
         confidence_notes=[],
     ).to_dict()
+
+
+def generate_workflow(payload: dict, registry_path: Path | None = None) -> dict:
+    request = GenerateRequest.from_dict(payload)
+    registry = load_registry(registry_path or DEFAULT_REGISTRY_PATH)
+    brief = parse_prompt(request.request_text)
+    try:
+        plan = WorkflowPlanner(registry).plan(brief)
+    except ValueError:
+        return {
+            "status": "planning_required",
+            "domain": brief.domain,
+            "route_id": None,
+            "workflow": None,
+            "message": f"Workflow planning is required before generating domain: {brief.domain}",
+            "confidence_notes": list(brief.confidence_notes),
+        }
+    workflow = WorkflowBuilder(default_node_catalog()).build(plan)
+    return {
+        "status": "ok",
+        "domain": plan.domain,
+        "route_id": plan.route_id,
+        "workflow": workflow,
+    }

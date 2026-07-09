@@ -87,9 +87,19 @@ def generate_workflow(payload: dict, registry_path: Path | None = None) -> dict:
             "confidence_notes": list(brief.confidence_notes),
         }
     workflow = WorkflowBuilder(default_node_catalog()).build(plan)
+    deterministic_steps = [
+        registry.tool_by_id(stage.selected_tool_id).label for stage in plan.stages
+    ]
+    message = None
+    if request.steps and list(request.steps) != deterministic_steps:
+        message = (
+            "Your step edits (reordering/replacement) are not applied in Slice 1; "
+            "the workflow was generated from the deterministic default route."
+        )
     return {
         "status": "ok",
         "domain": plan.domain,
         "route_id": plan.route_id,
         "workflow": workflow,
+        "message": message,
     }

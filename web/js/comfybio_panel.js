@@ -1103,6 +1103,9 @@ function initializePanel(panel, launcher) {
       }
       app.loadGraphData(data.workflow);
       status.textContent = "Graph loaded";
+      if (data.message) {
+        showToolMessage(data.message);
+      }
     } catch (error) {
       status.textContent = "Backend offline";
       showToolMessage(`Generate failed: ${error.message}`);

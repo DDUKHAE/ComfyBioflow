@@ -42,3 +42,26 @@ def test_generate_workflow_unsupported_is_planning_required():
     result = generate_workflow({"request_text": "assemble a bacterial genome"})
     assert result["status"] == "planning_required"
     assert result["workflow"] is None
+
+
+def test_generate_workflow_matching_steps_has_no_message():
+    request_text = "bulk RNA-seq human treated vs control with DESeq2 plots and report"
+    compiled = compile_spec({"request_text": request_text})
+    deterministic_steps = [step["tool_label"] for step in compiled["steps"]]
+    result = generate_workflow({"request_text": request_text, "steps": deterministic_steps})
+    assert result["status"] == "ok"
+    assert result["message"] is None
+
+
+def test_generate_workflow_reordered_steps_surfaces_warning_not_error():
+    result = generate_workflow(
+        {
+            "request_text": "bulk RNA-seq human treated vs control with DESeq2 plots and report",
+            "steps": ["some_reordered_tool", "another_replacement_tool"],
+        }
+    )
+    assert result["status"] == "ok"
+    assert result["workflow"] is not None
+    assert result["route_id"] == "bulk_rna_seq_salmon_ref"
+    assert result["message"]
+    assert "not applied" in result["message"].lower()

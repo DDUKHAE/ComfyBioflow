@@ -1,9 +1,10 @@
 import { app } from "../../scripts/app.js";
+import { api } from "../../scripts/api.js";
 
 const PROVIDER_MODELS = {
   codex: ["gpt-5.5", "gpt-5.4", "gpt-5.4-mini"],
-  claude: ["claude-opus-4.1", "claude-sonnet-4.5", "claude-haiku-4.5"],
-  gemini: ["gemini-2.5-pro", "gemini-2.5-flash", "gemini-2.5-flash-lite"],
+  claude: ["claude-opus-4.6", "claude-sonnet-5.0", "claude-haiku-4.5"],
+  gemini: ["gemini-3.1-pro", "gemini-3.5-flash", "gemini-3.1-flash"],
 };
 
 const STEP_CATALOG = {
@@ -682,9 +683,8 @@ function createExtraResource() {
   return row;
 }
 
-function createStep(key) {
-  const step = STEP_CATALOG[key];
-  const item = el("div", { class: "cb-step", datakey: key });
+function createStep(step) {
+  const item = el("div", { class: "cb-step" });
   item.innerHTML = `
     <div class="cb-step-summary" role="button" tabindex="0" aria-expanded="false">
       <span class="cb-drag" title="Drag to reorder" aria-hidden="true">::</span>
@@ -836,6 +836,7 @@ function initializePanel(panel, launcher) {
     panelResize: null,
     stepDrag: null,
     lastPayload: null,
+    spec: null,
   };
   const viewportMargin = 12;
   const launcherSize = 56;
@@ -887,6 +888,37 @@ function initializePanel(panel, launcher) {
     stepList.querySelectorAll(".cb-step").forEach((item, index) => {
       item.querySelector(".cb-badge").textContent = String(index + 1);
     });
+  }
+
+  function stepFromDTO(dto) {
+    const io = `${(dto.input_types || []).join(", ") || "-"} / ${(dto.output_types || []).join(", ") || "-"}`;
+    return {
+      stage: dto.stage_label,
+      tool: dto.tool_label,
+      input: (dto.input_types || []).join(", ") || "-",
+      output: (dto.output_types || []).join(", ") || "-",
+      title: `TSR candidates for ${dto.stage_label}`,
+      subtitle: io,
+      candidates: (dto.candidates || []).map((candidate) => [
+        candidate.label,
+        candidate.tier,
+        candidate.tier === "REF" ? "" : " amber",
+        candidate.note || "",
+      ]),
+    };
+  }
+
+  function renderServerSteps(steps) {
+    stepList.replaceChildren(...steps.map((dto) => createStep(stepFromDTO(dto))));
+    renumberSteps();
+    refreshSummary();
+  }
+
+  function showToolMessage(text) {
+    const message = panel.querySelector('[data-panel="tool"] .cb-message');
+    if (message) {
+      message.innerHTML = `<span class="severity">status</span>${text}`;
+    }
   }
 
   function setExpandedStep(item, shouldExpand) {
@@ -972,10 +1004,8 @@ function initializePanel(panel, launcher) {
     createExtraResource(),
   );
   for (const key of INITIAL_STEPS) {
-    stepList.append(createStep(key));
+    stepList.append(createStep(STEP_CATALOG[key]));
   }
-  stepList.querySelector('[data-key="star"]').classList.add("expanded", "replace-open");
-  stepList.querySelector('[data-key="star"] .cb-step-summary').setAttribute("aria-expanded", "true");
   renumberSteps();
   refreshSummary();
   syncLauncher();
@@ -1016,15 +1046,33 @@ function initializePanel(panel, launcher) {
     }
   });
 
-  panel.querySelector(".cb-submit").addEventListener("click", () => {
-    state.lastPayload = {
+  panel.querySelector(".cb-submit").addEventListener("click", async () => {
+    const payload = {
       provider: provider.value,
       model: model.value,
       request_text: panel.querySelector(".cb-analysis-request").value.trim(),
       resources: getResources(),
     };
-    status.textContent = "Context ready";
-    refreshSummary();
+    state.lastPayload = payload;
+    try {
+      const response = await api.fetchApi("/comfybio/compile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await response.json();
+      if (data.status === "planning_required") {
+        status.textContent = "Planning required";
+        showToolMessage(data.message || "Domain requires planning.");
+        return;
+      }
+      state.spec = data;
+      renderServerSteps(data.steps || []);
+      status.textContent = "Spec ready";
+    } catch (error) {
+      status.textContent = "Backend offline";
+      showToolMessage(`Compile failed: ${error.message}`);
+    }
   });
 
   panel.querySelector(".cb-approve").addEventListener("click", () => {
@@ -1032,15 +1080,33 @@ function initializePanel(panel, launcher) {
     refreshSummary();
   });
 
-  panel.querySelector(".cb-generate").addEventListener("click", () => {
+  panel.querySelector(".cb-generate").addEventListener("click", async () => {
     refreshSummary();
-    const detail = {
-      prompt: state.lastPayload,
-      tools: getToolSequence(),
+    const payload = {
+      provider: provider.value,
+      model: model.value,
+      request_text: panel.querySelector(".cb-analysis-request").value.trim(),
+      resources: getResources(),
+      steps: getToolSequence(),
     };
-    window.dispatchEvent(new CustomEvent("comfybio:generate-graph", { detail }));
-    status.textContent = "Graph requested";
-    console.info("[ComfyBIO] Generate Graph requested", detail);
+    try {
+      const response = await api.fetchApi("/comfybio/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await response.json();
+      if (data.status !== "ok" || !data.workflow) {
+        status.textContent = "Generate failed";
+        showToolMessage(data.message || "Workflow generation failed.");
+        return;
+      }
+      app.loadGraphData(data.workflow);
+      status.textContent = "Graph loaded";
+    } catch (error) {
+      status.textContent = "Backend offline";
+      showToolMessage(`Generate failed: ${error.message}`);
+    }
   });
 
   launcher.addEventListener("pointerdown", (event) => {
@@ -1197,7 +1263,7 @@ function initializePanel(panel, launcher) {
   addStepWrap.addEventListener("click", (event) => {
     const option = event.target.closest(".cb-step-option");
     if (!option) return;
-    const item = createStep(option.dataset.step);
+    const item = createStep(STEP_CATALOG[option.dataset.step]);
     stepList.append(item);
     renumberSteps();
     setExpandedStep(item, true);

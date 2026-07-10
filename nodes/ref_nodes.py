@@ -227,6 +227,14 @@ class DESeq2VisualizationNode(_BaseComfyBIONode):
             }
         }
 
+    def run(self, deseq2_results_table, count_matrix, results_csv, plot_dir, extra_command="", runner=None, preview_loader=None) -> tuple[str, object]:
+        runner = resolve_runner(runner)
+        loader = preview_loader if preview_loader is not None else load_preview_tensor
+        plots = Path(plot_dir)
+        plots.mkdir(parents=True, exist_ok=True)
+        runner.run(stage_commands.deseq2_viz_argv(count_matrix, results_csv, plots, extra_command), plots)
+        return (str(plots), loader(plots / "pca.png"))
+
 
 class TenxCountNode(_BaseComfyBIONode):
     CATEGORY = "ComfyBIO/scRNA-seq"
@@ -368,3 +376,10 @@ class ComfyBIOReportNode(_BaseComfyBIONode):
                 "extra_command": cls._extra_command_input(),
             }
         }
+
+    def run(self, plot_dir_path, results_csv, plot_dir, report_path, extra_command="", runner=None) -> tuple[str]:
+        runner = resolve_runner(runner)
+        report = Path(report_path)
+        report.parent.mkdir(parents=True, exist_ok=True)
+        runner.run(stage_commands.report_argv(results_csv, plot_dir, report), report.parent)
+        return (str(report),)

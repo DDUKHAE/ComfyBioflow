@@ -127,3 +127,32 @@ def test_deseq2_analysis_runs_once_and_returns_results(tmp_path):
     assert result == (str(results),)
     assert results.parent.exists()
     assert len(runner.commands) == 1
+
+
+def test_deseq2_visualization_returns_plot_dir_and_image(tmp_path):
+    runner = DryRunCommandRunner()
+    plots = tmp_path / "plots"
+    node = nodes.NODE_CLASS_MAPPINGS["DESeq2VisualizationNode"]()
+    result = node.run(
+        deseq2_results_table="upstream", count_matrix=str(tmp_path / "count_matrix.csv"),
+        results_csv=str(tmp_path / "results.csv"), plot_dir=str(plots),
+        extra_command="", runner=runner, preview_loader=lambda path: "IMAGE_STUB",
+    )
+    assert result == (str(plots), "IMAGE_STUB")
+    assert plots.exists()
+    assert len(runner.commands) == 1
+
+
+def test_comfybio_report_runs_report_script(tmp_path):
+    runner = DryRunCommandRunner()
+    report = tmp_path / "report" / "comfybio_report.md"
+    node = nodes.NODE_CLASS_MAPPINGS["ComfyBIOReportNode"]()
+    result = node.run(
+        plot_dir_path="upstream", results_csv=str(tmp_path / "results.csv"),
+        plot_dir=str(tmp_path / "plots"), report_path=str(report),
+        extra_command="", runner=runner,
+    )
+    assert result == (str(report),)
+    assert report.parent.exists()
+    assert len(runner.commands) == 1
+    assert "conda" not in runner.commands[0].argv

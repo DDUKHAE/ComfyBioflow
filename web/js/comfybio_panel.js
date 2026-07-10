@@ -398,7 +398,7 @@ function injectStyles() {
     }
     .cb-step.expanded {
       border-color: color-mix(in srgb, var(--cb-accent) 58%, transparent);
-      background: #303636;
+      background: color-mix(in srgb, var(--cb-accent) 8%, var(--cb-panel-2));
     }
     .cb-step.dragging {
       opacity: .58;

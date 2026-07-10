@@ -13,7 +13,7 @@ HARNESS_SRC = ROOT / "harness" / "src"
 if str(HARNESS_SRC) not in sys.path:
     sys.path.insert(0, str(HARNESS_SRC))
 
-from bioflow_harness.custom_nodes import NODE_CLASS_MAPPINGS, NODE_DISPLAY_NAME_MAPPINGS  # noqa: E402
+from .nodes import NODE_CLASS_MAPPINGS, NODE_DISPLAY_NAME_MAPPINGS  # noqa: E402
 
 
 def _register_comfybio_routes() -> None:

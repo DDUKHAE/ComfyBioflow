@@ -1,4 +1,4 @@
-from bioflow_harness.custom_nodes.ref_nodes import (
+from nodes.ref_nodes import (
     ComfyBIOReportNode,
     DESeq2AnalysisNode,
     DESeq2VisualizationNode,

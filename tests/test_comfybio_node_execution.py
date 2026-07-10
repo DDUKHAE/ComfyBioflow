@@ -99,3 +99,31 @@ def test_salmon_quant_uses_trimmed_reads_sibling_of_output(tmp_path):
     joined = " ".join(runner.commands[0].argv)
     assert str(base / "trimmed" / "sample_a" / "R1.fastq") in joined
     assert (quant / "sample_a").exists()
+
+
+def test_tximport_runs_once_and_creates_matrix_parent(tmp_path):
+    runner = DryRunCommandRunner()
+    matrix = tmp_path / "deseq2" / "count_matrix.csv"
+    node = nodes.NODE_CLASS_MAPPINGS["TximportNode"]()
+    result = node.run(
+        salmon_quant_dir_path="upstream", salmon_quant_dir=str(tmp_path / "salmon_quant"),
+        metadata_csv=QS_META, output_count_matrix=str(matrix), extra_command="", runner=runner,
+    )
+    assert result == (str(matrix),)
+    assert matrix.parent.exists()
+    assert len(runner.commands) == 1
+    assert "Rscript" in runner.commands[0].argv
+
+
+def test_deseq2_analysis_runs_once_and_returns_results(tmp_path):
+    runner = DryRunCommandRunner()
+    results = tmp_path / "deseq2" / "results.csv"
+    node = nodes.NODE_CLASS_MAPPINGS["DESeq2AnalysisNode"]()
+    result = node.run(
+        deseq2_count_matrix="upstream", count_matrix=str(tmp_path / "count_matrix.csv"),
+        sample_metadata=QS_META, results_csv=str(results),
+        design_formula="~ condition", extra_command="", runner=runner,
+    )
+    assert result == (str(results),)
+    assert results.parent.exists()
+    assert len(runner.commands) == 1

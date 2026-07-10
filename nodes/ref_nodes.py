@@ -177,6 +177,13 @@ class TximportNode(_BaseComfyBIONode):
             }
         }
 
+    def run(self, salmon_quant_dir_path, salmon_quant_dir, metadata_csv, output_count_matrix, extra_command="", runner=None) -> tuple[str]:
+        runner = resolve_runner(runner)
+        matrix = Path(output_count_matrix)
+        matrix.parent.mkdir(parents=True, exist_ok=True)
+        runner.run(stage_commands.tximport_argv(salmon_quant_dir, matrix, extra_command), matrix.parent)
+        return (str(matrix),)
+
 
 class DESeq2AnalysisNode(_BaseComfyBIONode):
     CATEGORY = "ComfyBIO/Differential Expression"
@@ -194,6 +201,13 @@ class DESeq2AnalysisNode(_BaseComfyBIONode):
                 "extra_command": cls._extra_command_input(),
             }
         }
+
+    def run(self, deseq2_count_matrix, count_matrix, sample_metadata, results_csv, design_formula="~ condition", extra_command="", runner=None) -> tuple[str]:
+        runner = resolve_runner(runner)
+        results = Path(results_csv)
+        results.parent.mkdir(parents=True, exist_ok=True)
+        runner.run(stage_commands.deseq2_argv(count_matrix, sample_metadata, results, extra_command), results.parent)
+        return (str(results),)
 
 
 class DESeq2VisualizationNode(_BaseComfyBIONode):

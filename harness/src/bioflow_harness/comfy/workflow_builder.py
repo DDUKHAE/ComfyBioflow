@@ -2,12 +2,25 @@ from bioflow_harness.comfy.node_catalog import NodeDefinition
 from bioflow_harness.comfy.workflow_schema import validate_workflow_export
 from bioflow_harness.models.workflow_plan import WorkflowPlan
 
+# node_type -> {widget_index: attribute name on ResourceBindings}
+_BULK_INJECTION = {
+    "SampleMetadataValidatorNode": {0: "input_fastq_dir", 1: "metadata_csv"},
+    "FastpQCNode": {0: "input_fastq_dir", 1: "metadata_csv", 2: "qc_dir"},
+    "FastpTrimNode": {0: "input_fastq_dir", 1: "metadata_csv", 2: "trimmed_dir"},
+    "SalmonIndexNode": {0: "transcriptome_fasta", 1: "salmon_index_dir"},
+    "SalmonQuantNode": {0: "salmon_index_dir", 1: "input_fastq_dir", 2: "metadata_csv", 3: "salmon_quant_dir"},
+    "TximportNode": {0: "salmon_quant_dir", 1: "metadata_csv", 2: "count_matrix"},
+    "DESeq2AnalysisNode": {0: "count_matrix", 1: "metadata_csv", 2: "results_csv"},
+    "DESeq2VisualizationNode": {0: "count_matrix", 1: "results_csv", 2: "plot_dir"},
+    "ComfyBIOReportNode": {0: "results_csv", 1: "plot_dir", 2: "report_path"},
+}
+
 
 class WorkflowBuilder:
     def __init__(self, node_catalog: dict[str, NodeDefinition]) -> None:
         self.node_catalog = node_catalog
 
-    def build(self, plan: WorkflowPlan) -> dict:
+    def build(self, plan: WorkflowPlan, bindings=None) -> dict:
         nodes = []
         links = []
         preview_source_node_id = None
@@ -18,7 +31,7 @@ class WorkflowBuilder:
             if stage.node_type not in self.node_catalog:
                 raise ValueError(f"Node type {stage.node_type} is missing from the node catalog.")
             definition = self.node_catalog[stage.node_type]
-            widgets = self._widgets_for_stage(definition, plan)
+            widgets = self._widgets_for_stage(definition, plan, bindings)
             incoming_link_id = index - 1 if index > 1 else None
             output_links_by_slot = {0: [index] if index < len(plan.stages) else []}
             image_output_slot = self._image_output_slot(definition)
@@ -101,12 +114,17 @@ class WorkflowBuilder:
         validate_workflow_export(workflow)
         return workflow
 
-    def _widgets_for_stage(self, definition: NodeDefinition, plan: WorkflowPlan) -> list[str | int | bool]:
+    def _widgets_for_stage(self, definition: NodeDefinition, plan: WorkflowPlan, bindings=None) -> list[str | int | bool]:
         if definition.node_type == "WorkflowRequestLoader":
             return [self._request_text(plan)]
         if definition.node_type == "WorkflowJSONOutput":
             return [f"harness/examples/workflows/{plan.route_id}.json"]
-        return list(definition.widgets)
+        widgets = list(definition.widgets)
+        if bindings is not None:
+            for index, attribute in _BULK_INJECTION.get(definition.node_type, {}).items():
+                if index < len(widgets):
+                    widgets[index] = getattr(bindings, attribute)
+        return widgets
 
     def _request_text(self, plan: WorkflowPlan) -> str:
         if plan.domain == "scrna_seq":

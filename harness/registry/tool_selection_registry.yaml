@@ -30,25 +30,6 @@
   },
   "tools": [
     {
-      "id": "workflow_request_loader",
-      "label": "Workflow Request Loader",
-      "domain_tags": ["bulk_rna_seq"],
-      "stage_tags": ["request_loading"],
-      "input_types": ["prompt_payload"],
-      "output_types": ["request_payload"],
-      "language": "python",
-      "python_bindings": [],
-      "summary": "Loads a submitted prompt-entry payload for the ComfyBIO graph.",
-      "tier": "REF",
-      "tier_rationale": "Required bridge from the dedicated prompt UI to the ComfyUI workflow.",
-      "context_routing_rules": [],
-      "applicability_constraints": ["official route"],
-      "selection_rules": ["Use for every generated workflow."],
-      "operations": [{"id": "load_request", "label": "Load request", "input_types": ["prompt_payload"], "output_types": ["request_payload"], "node_type": "WorkflowRequestLoader"}],
-      "future_comfy_node": "WorkflowRequestLoader",
-      "runnable_node_status": "runnable"
-    },
-    {
       "id": "sample_metadata_validator",
       "label": "Sample Metadata Validator",
       "domain_tags": ["bulk_rna_seq"],
@@ -217,25 +198,6 @@
       "selection_rules": ["Use after visualization generation."],
       "operations": [{"id": "report", "label": "Write report", "input_types": ["plot_directory"], "output_types": ["report_artifact"], "node_type": "ComfyBIOReportNode"}],
       "future_comfy_node": "ComfyBIOReportNode",
-      "runnable_node_status": "runnable"
-    },
-    {
-      "id": "workflow_json_output",
-      "label": "Workflow JSON output",
-      "domain_tags": ["bulk_rna_seq"],
-      "stage_tags": ["workflow_export"],
-      "input_types": ["workflow_plan"],
-      "output_types": ["workflow_export_json"],
-      "language": "python",
-      "python_bindings": [],
-      "summary": "Emits ComfyUI's UI-oriented workflow export JSON.",
-      "tier": "REF",
-      "tier_rationale": "Deterministic JSON export is the harness output contract.",
-      "context_routing_rules": [],
-      "applicability_constraints": ["validated workflow plan"],
-      "selection_rules": ["Use as final graph export stage."],
-      "operations": [{"id": "workflow_json_export", "label": "Export workflow JSON", "input_types": ["report_artifact"], "output_types": ["workflow_export_json"], "node_type": "WorkflowJSONOutput"}],
-      "future_comfy_node": "WorkflowJSONOutput",
       "runnable_node_status": "runnable"
     },
     {

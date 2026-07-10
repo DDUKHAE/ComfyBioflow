@@ -64,6 +64,14 @@ class FastpQCNode(_BaseComfyBIONode):
             }
         }
 
+    def run(self, fastq_pair, fastq_dir, metadata_csv, output_dir, threads=2, extra_command="", runner=None) -> tuple[str]:
+        runner = resolve_runner(runner)
+        out = Path(output_dir)
+        out.mkdir(parents=True, exist_ok=True)
+        for sample in load_samples(Path(fastq_dir), Path(metadata_csv) if metadata_csv else None):
+            runner.run(stage_commands.fastp_qc_argv(sample, out, threads, extra_command), out)
+        return (str(out),)
+
 
 class FastpTrimNode(_BaseComfyBIONode):
     CATEGORY = "ComfyBIO/QC"
@@ -81,6 +89,16 @@ class FastpTrimNode(_BaseComfyBIONode):
                 "extra_command": cls._extra_command_input(),
             }
         }
+
+    def run(self, fastp_qc_json, fastq_dir, metadata_csv, output_dir, threads=2, extra_command="", runner=None) -> tuple[str]:
+        runner = resolve_runner(runner)
+        out = Path(output_dir)
+        out.mkdir(parents=True, exist_ok=True)
+        for sample in load_samples(Path(fastq_dir), Path(metadata_csv) if metadata_csv else None):
+            sample_dir = out / sample.sample_id
+            sample_dir.mkdir(parents=True, exist_ok=True)
+            runner.run(stage_commands.fastp_trim_argv(sample, sample_dir, threads, extra_command), out)
+        return (str(out),)
 
 
 class SalmonIndexNode(_BaseComfyBIONode):

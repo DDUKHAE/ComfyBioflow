@@ -31,12 +31,12 @@ def extract_brief(
     provider: str = "codex",
     model: str = "",
     *,
-    client=None,
+    runner=None,
 ) -> tuple[AnalysisBrief, ExtractionMeta]:
     if provider == "claude":
         chosen = model or DEFAULT_MODEL
         try:
-            brief = ClaudeBriefExtractor(chosen, client=client).extract(request_text)
+            brief = ClaudeBriefExtractor(chosen, runner=runner).extract(request_text)
             meta = ExtractionMeta(
                 source="claude",
                 model=chosen,

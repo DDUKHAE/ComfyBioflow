@@ -234,9 +234,9 @@ function injectStyles() {
     .cb-status {
       display: inline-flex;
       align-items: center;
-      border: 1px solid rgba(65, 194, 135, 0.45);
+      border: 1px solid color-mix(in srgb, var(--cb-success) 45%, transparent);
       color: var(--cb-success);
-      background: rgba(65, 194, 135, 0.08);
+      background: color-mix(in srgb, var(--cb-success) 8%, transparent);
       border-radius: 999px;
       padding: 5px 9px;
       font-size: 12px;
@@ -301,9 +301,9 @@ function injectStyles() {
       color: var(--cb-soft);
     }
     .cb-tab.active {
-      border-color: rgba(32, 178, 170, 0.7);
+      border-color: color-mix(in srgb, var(--cb-accent) 70%, transparent);
       color: var(--cb-text);
-      background: rgba(32, 178, 170, 0.14);
+      background: color-mix(in srgb, var(--cb-accent) 14%, transparent);
     }
     .cb-panel-section { display: none; }
     .cb-panel-section.active { display: grid; gap: 12px; }
@@ -364,7 +364,7 @@ function injectStyles() {
       gap: 6px;
       min-width: 130px;
       padding: 7px;
-      border: 1px solid rgba(32, 178, 170, 0.48);
+      border: 1px solid color-mix(in srgb, var(--cb-accent) 48%, transparent);
       border-radius: 8px;
       background: #1d2228;
       box-shadow: 0 14px 32px rgba(0, 0, 0, 0.32);
@@ -408,7 +408,7 @@ function injectStyles() {
       overflow: hidden;
     }
     .cb-step.expanded {
-      border-color: rgba(32, 178, 170, 0.58);
+      border-color: color-mix(in srgb, var(--cb-accent) 58%, transparent);
       background: #303636;
     }
     .cb-step.dragging {
@@ -441,7 +441,7 @@ function injectStyles() {
       display: grid;
       place-items: center;
       border-radius: 999px;
-      border: 1px solid rgba(32, 178, 170, .45);
+      border: 1px solid color-mix(in srgb, var(--cb-accent) 45%, transparent);
       color: var(--cb-accent);
       font-size: 10px;
       font-weight: 700;
@@ -516,7 +516,7 @@ function injectStyles() {
       display: none;
       gap: 7px;
       padding: 8px;
-      border: 1px solid rgba(32, 178, 170, .48);
+      border: 1px solid color-mix(in srgb, var(--cb-accent) 48%, transparent);
       border-radius: 7px;
       background: #1d2228;
       box-shadow: 0 14px 32px rgba(0, 0, 0, .28);
@@ -539,8 +539,8 @@ function injectStyles() {
       font-size: 12px;
     }
     .cb-replace-option.recommended {
-      border-color: rgba(32, 178, 170, .72);
-      background: rgba(32, 178, 170, .1);
+      border-color: color-mix(in srgb, var(--cb-accent) 72%, transparent);
+      background: color-mix(in srgb, var(--cb-accent) 10%, transparent);
     }
     .cb-replace-option span, .cb-step-option span {
       color: var(--cb-muted);
@@ -550,16 +550,16 @@ function injectStyles() {
     .cb-chip {
       display: inline-flex;
       align-items: center;
-      border: 1px solid rgba(65, 194, 135, .45);
+      border: 1px solid color-mix(in srgb, var(--cb-success) 45%, transparent);
       color: var(--cb-success);
-      background: rgba(65, 194, 135, .08);
+      background: color-mix(in srgb, var(--cb-success) 8%, transparent);
       border-radius: 999px;
       padding: 3px 7px;
       font-size: 11px;
       white-space: nowrap;
     }
     .cb-chip.amber {
-      border-color: rgba(232, 176, 78, .45);
+      border-color: color-mix(in srgb, var(--cb-warning) 45%, transparent);
       color: var(--cb-warning);
       background: transparent;
     }

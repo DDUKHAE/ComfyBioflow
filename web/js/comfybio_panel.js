@@ -133,12 +133,12 @@ function injectStyles() {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      border: 1px solid rgba(32, 178, 170, 0.65);
+      border: 1px solid var(--cb-line);
       border-radius: 999px;
-      background: #183331;
+      background: var(--cb-panel);
       color: var(--cb-text);
       padding: 0;
-      box-shadow: 0 16px 34px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
       cursor: grab;
       touch-action: none;
       user-select: none;
@@ -148,7 +148,7 @@ function injectStyles() {
     .comfybio-launcher.dragging { cursor: grabbing; }
     .comfybio-launcher.panel-open {
       border-radius: 10px 0 10px 0;
-      background: #2b3037;
+      background: var(--cb-panel-2);
       box-shadow: none;
     }
 
@@ -172,7 +172,7 @@ function injectStyles() {
       border-radius: 10px;
       background: var(--cb-panel);
       color: var(--cb-text);
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.36);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
       opacity: 0;
       pointer-events: none;
       transform: translateY(10px) scale(0.98);
@@ -184,17 +184,6 @@ function injectStyles() {
       opacity: 1;
       pointer-events: auto;
       transform: translateY(0) scale(1);
-    }
-
-    .comfybio-panel,
-    .comfybio-panel * {
-      scrollbar-width: none;
-      -ms-overflow-style: none;
-    }
-
-    .comfybio-panel::-webkit-scrollbar,
-    .comfybio-panel *::-webkit-scrollbar {
-      display: none;
     }
 
     .cb-resize {
@@ -366,7 +355,7 @@ function injectStyles() {
       padding: 7px;
       border: 1px solid color-mix(in srgb, var(--cb-accent) 48%, transparent);
       border-radius: 8px;
-      background: #1d2228;
+      background: var(--cb-panel-2);
       box-shadow: 0 14px 32px rgba(0, 0, 0, 0.32);
     }
     .cb-path-menu { top: calc(100% + 6px); }
@@ -381,7 +370,7 @@ function injectStyles() {
       padding: 10px;
       border-left: 3px solid var(--cb-accent);
       border-radius: 7px;
-      background: #222629;
+      background: var(--cb-panel-2);
       color: var(--cb-soft);
       font-size: 12px;
       line-height: 1.45;
@@ -518,7 +507,7 @@ function injectStyles() {
       padding: 8px;
       border: 1px solid color-mix(in srgb, var(--cb-accent) 48%, transparent);
       border-radius: 7px;
-      background: #1d2228;
+      background: var(--cb-panel-2);
       box-shadow: 0 14px 32px rgba(0, 0, 0, .28);
     }
     .cb-step.replace-open .cb-replace-popover { display: grid; }
@@ -574,7 +563,7 @@ function injectStyles() {
       margin: 0 -16px -16px;
       padding: 12px 16px;
       border-top: 1px solid var(--cb-line);
-      background: rgba(37, 37, 37, .96);
+      background: var(--cb-panel);
       backdrop-filter: blur(8px);
     }
     .cb-generate-footer {

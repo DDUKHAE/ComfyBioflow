@@ -1,3 +1,10 @@
+from pathlib import Path
+
+from nodes.execution import require_environment, resolve_runner, load_preview_tensor
+from nodes.sample_loading import load_samples
+from nodes import stage_commands
+
+
 class _BaseComfyBIONode:
     CATEGORY = "ComfyBIO"
     FUNCTION = "run"
@@ -29,6 +36,15 @@ class SampleMetadataValidatorNode(_BaseComfyBIONode):
                 "extra_command": cls._extra_command_input(),
             }
         }
+
+    def run(self, fastq_dir, metadata_csv, extra_command="", probe=None) -> tuple[str]:
+        require_environment(probe)
+        fastq_path = Path(fastq_dir)
+        if not fastq_path.exists():
+            raise FileNotFoundError(f"FASTQ directory not found: {fastq_dir}")
+        metadata_path = Path(metadata_csv) if metadata_csv else None
+        load_samples(fastq_path, metadata_path)  # raises if no samples resolvable
+        return (str(metadata_path) if metadata_path else str(fastq_path),)
 
 
 class FastpQCNode(_BaseComfyBIONode):

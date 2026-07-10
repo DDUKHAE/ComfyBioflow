@@ -37,7 +37,8 @@ class SampleMetadataValidatorNode(_BaseComfyBIONode):
         return {
             "required": {
                 "workflow_request": cls._upstream_input(),
-                "sample_metadata": cls._string_input("sample_metadata.csv"),
+                "fastq_dir": cls._string_input("fastq"),
+                "metadata_csv": cls._string_input("sample_metadata.csv"),
                 "extra_command": cls._extra_command_input(),
             }
         }
@@ -52,9 +53,9 @@ class FastpQCNode(_BaseComfyBIONode):
         return {
             "required": {
                 "fastq_pair": cls._upstream_input(),
-                "fastq_1": cls._string_input(),
-                "fastq_2": cls._string_input(),
-                "output_json": cls._string_input("fastp.json"),
+                "fastq_dir": cls._string_input("fastq"),
+                "metadata_csv": cls._string_input("sample_metadata.csv"),
+                "output_dir": cls._string_input("qc"),
                 "threads": ("INT", {"default": 2, "min": 1, "max": 64}),
                 "extra_command": cls._extra_command_input(),
             }
@@ -70,8 +71,8 @@ class FastpTrimNode(_BaseComfyBIONode):
         return {
             "required": {
                 "fastp_qc_json": cls._upstream_input(),
-                "fastq_1": cls._string_input(),
-                "fastq_2": cls._string_input(),
+                "fastq_dir": cls._string_input("fastq"),
+                "metadata_csv": cls._string_input("sample_metadata.csv"),
                 "output_dir": cls._string_input("trimmed"),
                 "threads": ("INT", {"default": 2, "min": 1, "max": 64}),
                 "extra_command": cls._extra_command_input(),
@@ -106,8 +107,8 @@ class SalmonQuantNode(_BaseComfyBIONode):
             "required": {
                 "salmon_index_dir": cls._upstream_input(),
                 "index_dir": cls._string_input("salmon_index"),
-                "fastq_1": cls._string_input(),
-                "fastq_2": cls._string_input(),
+                "fastq_dir": cls._string_input("fastq"),
+                "metadata_csv": cls._string_input("sample_metadata.csv"),
                 "output_dir": cls._string_input("salmon_quant"),
                 "read_layout": ("STRING", {"default": "A"}),
                 "threads": ("INT", {"default": 2, "min": 1, "max": 64}),
@@ -126,6 +127,7 @@ class TximportNode(_BaseComfyBIONode):
             "required": {
                 "salmon_quant_dir_path": cls._upstream_input(),
                 "salmon_quant_dir": cls._string_input("salmon_quant"),
+                "metadata_csv": cls._string_input("sample_metadata.csv"),
                 "output_count_matrix": cls._string_input("deseq2/count_matrix.csv"),
                 "extra_command": cls._extra_command_input(),
             }

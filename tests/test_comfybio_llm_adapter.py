@@ -127,3 +127,32 @@ def test_extract_brief_non_claude_provider_uses_deterministic():
     assert meta.source == "deterministic"
     assert isinstance(meta, ExtractionMeta)
     assert any("not yet wired" in note for note in brief.confidence_notes)
+
+
+from bioflow_harness.server.handlers import compile_spec, generate_workflow
+
+
+def test_compile_spec_default_provider_still_produces_bulk_steps():
+    payload = {
+        "request_text": "Analyze this FASTQ folder as bulk RNA-seq, human, treated vs control with DESeq2",
+        "provider": "codex",
+        "model": "",
+        "resources": [],
+    }
+    result = compile_spec(payload)
+    assert result["status"] == "ok"
+    assert result["domain"] == "bulk_rna_seq"
+    assert len(result["steps"]) > 0
+
+
+def test_generate_workflow_default_provider_returns_workflow():
+    payload = {
+        "request_text": "Analyze this FASTQ folder as bulk RNA-seq, human, treated vs control with DESeq2",
+        "provider": "codex",
+        "model": "",
+        "resources": [],
+        "steps": [],
+    }
+    result = generate_workflow(payload)
+    assert result["status"] == "ok"
+    assert result["workflow"] is not None

@@ -6,7 +6,7 @@ from bioflow_harness.comfy.node_catalog import default_node_catalog
 from bioflow_harness.comfy.resource_binding import ResourceBindings, validate_bindings
 from bioflow_harness.comfy.workflow_builder import WorkflowBuilder
 from bioflow_harness.models.registry_contract import ToolRegistry
-from bioflow_harness.parser.prompt_parser import parse_prompt
+from bioflow_harness.llm.brief_extractor import extract_brief
 from bioflow_harness.planner.stage_mapper import route_for_domain
 from bioflow_harness.planner.tool_selector import load_registry
 from bioflow_harness.planner.workflow_planner import WorkflowPlanner
@@ -34,7 +34,7 @@ def list_stage_candidates(registry: ToolRegistry, stage_id: str) -> list[Candida
 def compile_spec(payload: dict, registry_path: Path | None = None) -> dict:
     request = CompileRequest.from_dict(payload)
     registry = load_registry(registry_path or DEFAULT_REGISTRY_PATH)
-    brief = parse_prompt(request.request_text)
+    brief, _meta = extract_brief(request.request_text, request.provider, request.model)
     try:
         route_for_domain(brief.domain)
     except ValueError:
@@ -75,7 +75,7 @@ def compile_spec(payload: dict, registry_path: Path | None = None) -> dict:
 def generate_workflow(payload: dict, registry_path: Path | None = None) -> dict:
     request = GenerateRequest.from_dict(payload)
     registry = load_registry(registry_path or DEFAULT_REGISTRY_PATH)
-    brief = parse_prompt(request.request_text)
+    brief, _meta = extract_brief(request.request_text, request.provider, request.model)
     try:
         plan = WorkflowPlanner(registry).plan(brief)
     except ValueError:

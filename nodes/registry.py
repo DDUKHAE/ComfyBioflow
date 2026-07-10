@@ -15,13 +15,10 @@ from nodes.ref_nodes import (
     ScanpyQCNode,
     TenxCountNode,
     TximportNode,
-    WorkflowJSONOutput,
-    WorkflowRequestLoader,
 )
 
 
 NODE_CLASS_MAPPINGS = {
-    "WorkflowRequestLoader": WorkflowRequestLoader,
     "SampleMetadataValidatorNode": SampleMetadataValidatorNode,
     "FastpQCNode": FastpQCNode,
     "FastpTrimNode": FastpTrimNode,
@@ -38,7 +35,6 @@ NODE_CLASS_MAPPINGS = {
     "DESeq2AnalysisNode": DESeq2AnalysisNode,
     "DESeq2VisualizationNode": DESeq2VisualizationNode,
     "ComfyBIOReportNode": ComfyBIOReportNode,
-    "WorkflowJSONOutput": WorkflowJSONOutput,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {

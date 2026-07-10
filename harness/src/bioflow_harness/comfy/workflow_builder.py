@@ -115,21 +115,12 @@ class WorkflowBuilder:
         return workflow
 
     def _widgets_for_stage(self, definition: NodeDefinition, plan: WorkflowPlan, bindings=None) -> list[str | int | bool]:
-        if definition.node_type == "WorkflowRequestLoader":
-            return [self._request_text(plan)]
-        if definition.node_type == "WorkflowJSONOutput":
-            return [f"harness/examples/workflows/{plan.route_id}.json"]
         widgets = list(definition.widgets)
         if bindings is not None:
             for index, attribute in _BULK_INJECTION.get(definition.node_type, {}).items():
                 if index < len(widgets):
                     widgets[index] = getattr(bindings, attribute)
         return widgets
-
-    def _request_text(self, plan: WorkflowPlan) -> str:
-        if plan.domain == "scrna_seq":
-            return "Single-cell RNA-seq through 10x count, Scanpy QC, normalization, clustering, UMAP, marker genes, plots, and report."
-        return "Bulk RNA-seq through salmon, DESeq2, plots, and report."
 
     def _preview_title(self, plan: WorkflowPlan) -> str:
         if plan.domain == "scrna_seq":

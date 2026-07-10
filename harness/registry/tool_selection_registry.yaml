@@ -8,7 +8,6 @@
   "planned_domains": ["metagenome", "WGS"],
   "routes": {
     "bulk_rna_seq_salmon_ref": [
-      {"stage_id": "request_loading", "stage_label": "Prompt or request payload loading", "tool_id": "workflow_request_loader", "operation_id": "load_request"},
       {"stage_id": "metadata_validation", "stage_label": "Input asset and sample metadata validation", "tool_id": "sample_metadata_validator", "operation_id": "validate_sample_metadata"},
       {"stage_id": "read_qc", "stage_label": "FASTQ QC", "tool_id": "fastp_qc", "operation_id": "fastq_qc"},
       {"stage_id": "trimming", "stage_label": "Optional fastp trimming", "tool_id": "fastp_trim", "operation_id": "fastq_trim", "optional": true},
@@ -17,19 +16,16 @@
       {"stage_id": "tximport_import", "stage_label": "tximport-compatible import", "tool_id": "tximport_import", "operation_id": "tximport_import"},
       {"stage_id": "deseq2_analysis", "stage_label": "DESeq2 differential expression analysis", "tool_id": "deseq2_analysis", "operation_id": "deseq2_analysis"},
       {"stage_id": "deseq2_visualization", "stage_label": "DESeq2 visualization artifact generation", "tool_id": "comfybio_deseq2_visualization", "operation_id": "deseq2_visualization"},
-      {"stage_id": "reporting", "stage_label": "Summary and report output", "tool_id": "comfybio_report", "operation_id": "report"},
-      {"stage_id": "workflow_export", "stage_label": "ComfyUI workflow JSON export", "tool_id": "workflow_json_output", "operation_id": "workflow_json_export"}
+      {"stage_id": "reporting", "stage_label": "Summary and report output", "tool_id": "comfybio_report", "operation_id": "report"}
     ],
     "scrna_seq_scanpy_ref": [
-      {"stage_id": "request_loading", "stage_label": "Prompt or request payload loading", "tool_id": "workflow_request_loader", "operation_id": "load_request"},
       {"stage_id": "tenx_count", "stage_label": "10x count matrix generation", "tool_id": "tenx_count", "operation_id": "tenx_count"},
       {"stage_id": "scrna_qc", "stage_label": "Single-cell QC and filtering", "tool_id": "scanpy_qc", "operation_id": "scanpy_qc"},
       {"stage_id": "scrna_normalization", "stage_label": "Normalization and highly-variable gene selection", "tool_id": "scanpy_normalize", "operation_id": "scanpy_normalize"},
       {"stage_id": "scrna_clustering", "stage_label": "PCA, neighbor graph, UMAP, and clustering", "tool_id": "scanpy_cluster", "operation_id": "scanpy_cluster"},
       {"stage_id": "scrna_marker_genes", "stage_label": "Marker gene ranking", "tool_id": "scanpy_marker_genes", "operation_id": "scanpy_marker_genes"},
       {"stage_id": "scrna_visualization", "stage_label": "UMAP and marker visualization", "tool_id": "comfybio_scrna_visualization", "operation_id": "scrna_visualization"},
-      {"stage_id": "scrna_reporting", "stage_label": "Single-cell report output", "tool_id": "comfybio_scrna_report", "operation_id": "scrna_report"},
-      {"stage_id": "workflow_export", "stage_label": "ComfyUI workflow JSON export", "tool_id": "workflow_json_output", "operation_id": "workflow_json_export"}
+      {"stage_id": "scrna_reporting", "stage_label": "Single-cell report output", "tool_id": "comfybio_scrna_report", "operation_id": "scrna_report"}
     ]
   },
   "tools": [

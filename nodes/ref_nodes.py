@@ -16,18 +16,6 @@ class _BaseComfyBIONode:
         return ("STRING", {"default": "", "multiline": True})
 
 
-class WorkflowRequestLoader(_BaseComfyBIONode):
-    CATEGORY = "ComfyBIO/Orchestration"
-    RETURN_NAMES = ("workflow_request",)
-
-    @classmethod
-    def INPUT_TYPES(cls) -> dict:
-        return {"required": {"request_payload": cls._string_input()}}
-
-    def run(self, request_payload: str) -> tuple[str]:
-        return (request_payload,)
-
-
 class SampleMetadataValidatorNode(_BaseComfyBIONode):
     CATEGORY = "ComfyBIO/Input"
     RETURN_NAMES = ("sample_metadata_csv",)
@@ -36,7 +24,6 @@ class SampleMetadataValidatorNode(_BaseComfyBIONode):
     def INPUT_TYPES(cls) -> dict:
         return {
             "required": {
-                "workflow_request": cls._upstream_input(),
                 "fastq_dir": cls._string_input("fastq"),
                 "metadata_csv": cls._string_input("sample_metadata.csv"),
                 "extra_command": cls._extra_command_input(),
@@ -178,7 +165,6 @@ class TenxCountNode(_BaseComfyBIONode):
     def INPUT_TYPES(cls) -> dict:
         return {
             "required": {
-                "tenx_fastq_dir": cls._upstream_input(),
                 "fastq_dir": cls._string_input("fastqs"),
                 "sample_id": cls._string_input("sample"),
                 "reference_dir": cls._string_input("cellranger_reference"),
@@ -311,12 +297,3 @@ class ComfyBIOReportNode(_BaseComfyBIONode):
                 "extra_command": cls._extra_command_input(),
             }
         }
-
-
-class WorkflowJSONOutput(_BaseComfyBIONode):
-    CATEGORY = "ComfyBIO/Orchestration"
-    RETURN_NAMES = ("workflow_json",)
-
-    @classmethod
-    def INPUT_TYPES(cls) -> dict:
-        return {"required": {"report_markdown": cls._upstream_input(), "workflow_json_path": cls._string_input("workflow.json")}}

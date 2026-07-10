@@ -17,11 +17,6 @@ def regenerate_bulk_rna_seq_workflow(
 
     node_specs: list[tuple[str, list[object], str | None]] = [
         (
-            "WorkflowRequestLoader",
-            ["Bulk RNA-seq through salmon, DESeq2, plots, and report."],
-            None,
-        ),
-        (
             "SampleMetadataValidatorNode",
             [str(fixture.sample_metadata), ""],
             None,
@@ -115,11 +110,6 @@ def regenerate_bulk_rna_seq_workflow(
                     str(fixture.fixture_dir.parent.parent / "runs" / "quickstart" / "report" / "comfybio_report.md"),
                     _report_contract() if apply_safe_defaults else "",
                 ],
-                None,
-            ),
-            (
-                "WorkflowJSONOutput",
-                ["harness/examples/workflows/bulk_rna_seq_salmon_ref.json"],
                 None,
             ),
         ]

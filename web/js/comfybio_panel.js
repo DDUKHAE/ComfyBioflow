@@ -105,21 +105,21 @@ function injectStyles() {
   style.id = "comfybio-panel-styles";
   style.textContent = `
     :root {
-      --cb-bg: #1c1c1c;
-      --cb-panel: #252525;
-      --cb-panel-2: #2f2f2f;
-      --cb-line: #454545;
-      --cb-text: #f1f1f1;
-      --cb-muted: #a8a8a8;
-      --cb-soft: #d6d6d6;
-      --cb-teal: #20b2aa;
-      --cb-green: #41c287;
-      --cb-amber: #e8b04e;
+      --cb-bg: var(--comfy-input-bg, #1c1c1c);
+      --cb-panel: var(--comfy-menu-bg, #252525);
+      --cb-panel-2: var(--comfy-menu-secondary-bg, #2f2f2f);
+      --cb-line: var(--border-color, #454545);
+      --cb-text: var(--fg-color, #f1f1f1);
+      --cb-muted: var(--descrip-text, #a8a8a8);
+      --cb-soft: var(--fg-color, #d6d6d6);
+      --cb-accent: var(--p-primary-color, #20b2aa);
+      --cb-accent-contrast: var(--p-primary-contrast-color, #081013);
+      --cb-success: #41c287;
+      --cb-warning: #e8b04e;
     }
 
     .comfybio-launcher, .comfybio-panel, .comfybio-panel * {
       box-sizing: border-box;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       letter-spacing: 0;
     }
 
@@ -155,7 +155,7 @@ function injectStyles() {
     .comfybio-launcher svg {
       width: 30px;
       height: 30px;
-      color: var(--cb-teal);
+      color: var(--cb-accent);
     }
 
     .comfybio-panel {
@@ -235,7 +235,7 @@ function injectStyles() {
       display: inline-flex;
       align-items: center;
       border: 1px solid rgba(65, 194, 135, 0.45);
-      color: var(--cb-green);
+      color: var(--cb-success);
       background: rgba(65, 194, 135, 0.08);
       border-radius: 999px;
       padding: 5px 9px;
@@ -264,9 +264,9 @@ function injectStyles() {
       padding: 10px 12px;
     }
     .cb-button.apply {
-      background: var(--cb-teal);
-      border-color: var(--cb-teal);
-      color: #081013;
+      background: var(--cb-accent);
+      border-color: var(--cb-accent);
+      color: var(--cb-accent-contrast);
       font-weight: 700;
     }
     .cb-tiny {
@@ -379,7 +379,7 @@ function injectStyles() {
 
     .cb-message {
       padding: 10px;
-      border-left: 3px solid var(--cb-teal);
+      border-left: 3px solid var(--cb-accent);
       border-radius: 7px;
       background: #222629;
       color: var(--cb-soft);
@@ -389,7 +389,7 @@ function injectStyles() {
     .cb-message .severity {
       display: inline-flex;
       margin-right: 7px;
-      color: var(--cb-teal);
+      color: var(--cb-accent);
       font-weight: 700;
     }
     .cb-meta {
@@ -442,7 +442,7 @@ function injectStyles() {
       place-items: center;
       border-radius: 999px;
       border: 1px solid rgba(32, 178, 170, .45);
-      color: var(--cb-teal);
+      color: var(--cb-accent);
       font-size: 10px;
       font-weight: 700;
     }
@@ -551,7 +551,7 @@ function injectStyles() {
       display: inline-flex;
       align-items: center;
       border: 1px solid rgba(65, 194, 135, .45);
-      color: var(--cb-green);
+      color: var(--cb-success);
       background: rgba(65, 194, 135, .08);
       border-radius: 999px;
       padding: 3px 7px;
@@ -560,7 +560,7 @@ function injectStyles() {
     }
     .cb-chip.amber {
       border-color: rgba(232, 176, 78, .45);
-      color: var(--cb-amber);
+      color: var(--cb-warning);
       background: transparent;
     }
     .cb-footer {

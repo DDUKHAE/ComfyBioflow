@@ -9,6 +9,7 @@ from bioflow_harness.llm.claude_extractor import (
     DEFAULT_MODEL,
 )
 from bioflow_harness.models.prompt_contract import AnalysisBrief
+from bioflow_harness.llm.brief_extractor import ExtractionMeta, extract_brief
 
 
 @dataclass
@@ -100,3 +101,29 @@ def test_schema_invalid_payload_raises_extraction_error():
     client = _FakeClient(response=_Response(content=[_Block(text=json.dumps({"domain": "bulk_rna_seq"}))]))
     with pytest.raises(BriefExtractionError):
         ClaudeBriefExtractor("claude-opus-4-8", client=client).extract("x")
+
+
+def test_extract_brief_claude_success_annotates_provenance():
+    brief, meta = extract_brief("bulk RNA-seq, human", provider="claude", client=_ok_client())
+    assert meta.source == "claude"
+    assert brief.domain == "bulk_rna_seq"
+    assert any("claude" in note for note in brief.confidence_notes)
+
+
+def test_extract_brief_falls_back_when_claude_raises():
+    failing = _FakeClient(exc=RuntimeError("no credential"))
+    brief, meta = extract_brief(
+        "Analyze this bulk RNA-seq data with DESeq2",
+        provider="claude",
+        client=failing,
+    )
+    assert meta.source == "deterministic"
+    assert brief.domain == "bulk_rna_seq"  # parse_prompt still classifies it
+    assert any("deterministic" in note for note in brief.confidence_notes)
+
+
+def test_extract_brief_non_claude_provider_uses_deterministic():
+    brief, meta = extract_brief("Analyze bulk RNA-seq with DESeq2", provider="codex")
+    assert meta.source == "deterministic"
+    assert isinstance(meta, ExtractionMeta)
+    assert any("not yet wired" in note for note in brief.confidence_notes)

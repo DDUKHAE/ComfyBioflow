@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from bioflow_harness.comfy.node_catalog import default_node_catalog
+from bioflow_harness.comfy.resource_binding import ResourceBindings, validate_bindings
 from bioflow_harness.comfy.workflow_builder import WorkflowBuilder
 from bioflow_harness.models.registry_contract import ToolRegistry
 from bioflow_harness.parser.prompt_parser import parse_prompt
@@ -86,13 +87,14 @@ def generate_workflow(payload: dict, registry_path: Path | None = None) -> dict:
             "message": f"Workflow planning is required before generating domain: {brief.domain}",
             "confidence_notes": list(brief.confidence_notes),
         }
-    workflow = WorkflowBuilder(default_node_catalog()).build(plan)
+    bindings = ResourceBindings.from_resources([r.__dict__ for r in request.resources])
+    workflow = WorkflowBuilder(default_node_catalog()).build(plan, bindings)
+    warnings = validate_bindings(plan.route_id, bindings)
     deterministic_steps = [
         registry.tool_by_id(stage.selected_tool_id).label for stage in plan.stages
     ]
-    message = None
     if request.steps and list(request.steps) != deterministic_steps:
-        message = (
+        warnings.append(
             "Your step edits (reordering/replacement) are not applied in Slice 1; "
             "the workflow was generated from the deterministic default route."
         )
@@ -101,5 +103,5 @@ def generate_workflow(payload: dict, registry_path: Path | None = None) -> dict:
         "domain": plan.domain,
         "route_id": plan.route_id,
         "workflow": workflow,
-        "message": message,
+        "message": " ".join(warnings) if warnings else None,
     }

@@ -48,7 +48,18 @@ def test_generate_workflow_matching_steps_has_no_message():
     request_text = "bulk RNA-seq human treated vs control with DESeq2 plots and report"
     compiled = compile_spec({"request_text": request_text})
     deterministic_steps = [step["tool_label"] for step in compiled["steps"]]
-    result = generate_workflow({"request_text": request_text, "steps": deterministic_steps})
+    result = generate_workflow(
+        {
+            "request_text": request_text,
+            "steps": deterministic_steps,
+            "resources": [
+                {"label": "input_path", "path": "/data/fastq"},
+                {"label": "output_path", "path": "/data/out"},
+                {"label": "metadata_csv", "type": "metadata", "path": "/data/meta.csv"},
+                {"label": "tx", "type": "index", "path": "/data/tx.fasta"},
+            ],
+        }
+    )
     assert result["status"] == "ok"
     assert result["message"] is None
 
@@ -65,3 +76,27 @@ def test_generate_workflow_reordered_steps_surfaces_warning_not_error():
     assert result["route_id"] == "bulk_rna_seq_salmon_ref"
     assert result["message"]
     assert "not applied" in result["message"].lower()
+
+
+def test_generate_workflow_injects_resource_paths():
+    payload = {
+        "request_text": "bulk RNA-seq human treated vs control with DESeq2 plots and report",
+        "resources": [
+            {"label": "input_path", "path": "/data/fastq"},
+            {"label": "output_path", "path": "/data/out"},
+            {"label": "metadata_csv", "type": "metadata", "path": "/data/meta.csv"},
+            {"label": "tx", "type": "index", "path": "/data/tx.fasta"},
+        ],
+    }
+    result = generate_workflow(payload)
+    assert result["status"] == "ok"
+    salmon = next(n for n in result["workflow"]["nodes"] if n["type"] == "SalmonQuantNode")
+    assert salmon["widgets_values"][1] == "/data/fastq"
+    assert result["message"] is None
+
+
+def test_generate_workflow_warns_on_missing_resources():
+    payload = {"request_text": "bulk RNA-seq treated vs control with DESeq2 plots and report"}
+    result = generate_workflow(payload)
+    assert result["status"] == "ok"
+    assert "transcriptome_fasta" in (result["message"] or "")

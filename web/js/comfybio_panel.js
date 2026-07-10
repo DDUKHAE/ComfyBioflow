@@ -683,6 +683,40 @@ function createExtraResource() {
   return row;
 }
 
+function createTranscriptomeResource() {
+  const row = el("div", { class: "cb-resource-row extra" });
+  row.innerHTML = `
+    <div class="cb-field">
+      <label>Label</label>
+      <input class="cb-resource-label" value="transcriptome_fasta">
+    </div>
+    <div class="cb-field">
+      <label>Type</label>
+      <select class="cb-resource-type">
+        <option>index</option>
+        <option>reference</option>
+        <option>metadata</option>
+        <option>annotation</option>
+        <option>contrast</option>
+        <option>other</option>
+      </select>
+    </div>
+    <div class="cb-field">
+      <label>Path</label>
+      <input class="cb-resource-path" value="/data/project/transcriptome.fasta">
+    </div>
+    <div class="cb-path-wrap">
+      <button class="cb-path-button cb-tiny" type="button">Browse</button>
+      <div class="cb-path-menu">
+        <button class="cb-tiny cb-path-choice" type="button" data-kind="file">File</button>
+        <button class="cb-tiny cb-path-choice" type="button" data-kind="folder">Folder</button>
+      </div>
+    </div>
+    <button class="cb-tiny cb-remove-resource" type="button">x</button>
+  `;
+  return row;
+}
+
 function createStep(step) {
   const item = el("div", { class: "cb-step" });
   item.innerHTML = `
@@ -1002,6 +1036,7 @@ function initializePanel(panel, launcher) {
     createPathPicker("input_path", "/data/project/fastq", true),
     createPathPicker("output_path", "/data/project/results", true),
     createExtraResource(),
+    createTranscriptomeResource(),
   );
   for (const key of INITIAL_STEPS) {
     stepList.append(createStep(STEP_CATALOG[key]));

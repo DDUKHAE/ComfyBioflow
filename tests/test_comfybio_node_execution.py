@@ -67,3 +67,35 @@ def test_fastp_trim_creates_per_sample_dirs(tmp_path):
     assert result == (str(out),)
     assert (out / "sample_a").exists()
     assert len(runner.commands) == 4
+
+
+def test_salmon_index_runs_once_and_creates_dir(tmp_path):
+    runner = DryRunCommandRunner()
+    idx = tmp_path / "salmon_index"
+    node = nodes.NODE_CLASS_MAPPINGS["SalmonIndexNode"]()
+    result = node.run(
+        transcriptome_fasta_path="upstream",
+        transcriptome_fasta="harness/examples/fixtures/quickstart/toy_transcriptome.fasta",
+        index_dir=str(idx), threads=2, extra_command="", runner=runner,
+    )
+    assert result == (str(idx),)
+    assert idx.exists()
+    assert len(runner.commands) == 1
+    assert runner.commands[0].argv[:6] == ["conda", "run", "-n", "bulk_rna_seq", "salmon", "index"]
+
+
+def test_salmon_quant_uses_trimmed_reads_sibling_of_output(tmp_path):
+    runner = DryRunCommandRunner()
+    base = tmp_path / "run"
+    quant = base / "salmon_quant"
+    node = nodes.NODE_CLASS_MAPPINGS["SalmonQuantNode"]()
+    result = node.run(
+        salmon_index_dir="upstream", index_dir=str(base / "salmon_index"),
+        fastq_dir=QS, metadata_csv=QS_META, output_dir=str(quant),
+        read_layout="A", threads=2, extra_command="", runner=runner,
+    )
+    assert result == (str(quant),)
+    assert len(runner.commands) == 4
+    joined = " ".join(runner.commands[0].argv)
+    assert str(base / "trimmed" / "sample_a" / "R1.fastq") in joined
+    assert (quant / "sample_a").exists()

@@ -117,6 +117,13 @@ class SalmonIndexNode(_BaseComfyBIONode):
             }
         }
 
+    def run(self, transcriptome_fasta_path, transcriptome_fasta, index_dir, threads=2, extra_command="", runner=None) -> tuple[str]:
+        runner = resolve_runner(runner)
+        idx = Path(index_dir)
+        idx.mkdir(parents=True, exist_ok=True)
+        runner.run(stage_commands.salmon_index_argv(transcriptome_fasta, idx, threads, extra_command), idx)
+        return (str(idx),)
+
 
 class SalmonQuantNode(_BaseComfyBIONode):
     CATEGORY = "ComfyBIO/Quantification"
@@ -136,6 +143,22 @@ class SalmonQuantNode(_BaseComfyBIONode):
                 "extra_command": cls._extra_command_input(),
             }
         }
+
+    def run(self, salmon_index_dir, index_dir, fastq_dir, metadata_csv, output_dir, read_layout="A", threads=2, extra_command="", runner=None) -> tuple[str]:
+        runner = resolve_runner(runner)
+        quant = Path(output_dir)
+        quant.mkdir(parents=True, exist_ok=True)
+        trimmed = quant.parent / "trimmed"
+        for sample in load_samples(Path(fastq_dir), Path(metadata_csv) if metadata_csv else None):
+            sample_out = quant / sample.sample_id
+            sample_out.mkdir(parents=True, exist_ok=True)
+            read1 = trimmed / sample.sample_id / "R1.fastq"
+            read2 = trimmed / sample.sample_id / "R2.fastq" if sample.fastq_2 is not None else None
+            runner.run(
+                stage_commands.salmon_quant_argv(index_dir, read1, read2, sample_out, read_layout, threads, extra_command),
+                quant,
+            )
+        return (str(quant),)
 
 
 class TximportNode(_BaseComfyBIONode):

@@ -3,7 +3,7 @@ import { api } from "../../scripts/api.js";
 
 const PROVIDER_MODELS = {
   codex: ["gpt-5.5", "gpt-5.4", "gpt-5.4-mini"],
-  claude: ["claude-opus-4.6", "claude-sonnet-5.0", "claude-haiku-4.5"],
+  claude: ["claude-opus-4-8", "claude-sonnet-5", "claude-haiku-4-5"],
   gemini: ["gemini-3.1-pro", "gemini-3.5-flash", "gemini-3.1-flash"],
 };
 

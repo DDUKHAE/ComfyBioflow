@@ -6,3 +6,8 @@ harness/.pytest_cache/
 harness/tests/
 harness/examples/runs/
 docs/superpowers/
+
+# Internal design/planning docs (not needed by end users)
+harness/docs/plans/
+harness/docs/specs/
+harness/docs/llm_comfyui_ui_plan.md

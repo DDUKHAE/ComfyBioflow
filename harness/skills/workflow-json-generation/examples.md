@@ -1,6 +1,6 @@
 # Workflow JSON Generation Examples
 
-The official workflow export contains 11 nodes and 10 links for `bulk_rna_seq_salmon_ref`.
+The official workflow export contains 10 nodes and 9 links for `bulk_rna_seq_salmon_ref` (9 registry stages plus one builtin `PreviewImage`).
 
 Validation should reject:
 

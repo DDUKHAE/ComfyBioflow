@@ -1,4 +1,4 @@
-from nodes.ref_nodes import (
+from .ref_nodes import (
     ComfyBIOReportNode,
     DESeq2AnalysisNode,
     DESeq2VisualizationNode,

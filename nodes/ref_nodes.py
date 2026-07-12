@@ -1,8 +1,8 @@
 from pathlib import Path
 
-from nodes.execution import require_environment, resolve_runner, load_preview_tensor
-from nodes.sample_loading import load_samples
-from nodes import stage_commands
+from .execution import require_environment, resolve_runner, load_preview_tensor
+from .sample_loading import load_samples
+from . import stage_commands
 
 
 class _BaseComfyBIONode:

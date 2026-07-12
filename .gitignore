@@ -11,3 +11,15 @@ docs/superpowers/
 harness/docs/plans/
 harness/docs/specs/
 harness/docs/llm_comfyui_ui_plan.md
+
+# Legacy CLI/bulk docs superseded by ARCHITECTURE.md + execution.md (kept on disk)
+harness/docs/artifact_sidecar.md
+harness/docs/custom_nodes.md
+harness/docs/domain_expansion.md
+harness/docs/environment.md
+harness/docs/node_activation.md
+harness/docs/quickstart.md
+harness/docs/real_fixture_run.md
+harness/docs/registry_validation.md
+harness/docs/scrna_seq.md
+harness/docs/workflow_validation.md

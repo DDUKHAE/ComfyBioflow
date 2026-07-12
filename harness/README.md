@@ -1,6 +1,6 @@
 # ComfyBIO Harness
 
-ComfyBIO Harness converts a natural-language genomics request into a runnable ComfyUI workflow JSON. Implemented routes include `bulk_rna_seq_salmon_ref`, which models FASTQ QC, optional trimming, salmon indexing and quantification, tximport-compatible import, DESeq2 analysis, DESeq2 visualization, and report generation, and `scrna_seq_scanpy_ref`, which models a 10x/Scanpy single-cell workflow through QC, normalization, clustering, UMAP/marker visualization, and reporting.
+ComfyBIO Harness converts a natural-language genomics request into a ComfyUI workflow JSON. Implemented routes include `bulk_rna_seq_salmon_ref`, which models FASTQ QC, optional trimming, salmon indexing and quantification, tximport-compatible import, DESeq2 analysis, DESeq2 visualization, and report generation, and executes them through a managed conda environment; and `scrna_seq_scanpy_ref`, which models a 10x/Scanpy single-cell workflow through QC, normalization, clustering, UMAP/marker visualization, and reporting, and generates the workflow graph (its nodes are construction-only stubs pending execution support).
 
 The code in this directory is intentionally small and registry-driven so future domains can reuse the same parser, planner, node catalog, and workflow builder. Future domains are not treated as runnable until they complete the domain expansion workflow.
 

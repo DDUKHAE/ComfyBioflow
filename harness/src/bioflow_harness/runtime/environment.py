@@ -39,6 +39,13 @@ VARIANT_ANALYSIS_REQUIREMENTS = DomainEnvironmentRequirements(
     optional_alt_tools=["gatk4"],
 )
 
+EPIGENOMICS_REQUIREMENTS = DomainEnvironmentRequirements(
+    env_name="epigenomics",
+    required_executables=["fastp", "bwa-mem2", "samtools", "macs3"],
+    required_packages=["python>=3.11", "fastp", "bwa-mem2", "samtools", "macs3", "bedtools", "matplotlib"],
+    optional_alt_tools=["macs2", "genrich"],
+)
+
 
 class EnvironmentProbe:
     def env_exists(self, env_name: str) -> bool:

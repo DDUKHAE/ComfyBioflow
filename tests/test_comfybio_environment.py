@@ -64,3 +64,18 @@ def test_domain_environment_requirements_is_a_frozen_dataclass():
         env_name="toy", required_executables=["a"], required_packages=["a"], optional_alt_tools=[]
     )
     assert requirements.env_name == "toy"
+
+
+def test_epigenomics_requirements_shape():
+    from bioflow_harness.runtime.environment import EPIGENOMICS_REQUIREMENTS
+
+    assert EPIGENOMICS_REQUIREMENTS.env_name == "epigenomics"
+    assert EPIGENOMICS_REQUIREMENTS.required_executables == ["fastp", "bwa-mem2", "samtools", "macs3"]
+
+
+def test_validate_environment_ready_for_epigenomics():
+    from bioflow_harness.runtime.environment import EPIGENOMICS_REQUIREMENTS
+
+    report = validate_environment(EPIGENOMICS_REQUIREMENTS, _ReadyProbe())
+    assert report.ready is True
+    assert report.conda_env_name == "epigenomics"

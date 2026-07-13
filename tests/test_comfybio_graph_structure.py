@@ -28,3 +28,25 @@ def test_metadata_validator_has_no_upstream_input():
     required = nodes.NODE_CLASS_MAPPINGS["SampleMetadataValidatorNode"].INPUT_TYPES()["required"]
     assert "workflow_request" not in required
     assert "fastq_dir" in required
+
+
+def test_variant_graph_starts_at_input_validator_ends_at_preview():
+    types = _types("germline variant calling with bwa-mem2 on paired-end WGS FASTQs, call and filter variants")
+    assert types[0] == "VariantInputValidatorNode"
+    assert types[-1] == "PreviewImage"
+    assert types[-2] == "VariantReportNode"
+    assert "BcftoolsCallNode" in types
+    assert "BcftoolsFilterNode" in types
+
+
+def test_variant_route_resolves_through_stage_mapper():
+    from bioflow_harness.planner.stage_mapper import route_for_domain
+
+    assert route_for_domain("variant_analysis") == "variant_analysis_bwa_ref"
+
+
+def test_variant_prompt_parses_to_variant_analysis_domain():
+    from bioflow_harness.parser.prompt_parser import parse_prompt
+
+    brief = parse_prompt("call germline SNPs and indels from WGS FASTQs with bwa-mem2 and bcftools")
+    assert brief.domain == "variant_analysis"

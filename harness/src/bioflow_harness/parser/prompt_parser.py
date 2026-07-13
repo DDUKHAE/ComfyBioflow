@@ -5,9 +5,16 @@ def parse_prompt(request_text: str) -> AnalysisBrief:
     text = request_text.lower()
 
     scrna_tokens = ["single-cell", "single cell", "scrna", "10x", "cell ranger", "starsolo", "umap", "marker genes"]
+    variant_tokens = [
+        "variant", "germline", "vcf", "bwa-mem2", "bwa mem2", "snp", "genotyp",
+        "whole genome", "whole exome", " wgs", " wes", "bcftools",
+    ]
     if any(token in text for token in scrna_tokens):
         domain = "scrna_seq"
         analysis_type = "single_cell_analysis"
+    elif any(token in text for token in variant_tokens):
+        domain = "variant_analysis"
+        analysis_type = "variant_calling"
     else:
         domain = "bulk_rna_seq" if any(token in text for token in ["bulk rna", "rna-seq", "rnaseq"]) else "unsupported"
         analysis_type = "differential_expression" if any(token in text for token in ["deseq2", "differential", "de "]) else "workflow_generation"
@@ -17,6 +24,8 @@ def parse_prompt(request_text: str) -> AnalysisBrief:
         input_assets.append("fastq")
     if "metadata" in text or "sample" in text:
         input_assets.append("sample_metadata")
+    if domain == "variant_analysis" and "reference" in text:
+        input_assets.append("reference_fasta")
 
     expected_outputs: list[str] = []
     if "salmon" in text or domain == "bulk_rna_seq":
@@ -31,14 +40,20 @@ def parse_prompt(request_text: str) -> AnalysisBrief:
         for output in ["cell_filtering", "normalization", "clustering", "umap", "marker_genes"]:
             if output not in expected_outputs:
                 expected_outputs.append(output)
+    if domain == "variant_analysis":
+        for output in ["filtered_vcf", "variant_summary_plot"]:
+            if output not in expected_outputs:
+                expected_outputs.append(output)
 
     preferred_tools = [
         tool
-        for tool in ["fastp", "salmon", "tximport", "deseq2", "cell ranger", "scanpy", "starsolo"]
+        for tool in ["fastp", "salmon", "tximport", "deseq2", "cell ranger", "scanpy", "starsolo", "bwa-mem2", "samtools", "bcftools"]
         if tool in text
     ]
     if domain == "scrna_seq" and "scanpy" not in preferred_tools:
         preferred_tools.append("scanpy")
+    if domain == "variant_analysis" and "bwa-mem2" not in preferred_tools:
+        preferred_tools.append("bwa-mem2")
 
     organism = None
     if "human" in text or "homo sapiens" in text:

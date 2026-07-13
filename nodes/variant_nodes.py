@@ -96,3 +96,105 @@ class BwaMem2AlignNode(_BaseVariantNode):
             runner.run(variant_stage_commands.samtools_sort_argv(sam_path, bam_path, threads), sample_dir)
             runner.run(variant_stage_commands.samtools_index_argv(bam_path), sample_dir)
         return (str(out),)
+
+
+class MarkDuplicatesNode(_BaseVariantNode):
+    CATEGORY = "ComfyBIO/Alignment"
+    RETURN_NAMES = ("dedup_bam_dir",)
+
+    @classmethod
+    def INPUT_TYPES(cls) -> dict:
+        return {
+            "required": {
+                "sorted_bam_dir": cls._upstream_input(),
+                "input_dir": cls._string_input("aligned"),
+                "output_dir": cls._string_input("dedup"),
+                "threads": ("INT", {"default": 4, "min": 1, "max": 64}),
+                "extra_command": cls._extra_command_input(),
+            }
+        }
+
+    def run(self, sorted_bam_dir, input_dir, output_dir, threads=4, extra_command="", runner=None) -> tuple[str]:
+        runner = resolve_runner(runner)
+        out = Path(output_dir)
+        out.mkdir(parents=True, exist_ok=True)
+        in_dir = Path(input_dir)
+        for sample_dir in sorted(path for path in in_dir.iterdir() if path.is_dir()):
+            bam = sample_dir / "sorted.bam"
+            sample_out = out / sample_dir.name
+            sample_out.mkdir(parents=True, exist_ok=True)
+            collated = sample_out / "collated.bam"
+            fixmate = sample_out / "fixmate.bam"
+            positionsorted = sample_out / "positionsorted.bam"
+            dedup = sample_out / "dedup.bam"
+            runner.run(variant_stage_commands.samtools_collate_argv(bam, collated, threads), sample_out)
+            runner.run(variant_stage_commands.samtools_fixmate_argv(collated, fixmate), sample_out)
+            runner.run(variant_stage_commands.samtools_sort_argv(fixmate, positionsorted, threads), sample_out)
+            runner.run(variant_stage_commands.samtools_markdup_argv(positionsorted, dedup, extra_command), sample_out)
+            runner.run(variant_stage_commands.samtools_index_argv(dedup), sample_out)
+        return (str(out),)
+
+
+class BcftoolsCallNode(_BaseVariantNode):
+    CATEGORY = "ComfyBIO/Variant Calling"
+    RETURN_NAMES = ("raw_vcf_dir",)
+
+    @classmethod
+    def INPUT_TYPES(cls) -> dict:
+        return {
+            "required": {
+                "dedup_bam_dir": cls._upstream_input(),
+                "input_dir": cls._string_input("dedup"),
+                "reference_fasta": cls._string_input("harness/examples/fixtures/variant/reference.fasta"),
+                "output_dir": cls._string_input("calls"),
+                "extra_command": cls._extra_command_input(),
+            }
+        }
+
+    def run(self, dedup_bam_dir, input_dir, reference_fasta, output_dir, extra_command="", runner=None) -> tuple[str]:
+        runner = resolve_runner(runner)
+        out = Path(output_dir)
+        out.mkdir(parents=True, exist_ok=True)
+        in_dir = Path(input_dir)
+        for sample_dir in sorted(path for path in in_dir.iterdir() if path.is_dir()):
+            bam = sample_dir / "dedup.bam"
+            sample_out = out / sample_dir.name
+            sample_out.mkdir(parents=True, exist_ok=True)
+            raw_bcf = sample_out / "raw.bcf"
+            raw_vcf = sample_out / "raw.vcf"
+            runner.run(variant_stage_commands.bcftools_mpileup_argv(reference_fasta, bam, raw_bcf, extra_command), sample_out)
+            runner.run(variant_stage_commands.bcftools_call_argv(raw_bcf, raw_vcf), sample_out)
+        return (str(out),)
+
+
+class BcftoolsFilterNode(_BaseVariantNode):
+    CATEGORY = "ComfyBIO/Variant Calling"
+    RETURN_NAMES = ("filtered_vcf_dir",)
+
+    @classmethod
+    def INPUT_TYPES(cls) -> dict:
+        return {
+            "required": {
+                "raw_vcf_dir": cls._upstream_input(),
+                "input_dir": cls._string_input("calls"),
+                "output_dir": cls._string_input("filtered"),
+                "exclude_expression": cls._string_input("QUAL<20 || DP<10"),
+                "extra_command": cls._extra_command_input(),
+            }
+        }
+
+    def run(self, raw_vcf_dir, input_dir, output_dir, exclude_expression="QUAL<20 || DP<10", extra_command="", runner=None) -> tuple[str]:
+        runner = resolve_runner(runner)
+        out = Path(output_dir)
+        out.mkdir(parents=True, exist_ok=True)
+        in_dir = Path(input_dir)
+        for sample_dir in sorted(path for path in in_dir.iterdir() if path.is_dir()):
+            raw_vcf = sample_dir / "raw.vcf"
+            sample_out = out / sample_dir.name
+            sample_out.mkdir(parents=True, exist_ok=True)
+            filtered_vcf = sample_out / "filtered.vcf"
+            runner.run(
+                variant_stage_commands.bcftools_filter_argv(raw_vcf, filtered_vcf, exclude_expression, extra_command),
+                sample_out,
+            )
+        return (str(out),)

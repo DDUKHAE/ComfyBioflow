@@ -4,7 +4,7 @@ import pytest
 
 from bioflow_harness.runtime.command_runner import DryRunCommandRunner
 from nodes.execution import EnvironmentNotReadyError
-from nodes.variant_nodes import BwaMem2AlignNode, BwaMem2IndexNode, VariantInputValidatorNode
+from nodes.variant_nodes import BcftoolsCallNode, BcftoolsFilterNode, BwaMem2AlignNode, BwaMem2IndexNode, MarkDuplicatesNode, VariantInputValidatorNode
 
 VARIANT_FIXTURES = "harness/examples/fixtures/variant"
 VARIANT_META = "harness/examples/fixtures/variant/sample_metadata.csv"
@@ -88,3 +88,63 @@ def test_bwa_mem2_align_runs_three_commands_per_sample(tmp_path):
     # under DryRunCommandRunner; sorted.bam is only produced by the (unexecuted) dry-run
     # samtools sort subprocess, so it must NOT be asserted here.
     assert (out / "sample_a" / "aligned.sam").exists()
+
+
+def _aligned_fixture(tmp_path):
+    aligned = tmp_path / "aligned" / "sample_a"
+    aligned.mkdir(parents=True)
+    (aligned / "sorted.bam").write_bytes(b"stub-bam")
+    return tmp_path / "aligned"
+
+
+def test_mark_duplicates_runs_five_commands_per_sample(tmp_path):
+    runner = DryRunCommandRunner()
+    input_dir = _aligned_fixture(tmp_path)
+    out = tmp_path / "dedup"
+    node = MarkDuplicatesNode()
+    result = node.run(sorted_bam_dir="upstream", input_dir=str(input_dir), output_dir=str(out), threads=4, extra_command="", runner=runner)
+    assert result == (str(out),)
+    assert len(runner.commands) == 5
+    assert (out / "sample_a" / "dedup.bam").parent.exists()
+
+
+def _dedup_fixture(tmp_path):
+    dedup = tmp_path / "dedup" / "sample_a"
+    dedup.mkdir(parents=True)
+    (dedup / "dedup.bam").write_bytes(b"stub-bam")
+    return tmp_path / "dedup"
+
+
+def test_bcftools_call_runs_two_commands_per_sample(tmp_path):
+    runner = DryRunCommandRunner()
+    input_dir = _dedup_fixture(tmp_path)
+    out = tmp_path / "calls"
+    node = BcftoolsCallNode()
+    result = node.run(
+        dedup_bam_dir="upstream", input_dir=str(input_dir), reference_fasta=VARIANT_REF,
+        output_dir=str(out), extra_command="", runner=runner,
+    )
+    assert result == (str(out),)
+    assert len(runner.commands) == 2
+    assert runner.commands[0].argv[:5] == ["conda", "run", "-n", "variant_analysis", "bcftools"]
+
+
+def _calls_fixture(tmp_path):
+    calls = tmp_path / "calls" / "sample_a"
+    calls.mkdir(parents=True)
+    (calls / "raw.vcf").write_text("##fileformat=VCFv4.2\n", encoding="utf-8")
+    return tmp_path / "calls"
+
+
+def test_bcftools_filter_runs_one_command_per_sample(tmp_path):
+    runner = DryRunCommandRunner()
+    input_dir = _calls_fixture(tmp_path)
+    out = tmp_path / "filtered"
+    node = BcftoolsFilterNode()
+    result = node.run(
+        raw_vcf_dir="upstream", input_dir=str(input_dir), output_dir=str(out),
+        exclude_expression="QUAL<20 || DP<10", extra_command="", runner=runner,
+    )
+    assert result == (str(out),)
+    assert len(runner.commands) == 1
+    assert "QUAL<20 || DP<10" in runner.commands[0].argv

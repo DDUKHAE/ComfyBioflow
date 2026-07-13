@@ -200,3 +200,84 @@ class AtacQualityFilterNode(_BaseComfyBIONode):
             )
             runner.run(atac_stage_commands.samtools_index_argv(final_bam), sample_out)
         return (str(out),)
+
+
+class Macs3PeakCallingNode(_BaseComfyBIONode):
+    CATEGORY = "ComfyBIO/Peak Calling"
+    RETURN_NAMES = ("peaks_dir",)
+
+    @classmethod
+    def INPUT_TYPES(cls) -> dict:
+        return {
+            "required": {
+                "filtered_bam_dir": cls._upstream_input(),
+                "input_dir": cls._string_input("filtered"),
+                "output_dir": cls._string_input("peaks"),
+                "genome_size": cls._string_input("hs"),
+                "extra_command": cls._extra_command_input(),
+            }
+        }
+
+    def run(self, filtered_bam_dir, input_dir, output_dir, genome_size="hs", extra_command="", runner=None) -> tuple[str]:
+        runner = resolve_runner(runner)
+        out = Path(output_dir)
+        out.mkdir(parents=True, exist_ok=True)
+        in_dir = Path(input_dir)
+        for sample_dir in sorted(path for path in in_dir.iterdir() if path.is_dir()):
+            bam = sample_dir / "final.bam"
+            sample_out = out / sample_dir.name
+            sample_out.mkdir(parents=True, exist_ok=True)
+            runner.run(
+                atac_stage_commands.macs3_callpeak_argv(bam, sample_out, sample_dir.name, genome_size, extra_command),
+                sample_out,
+            )
+        return (str(out),)
+
+
+class AtacPeakVisualizationNode(_BaseComfyBIONode):
+    CATEGORY = "ComfyBIO/Visualization"
+    RETURN_TYPES = ("STRING", "IMAGE")
+    RETURN_NAMES = ("plot_dir", "preview_plot")
+
+    @classmethod
+    def INPUT_TYPES(cls) -> dict:
+        return {
+            "required": {
+                "peaks_dir": cls._upstream_input(),
+                "input_dir": cls._string_input("peaks"),
+                "plot_dir": cls._string_input("plots"),
+                "extra_command": cls._extra_command_input(),
+            }
+        }
+
+    def run(self, peaks_dir, input_dir, plot_dir, extra_command="", runner=None, preview_loader=None) -> tuple[str, object]:
+        runner = resolve_runner(runner)
+        loader = preview_loader if preview_loader is not None else load_preview_tensor
+        plots = Path(plot_dir)
+        plots.mkdir(parents=True, exist_ok=True)
+        runner.run(atac_stage_commands.atac_peak_visualization_argv(input_dir, plots, extra_command), plots)
+        return (str(plots), loader(plots / "atac_summary.png"))
+
+
+class AtacReportNode(_BaseComfyBIONode):
+    CATEGORY = "ComfyBIO/Reporting"
+    RETURN_NAMES = ("report_markdown",)
+
+    @classmethod
+    def INPUT_TYPES(cls) -> dict:
+        return {
+            "required": {
+                "plot_dir_path": cls._upstream_input(),
+                "peaks_dir": cls._string_input("peaks"),
+                "plot_dir": cls._string_input("plots"),
+                "report_path": cls._string_input("report/atac_report.md"),
+                "extra_command": cls._extra_command_input(),
+            }
+        }
+
+    def run(self, plot_dir_path, peaks_dir, plot_dir, report_path, extra_command="", runner=None) -> tuple[str]:
+        runner = resolve_runner(runner)
+        report = Path(report_path)
+        report.parent.mkdir(parents=True, exist_ok=True)
+        runner.run(atac_stage_commands.atac_report_argv(peaks_dir, plot_dir, report), report.parent)
+        return (str(report),)

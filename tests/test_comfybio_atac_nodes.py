@@ -155,3 +155,74 @@ def test_atac_quality_filter_runs_two_commands_per_sample(tmp_path):
     joined = " ".join(runner.commands[0].argv)
     assert "-q" in runner.commands[0].argv and "30" in runner.commands[0].argv
     assert 'rname != "chrM"' in joined
+
+
+from nodes.atac_nodes import AtacReportNode, AtacPeakVisualizationNode, Macs3PeakCallingNode
+
+
+def _filtered_fixture(tmp_path):
+    filtered = tmp_path / "filtered" / "sample_a"
+    filtered.mkdir(parents=True)
+    (filtered / "final.bam").write_bytes(b"stub-bam")
+    return tmp_path / "filtered"
+
+
+def test_macs3_peak_calling_runs_one_command_per_sample(tmp_path):
+    runner = DryRunCommandRunner()
+    input_dir = _filtered_fixture(tmp_path)
+    out = tmp_path / "peaks"
+    node = Macs3PeakCallingNode()
+    result = node.run(
+        filtered_bam_dir="upstream", input_dir=str(input_dir), output_dir=str(out),
+        genome_size="hs", extra_command="", runner=runner,
+    )
+    assert result == (str(out),)
+    assert len(runner.commands) == 1
+    assert runner.commands[0].argv[:5] == ["conda", "run", "-n", "epigenomics", "macs3"]
+    assert (out / "sample_a").exists()
+
+
+def _peaks_fixture(tmp_path):
+    peaks = tmp_path / "peaks" / "sample_a"
+    peaks.mkdir(parents=True)
+    return tmp_path / "peaks"
+
+
+def test_atac_peak_visualization_returns_plot_dir_and_image(tmp_path):
+    runner = DryRunCommandRunner()
+    input_dir = _peaks_fixture(tmp_path)
+    plots = tmp_path / "plots"
+    node = AtacPeakVisualizationNode()
+    result = node.run(
+        peaks_dir="upstream", input_dir=str(input_dir), plot_dir=str(plots),
+        extra_command="", runner=runner, preview_loader=lambda path: "IMAGE_STUB",
+    )
+    assert result == (str(plots), "IMAGE_STUB")
+    assert plots.exists()
+    assert len(runner.commands) == 1
+
+
+def test_atac_report_runs_report_script(tmp_path):
+    runner = DryRunCommandRunner()
+    report = tmp_path / "report" / "atac_report.md"
+    node = AtacReportNode()
+    result = node.run(
+        plot_dir_path="upstream", peaks_dir=str(tmp_path / "peaks"),
+        plot_dir=str(tmp_path / "plots"), report_path=str(report),
+        extra_command="", runner=runner,
+    )
+    assert result == (str(report),)
+    assert report.parent.exists()
+    assert len(runner.commands) == 1
+    assert "conda" not in runner.commands[0].argv
+
+
+def test_all_atac_nodes_registered_in_node_class_mappings():
+    import nodes
+
+    expected = {
+        "AtacInputValidatorNode", "AtacFastpTrimNode", "AtacBwaMem2IndexNode",
+        "AtacBwaMem2AlignNode", "AtacMarkDuplicatesNode", "AtacQualityFilterNode",
+        "Macs3PeakCallingNode", "AtacPeakVisualizationNode", "AtacReportNode",
+    }
+    assert expected.issubset(nodes.NODE_CLASS_MAPPINGS.keys())

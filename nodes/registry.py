@@ -26,6 +26,17 @@ from .variant_nodes import (
     VariantReportNode,
     VariantVisualizationNode,
 )
+from .atac_nodes import (
+    AtacBwaMem2AlignNode,
+    AtacBwaMem2IndexNode,
+    AtacFastpTrimNode,
+    AtacInputValidatorNode,
+    AtacMarkDuplicatesNode,
+    AtacPeakVisualizationNode,
+    AtacQualityFilterNode,
+    AtacReportNode,
+    Macs3PeakCallingNode,
+)
 
 
 NODE_CLASS_MAPPINGS = {
@@ -53,6 +64,15 @@ NODE_CLASS_MAPPINGS = {
     "BcftoolsFilterNode": BcftoolsFilterNode,
     "VariantVisualizationNode": VariantVisualizationNode,
     "VariantReportNode": VariantReportNode,
+    "AtacInputValidatorNode": AtacInputValidatorNode,
+    "AtacFastpTrimNode": AtacFastpTrimNode,
+    "AtacBwaMem2IndexNode": AtacBwaMem2IndexNode,
+    "AtacBwaMem2AlignNode": AtacBwaMem2AlignNode,
+    "AtacMarkDuplicatesNode": AtacMarkDuplicatesNode,
+    "AtacQualityFilterNode": AtacQualityFilterNode,
+    "Macs3PeakCallingNode": Macs3PeakCallingNode,
+    "AtacPeakVisualizationNode": AtacPeakVisualizationNode,
+    "AtacReportNode": AtacReportNode,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {

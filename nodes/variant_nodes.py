@@ -4,24 +4,9 @@ from bioflow_harness.runtime.environment import VARIANT_ANALYSIS_REQUIREMENTS
 from .execution import require_environment, resolve_runner, load_preview_tensor
 from .sample_loading import load_samples
 from . import variant_stage_commands
+from .ref_nodes import _BaseComfyBIONode
 
-
-class _BaseVariantNode:
-    CATEGORY = "ComfyBIO"
-    FUNCTION = "run"
-    RETURN_TYPES = ("STRING",)
-
-    @classmethod
-    def _string_input(cls, default: str = "") -> tuple[str, dict[str, str]]:
-        return ("STRING", {"default": default})
-
-    @classmethod
-    def _upstream_input(cls) -> tuple[str, dict[str, bool]]:
-        return ("STRING", {"forceInput": True})
-
-    @classmethod
-    def _extra_command_input(cls) -> tuple[str, dict[str, str | bool]]:
-        return ("STRING", {"default": "", "multiline": True})
+_BaseVariantNode = _BaseComfyBIONode
 
 
 class VariantInputValidatorNode(_BaseVariantNode):

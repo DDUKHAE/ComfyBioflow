@@ -60,7 +60,7 @@ It parses the CLI's JSON envelope (`{type, subtype, is_error, result, ...}`), ex
 
 These are the registered ComfyUI node classes (`nodes/registry.py::NODE_CLASS_MAPPINGS`, mirrored by `comfy/node_catalog.py`). This table is the source of truth for node names and socket contracts because no skill lists them. `plot_dir`/`preview_plot` visualization nodes emit an `IMAGE` output for a ComfyUI `PreviewImage`; all other data flows as `STRING` file/directory paths.
 
-The **Title** column is the workflow-JSON node title from `comfy/node_catalog.py`; the name ComfyUI shows in its Add-Node menu is derived separately from the class name via `nodes/registry.py::NODE_DISPLAY_NAME_MAPPINGS` (e.g. `SalmonIndexNode` → `SalmonIndex`, no space). The **Execution** column reflects actual `run()` coverage in `nodes/ref_nodes.py`: the 9 bulk nodes execute real tools via conda; the 7 scRNA nodes are **construction-only stubs** — they are registered and appear in generated workflow JSON, but have no `run()` method yet, so executing a scRNA graph in ComfyUI currently raises an error. Registry `runnable_node_status` does **not** capture this distinction (see the Selection-gate caveat below).
+The **Title** column is the workflow-JSON node title from `comfy/node_catalog.py`; the name ComfyUI shows in its Add-Node menu is derived separately from the class name via `nodes/registry.py::NODE_DISPLAY_NAME_MAPPINGS` (e.g. `SalmonIndexNode` → `SalmonIndex`, no space). The **Execution** column reflects actual `run()` coverage in `nodes/ref_nodes.py`: the 9 bulk nodes and the 8 variant-analysis nodes execute real tools via conda; the 7 scRNA nodes are **construction-only stubs** — they are registered and appear in generated workflow JSON, but have no `run()` method yet, so executing a scRNA graph in ComfyUI currently raises an error. Registry `runnable_node_status` does **not** capture this distinction (see the Selection-gate caveat below).
 
 | Node class | Title | Category | Inputs | Outputs | Domain | Execution |
 |---|---|---|---|---|---|---|
@@ -73,6 +73,14 @@ The **Title** column is the workflow-JSON node title from `comfy/node_catalog.py
 | `DESeq2AnalysisNode` | DESeq2 Analysis | ComfyBIO/Differential Expression | `deseq2_count_matrix`:STRING | `deseq2_results_table`:STRING | bulk | runs (conda) |
 | `DESeq2VisualizationNode` | DESeq2 Visualization | ComfyBIO/Visualization | `deseq2_results_table`:STRING | `plot_dir`:STRING, `preview_plot`:IMAGE | bulk | runs (conda) |
 | `ComfyBIOReportNode` | ComfyBIO Report | ComfyBIO/Reporting | `plot_dir_path`:STRING | `report_markdown`:STRING | bulk | runs (conda) |
+| `VariantInputValidatorNode` | Validate Variant Inputs | ComfyBIO/Input | — | `sample_metadata_csv`:STRING | variant_analysis | runs (conda) |
+| `BwaMem2IndexNode` | bwa-mem2 Index | ComfyBIO/Alignment | `sample_metadata_csv`:STRING | `reference_fasta_indexed`:STRING | variant_analysis | runs (conda) |
+| `BwaMem2AlignNode` | bwa-mem2 Align | ComfyBIO/Alignment | `reference_fasta_indexed`:STRING | `sorted_bam_dir`:STRING | variant_analysis | runs (conda) |
+| `MarkDuplicatesNode` | Mark Duplicates | ComfyBIO/Alignment | `sorted_bam_dir`:STRING | `dedup_bam_dir`:STRING | variant_analysis | runs (conda) |
+| `BcftoolsCallNode` | bcftools Call | ComfyBIO/Variant Calling | `dedup_bam_dir`:STRING | `raw_vcf_dir`:STRING | variant_analysis | runs (conda) |
+| `BcftoolsFilterNode` | bcftools Filter | ComfyBIO/Variant Calling | `raw_vcf_dir`:STRING | `filtered_vcf_dir`:STRING | variant_analysis | runs (conda) |
+| `VariantVisualizationNode` | Variant Visualization | ComfyBIO/Visualization | `filtered_vcf_dir`:STRING | `plot_dir`:STRING, `preview_plot`:IMAGE | variant_analysis | runs (conda) |
+| `VariantReportNode` | Variant Report | ComfyBIO/Reporting | `plot_dir_path`:STRING | `report_markdown`:STRING | variant_analysis | runs (conda) |
 | `TenxCountNode` | 10x Count Matrix Generation | ComfyBIO/scRNA-seq | — | `filtered_feature_bc_matrix`:STRING | scRNA | stub (no `run()` yet) |
 | `ScanpyQCNode` | Scanpy Cell QC | ComfyBIO/scRNA-seq | `filtered_feature_bc_matrix`:STRING | `qc_h5ad`:STRING | scRNA | stub (no `run()` yet) |
 | `ScanpyNormalizeNode` | Scanpy Normalize | ComfyBIO/scRNA-seq | `qc_h5ad`:STRING | `normalized_h5ad`:STRING | scRNA | stub (no `run()` yet) |
@@ -92,11 +100,11 @@ The tool-selection registry `harness/registry/tool_selection_registry.yaml` is J
 - `routes`: map of `route_id` → ordered list of **stages**, each `{stage_id, stage_label, tool_id, operation_id, optional?}`
 - `tools`: list of **tool** entries.
 
-The bulk route `bulk_rna_seq_salmon_ref` has 9 stages: `metadata_validation, read_qc, trimming (optional), salmon_index, salmon_quant, tximport_import, deseq2_analysis, deseq2_visualization, reporting`. The scRNA route `scrna_seq_scanpy_ref` has 7 stages: `tenx_count, scrna_qc, scrna_normalization, scrna_clustering, scrna_marker_genes, scrna_visualization, scrna_reporting`.
+The bulk route `bulk_rna_seq_salmon_ref` has 9 stages: `metadata_validation, read_qc, trimming (optional), salmon_index, salmon_quant, tximport_import, deseq2_analysis, deseq2_visualization, reporting`. The scRNA route `scrna_seq_scanpy_ref` has 7 stages: `tenx_count, scrna_qc, scrna_normalization, scrna_clustering, scrna_marker_genes, scrna_visualization, scrna_reporting`. The variant analysis route `variant_analysis_bwa_ref` has 8 stages: `input_validation, reference_indexing (optional), alignment, mark_duplicates, variant_calling, variant_filtering, variant_visualization, reporting`.
 
 Each tool entry carries: `id`, `label`, `domain_tags`, `stage_tags`, `input_types`, `output_types`, `language`, `summary`, `tier` (`REF` or `ALT`), `tier_rationale`, `context_routing_rules`, `selection_rules`, `future_comfy_node`, `runnable_node_status` (`runnable` when a registered node backs it), and `operations`. Each operation is `{id, label, input_types, output_types, node_type}` where `node_type` must be a key in the node catalog above.
 
-**Selection gate (route generation):** a route is selected and generated into workflow JSON when every stage's tool is `tier: REF`, `runnable_node_status: runnable`, and every `operation.node_type` resolves in `NODE_CLASS_MAPPINGS`. **Caveat:** `runnable_node_status: runnable` marks only that a *registered* node backs the operation; it does **not** guarantee the node *executes*. Today only the bulk route (`bulk_rna_seq_salmon_ref`) has nodes that implement `run()`; the scRNA route (`scrna_seq_scanpy_ref`) generates valid workflow JSON but its 7 nodes are construction-only stubs (see the Execution column above), so it is not yet an execution-ready route. `ALT` tools (e.g. STAR, featureCounts, MultiQC) require a recorded context-routing reason and are outside the MVP gate. See the `tool-ranking` and `context-routing` skills for the decision rules.
+**Selection gate (route generation):** a route is selected and generated into workflow JSON when every stage's tool is `tier: REF`, `runnable_node_status: runnable`, and every `operation.node_type` resolves in `NODE_CLASS_MAPPINGS`. **Caveat:** `runnable_node_status: runnable` marks only that a *registered* node backs the operation; it does **not** guarantee the node *executes*. Today the bulk route (`bulk_rna_seq_salmon_ref`) and the variant analysis route (`variant_analysis_bwa_ref`) have nodes that implement `run()`; the scRNA route (`scrna_seq_scanpy_ref`) generates valid workflow JSON but its 7 nodes are construction-only stubs (see the Execution column above), so it is not yet an execution-ready route. `ALT` tools (e.g. STAR, featureCounts, MultiQC) require a recorded context-routing reason and are outside the MVP gate. See the `tool-ranking` and `context-routing` skills for the decision rules.
 
 ## Node authoring policy
 
@@ -108,7 +116,7 @@ Each tool entry carries: `id`, `label`, `domain_tags`, `stage_tags`, `input_type
 
 ## Adding a new domain
 
-A domain that is not implemented must not be silently routed to an existing workflow; the harness returns a `planning_required` response until the domain has a runnable route and registered nodes. To add one: explore the analysis goal, inputs, and expected outputs; design canonical stages and the artifact contract between them; add a `routes` entry plus `tools`/`operations` with `domain_tags`, `tier`, and `node_type`; implement and register the ComfyBIO nodes; add fixtures and validation. Only then move the domain from `planned_domains` to `supported_domains`.
+A domain that is not implemented must not be silently routed to an existing workflow; the harness returns a `planning_required` response until the domain has a runnable route and registered nodes. To add one: explore the analysis goal, inputs, and expected outputs; design canonical stages and the artifact contract between them; add a `routes` entry plus `tools`/`operations` with `domain_tags`, `tier`, and `node_type`; implement and register the ComfyBIO nodes; add fixtures and validation. Only then move the domain from `planned_domains` to `supported_domains`. Follow `harness/skills/domain-bootstrap/` for the concrete process and promotion gate (`scripts/validate_domain_promotion.py`); `variant_analysis` (see `harness/skills/domain-bootstrap/examples.md`) is the worked example.
 
 ## Pointers
 

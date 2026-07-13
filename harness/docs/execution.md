@@ -4,7 +4,7 @@ This is the one part of the pipeline no skill covers: how registered nodes actua
 
 ## Managed conda environment
 
-Real node execution runs external tools inside a managed conda environment named `bulk_rna_seq` (`runtime/environment.py::CONDA_ENV_NAME`, `nodes/stage_commands.py::ENV_NAME`). Tools are invoked as `conda run -n bulk_rna_seq <tool> ...` (`runtime/command_runner.py`). The checked-in environment file is `harness/envs/bulk_rna_seq.yaml`.
+Real node execution runs external tools inside a **managed conda environment per domain** — one per `bioflow_harness.runtime.environment.DomainEnvironmentRequirements` (e.g. `bulk_rna_seq`, `variant_analysis`). Tools are invoked as `conda run -n <env_name> <tool> ...` (`runtime/command_runner.py`). Each domain's checked-in environment file lives at `harness/envs/<domain>.yaml` (`harness/envs/bulk_rna_seq.yaml`, `harness/envs/variant_analysis.yaml`).
 
 REF-only tool set (the official route):
 
@@ -14,6 +14,13 @@ REF-only tool set (the official route):
 The R stages call scripts under `harness/scripts/` (`tximport_import.R`, `deseq2_analysis.R`, `deseq2_visualization.R`).
 
 ALT tools such as `STAR`, `featureCounts`, and `MultiQC` are **not** installed by the REF-only setup; selecting them requires an explicit context-routing decision.
+
+Variant analysis REF-only tool set (`variant_analysis_bwa_ref`):
+
+- Executables: `bwa-mem2`, `samtools`, `bcftools`
+- Packages: `python>=3.11`, `bwa-mem2`, `samtools`, `bcftools`, `matplotlib`
+
+`gatk4` (GATK HaplotypeCaller) is **not** installed by the REF-only setup; selecting it requires an explicit context-routing decision, same as `STAR`/`featureCounts`/`MultiQC` for the bulk RNA-seq route.
 
 ## Execution gating
 

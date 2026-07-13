@@ -4,7 +4,10 @@ import pytest
 
 from bioflow_harness.runtime.command_runner import DryRunCommandRunner
 from nodes.execution import EnvironmentNotReadyError
-from nodes.atac_nodes import AtacBwaMem2IndexNode, AtacFastpTrimNode, AtacInputValidatorNode
+from nodes.atac_nodes import (
+    AtacBwaMem2IndexNode, AtacFastpTrimNode, AtacInputValidatorNode,
+    AtacBwaMem2AlignNode, AtacMarkDuplicatesNode, AtacQualityFilterNode
+)
 
 ATAC_FIXTURES = "harness/examples/fixtures/atac"
 ATAC_META = "harness/examples/fixtures/atac/sample_metadata.csv"
@@ -84,3 +87,71 @@ def test_atac_bwa_mem2_index_skips_when_index_present(tmp_path):
     node = AtacBwaMem2IndexNode()
     node.run(trimmed_fastq_dir="upstream", reference_fasta=str(reference), extra_command="", runner=runner)
     assert len(runner.commands) == 0
+
+
+def _trimmed_fixture(tmp_path):
+    trimmed = tmp_path / "trimmed" / "sample_a"
+    trimmed.mkdir(parents=True)
+    (trimmed / "R1.fastq").write_text("@r1\nACGT\n+\nFFFF\n", encoding="utf-8")
+    (trimmed / "R2.fastq").write_text("@r1\nACGT\n+\nFFFF\n", encoding="utf-8")
+    return tmp_path / "trimmed"
+
+
+def test_atac_bwa_mem2_align_runs_three_commands_per_sample(tmp_path):
+    runner = DryRunCommandRunner()
+    trimmed_dir = _trimmed_fixture(tmp_path)
+    out = tmp_path / "aligned"
+    node = AtacBwaMem2AlignNode()
+    result = node.run(
+        reference_fasta_indexed="upstream", fastq_dir=ATAC_FIXTURES, reference_fasta=ATAC_REF,
+        metadata_csv=ATAC_META, trimmed_dir=str(trimmed_dir), output_dir=str(out),
+        threads=4, extra_command="", runner=runner,
+    )
+    assert result == (str(out),)
+    assert len(runner.commands) == 3
+    assert runner.commands[0].argv[:5] == ["conda", "run", "-n", "epigenomics", "bwa-mem2"]
+    # aligned.sam is written by the node itself (from captured stdout), so it exists even
+    # under DryRunCommandRunner; sorted.bam is only produced by the (unexecuted) dry-run
+    # samtools sort subprocess, so it must NOT be asserted here.
+    assert (out / "sample_a" / "aligned.sam").exists()
+
+
+def _aligned_fixture(tmp_path):
+    aligned = tmp_path / "aligned" / "sample_a"
+    aligned.mkdir(parents=True)
+    (aligned / "sorted.bam").write_bytes(b"stub-bam")
+    return tmp_path / "aligned"
+
+
+def test_atac_mark_duplicates_runs_five_commands_per_sample(tmp_path):
+    runner = DryRunCommandRunner()
+    input_dir = _aligned_fixture(tmp_path)
+    out = tmp_path / "dedup"
+    node = AtacMarkDuplicatesNode()
+    result = node.run(sorted_bam_dir="upstream", input_dir=str(input_dir), output_dir=str(out), threads=4, extra_command="", runner=runner)
+    assert result == (str(out),)
+    assert len(runner.commands) == 5
+    assert (out / "sample_a").exists()
+
+
+def _dedup_fixture(tmp_path):
+    dedup = tmp_path / "dedup" / "sample_a"
+    dedup.mkdir(parents=True)
+    (dedup / "dedup.bam").write_bytes(b"stub-bam")
+    return tmp_path / "dedup"
+
+
+def test_atac_quality_filter_runs_two_commands_per_sample(tmp_path):
+    runner = DryRunCommandRunner()
+    input_dir = _dedup_fixture(tmp_path)
+    out = tmp_path / "filtered"
+    node = AtacQualityFilterNode()
+    result = node.run(
+        dedup_bam_dir="upstream", input_dir=str(input_dir), output_dir=str(out),
+        min_mapq=30, exclude_flags="1804", mito_contig="chrM", extra_command="", runner=runner,
+    )
+    assert result == (str(out),)
+    assert len(runner.commands) == 2
+    joined = " ".join(runner.commands[0].argv)
+    assert "-q" in runner.commands[0].argv and "30" in runner.commands[0].argv
+    assert 'rname != "chrM"' in joined

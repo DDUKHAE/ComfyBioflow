@@ -35,3 +35,11 @@ def test_check_domain_promotion_surfaces_registry_validation_errors():
     report = check_domain_promotion(registry, "does_not_exist", default_node_catalog(), nodes.NODE_CLASS_MAPPINGS)
     assert report.ready is False
     assert report.error is not None
+
+
+def test_atac_seq_route_passes_promotion_gate():
+    registry = load_registry(REGISTRY_PATH)
+    report = check_domain_promotion(registry, "atac_seq_macs3_ref", default_node_catalog(), nodes.NODE_CLASS_MAPPINGS)
+    assert report.ready is True
+    assert report.stub_node_types == []
+    assert report.error is None

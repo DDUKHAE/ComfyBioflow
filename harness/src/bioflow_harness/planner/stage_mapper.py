@@ -2,6 +2,7 @@ ROUTES_BY_DOMAIN = {
     "bulk_rna_seq": "bulk_rna_seq_salmon_ref",
     "scrna_seq": "scrna_seq_scanpy_ref",
     "variant_analysis": "variant_analysis_bwa_ref",
+    "epigenomics": "atac_seq_macs3_ref",
 }
 
 

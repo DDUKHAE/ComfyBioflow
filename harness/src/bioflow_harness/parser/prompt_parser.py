@@ -9,9 +9,16 @@ def parse_prompt(request_text: str) -> AnalysisBrief:
         "variant", "germline", "vcf", "bwa-mem2", "bwa mem2", "snp", "genotyp",
         "whole genome", "whole exome", " wgs", " wes", "bcftools",
     ]
+    epigenomics_tokens = [
+        "atac-seq", "atac seq", "chromatin accessibility", "open chromatin",
+        "peak calling", "macs3", "macs2", "narrowpeak", "chip-seq", "chip seq",
+    ]
     if any(token in text for token in scrna_tokens):
         domain = "scrna_seq"
         analysis_type = "single_cell_analysis"
+    elif any(token in text for token in epigenomics_tokens):
+        domain = "epigenomics"
+        analysis_type = "peak_calling"
     elif any(token in text for token in variant_tokens):
         domain = "variant_analysis"
         analysis_type = "variant_calling"
@@ -24,7 +31,7 @@ def parse_prompt(request_text: str) -> AnalysisBrief:
         input_assets.append("fastq")
     if "metadata" in text or "sample" in text:
         input_assets.append("sample_metadata")
-    if domain == "variant_analysis" and "reference" in text:
+    if domain in ("variant_analysis", "epigenomics") and "reference" in text:
         input_assets.append("reference_fasta")
 
     expected_outputs: list[str] = []
@@ -44,16 +51,25 @@ def parse_prompt(request_text: str) -> AnalysisBrief:
         for output in ["filtered_vcf", "variant_summary_plot"]:
             if output not in expected_outputs:
                 expected_outputs.append(output)
+    if domain == "epigenomics":
+        for output in ["filtered_bam", "peaks", "peak_summary_plot"]:
+            if output not in expected_outputs:
+                expected_outputs.append(output)
 
     preferred_tools = [
         tool
-        for tool in ["fastp", "salmon", "tximport", "deseq2", "cell ranger", "scanpy", "starsolo", "bwa-mem2", "samtools", "bcftools"]
+        for tool in [
+            "fastp", "salmon", "tximport", "deseq2", "cell ranger", "scanpy", "starsolo",
+            "bwa-mem2", "samtools", "bcftools", "macs3", "macs2",
+        ]
         if tool in text
     ]
     if domain == "scrna_seq" and "scanpy" not in preferred_tools:
         preferred_tools.append("scanpy")
     if domain == "variant_analysis" and "bwa-mem2" not in preferred_tools:
         preferred_tools.append("bwa-mem2")
+    if domain == "epigenomics" and "macs3" not in preferred_tools:
+        preferred_tools.append("macs3")
 
     organism = None
     if "human" in text or "homo sapiens" in text:

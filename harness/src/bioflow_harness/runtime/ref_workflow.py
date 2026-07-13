@@ -30,8 +30,8 @@ class ReferenceRunResult:
 class EnvironmentNotReadyError(RuntimeError):
     def __init__(self, report: EnvironmentReport) -> None:
         super().__init__(
-            "bulk_rna_seq managed environment is not ready. "
-            "Review the approval-required REF-only install plan before running external tools."
+            f"{report.conda_env_name} managed environment is not ready. "
+            f"Review the approval-required {report.install_plan.scope} install plan before running external tools."
         )
         self.report = report
 

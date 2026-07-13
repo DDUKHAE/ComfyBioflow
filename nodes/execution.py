@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from bioflow_harness.runtime.command_runner import CondaCommandRunner
-from bioflow_harness.runtime.environment import validate_bulk_rna_seq_environment
+from bioflow_harness.runtime.environment import BULK_RNA_SEQ_REQUIREMENTS, validate_environment
 from bioflow_harness.runtime.ref_workflow import EnvironmentNotReadyError
 
 __all__ = ["EnvironmentNotReadyError", "resolve_runner", "require_environment", "load_preview_tensor"]
@@ -11,8 +11,8 @@ def resolve_runner(runner=None):
     return runner if runner is not None else CondaCommandRunner()
 
 
-def require_environment(probe=None):
-    report = validate_bulk_rna_seq_environment(probe)
+def require_environment(probe=None, requirements=BULK_RNA_SEQ_REQUIREMENTS):
+    report = validate_environment(requirements, probe)
     if not report.ready:
         raise EnvironmentNotReadyError(report)
     return report

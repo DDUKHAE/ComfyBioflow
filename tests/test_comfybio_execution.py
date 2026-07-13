@@ -29,3 +29,26 @@ def test_require_environment_passes_when_ready():
 def test_require_environment_raises_when_missing():
     with pytest.raises(EnvironmentNotReadyError):
         require_environment(_MissingProbe())
+
+
+from bioflow_harness.runtime.environment import VARIANT_ANALYSIS_REQUIREMENTS
+
+
+def test_require_environment_accepts_variant_analysis_requirements():
+    report = require_environment(_ReadyProbe(), requirements=VARIANT_ANALYSIS_REQUIREMENTS)
+    assert report.ready is True
+    assert report.conda_env_name == "variant_analysis"
+
+
+def test_require_environment_raises_for_variant_analysis_when_missing():
+    with pytest.raises(EnvironmentNotReadyError):
+        require_environment(_MissingProbe(), requirements=VARIANT_ANALYSIS_REQUIREMENTS)
+
+
+def test_environment_not_ready_error_message_reflects_env_name():
+    try:
+        require_environment(_MissingProbe(), requirements=VARIANT_ANALYSIS_REQUIREMENTS)
+    except EnvironmentNotReadyError as error:
+        assert "variant_analysis" in str(error)
+    else:
+        raise AssertionError("expected EnvironmentNotReadyError")

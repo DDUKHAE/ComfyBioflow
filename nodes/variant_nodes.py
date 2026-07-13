@@ -198,3 +198,58 @@ class BcftoolsFilterNode(_BaseVariantNode):
                 sample_out,
             )
         return (str(out),)
+
+
+class VariantVisualizationNode(_BaseVariantNode):
+    CATEGORY = "ComfyBIO/Visualization"
+    RETURN_TYPES = ("STRING", "IMAGE")
+    RETURN_NAMES = ("plot_dir", "preview_plot")
+
+    @classmethod
+    def INPUT_TYPES(cls) -> dict:
+        return {
+            "required": {
+                "filtered_vcf_dir": cls._upstream_input(),
+                "input_dir": cls._string_input("filtered"),
+                "plot_dir": cls._string_input("plots"),
+                "extra_command": cls._extra_command_input(),
+            }
+        }
+
+    def run(self, filtered_vcf_dir, input_dir, plot_dir, extra_command="", runner=None, preview_loader=None) -> tuple[str, object]:
+        runner = resolve_runner(runner)
+        loader = preview_loader if preview_loader is not None else load_preview_tensor
+        plots = Path(plot_dir)
+        plots.mkdir(parents=True, exist_ok=True)
+        in_dir = Path(input_dir)
+        for sample_dir in sorted(path for path in in_dir.iterdir() if path.is_dir()):
+            vcf = sample_dir / "filtered.vcf"
+            stats_out = plots / f"{sample_dir.name}.stats.txt"
+            stats_record = runner.run(variant_stage_commands.bcftools_stats_argv(vcf), plots)
+            stats_out.write_text(stats_record.stdout)
+        runner.run(variant_stage_commands.variant_visualization_argv(plots, plots, extra_command), plots)
+        return (str(plots), loader(plots / "variant_summary.png"))
+
+
+class VariantReportNode(_BaseVariantNode):
+    CATEGORY = "ComfyBIO/Reporting"
+    RETURN_NAMES = ("report_markdown",)
+
+    @classmethod
+    def INPUT_TYPES(cls) -> dict:
+        return {
+            "required": {
+                "plot_dir_path": cls._upstream_input(),
+                "vcf_dir": cls._string_input("filtered"),
+                "plot_dir": cls._string_input("plots"),
+                "report_path": cls._string_input("report/variant_report.md"),
+                "extra_command": cls._extra_command_input(),
+            }
+        }
+
+    def run(self, plot_dir_path, vcf_dir, plot_dir, report_path, extra_command="", runner=None) -> tuple[str]:
+        runner = resolve_runner(runner)
+        report = Path(report_path)
+        report.parent.mkdir(parents=True, exist_ok=True)
+        runner.run(variant_stage_commands.variant_report_argv(vcf_dir, plot_dir, report), report.parent)
+        return (str(report),)

@@ -148,3 +148,54 @@ def test_bcftools_filter_runs_one_command_per_sample(tmp_path):
     assert result == (str(out),)
     assert len(runner.commands) == 1
     assert "QUAL<20 || DP<10" in runner.commands[0].argv
+
+
+from nodes.variant_nodes import VariantReportNode, VariantVisualizationNode
+
+
+def _filtered_fixture(tmp_path):
+    filtered = tmp_path / "filtered" / "sample_a"
+    filtered.mkdir(parents=True)
+    (filtered / "filtered.vcf").write_text("##fileformat=VCFv4.2\n", encoding="utf-8")
+    return tmp_path / "filtered"
+
+
+def test_variant_visualization_returns_plot_dir_and_image(tmp_path):
+    runner = DryRunCommandRunner()
+    input_dir = _filtered_fixture(tmp_path)
+    plots = tmp_path / "plots"
+    node = VariantVisualizationNode()
+    result = node.run(
+        filtered_vcf_dir="upstream", input_dir=str(input_dir), plot_dir=str(plots),
+        extra_command="", runner=runner, preview_loader=lambda path: "IMAGE_STUB",
+    )
+    assert result == (str(plots), "IMAGE_STUB")
+    assert plots.exists()
+    assert len(runner.commands) == 2  # one bcftools stats per sample + one plotting call
+    assert (plots / "sample_a.stats.txt").exists()
+
+
+def test_variant_report_runs_report_script(tmp_path):
+    runner = DryRunCommandRunner()
+    report = tmp_path / "report" / "variant_report.md"
+    node = VariantReportNode()
+    result = node.run(
+        plot_dir_path="upstream", vcf_dir=str(tmp_path / "filtered"),
+        plot_dir=str(tmp_path / "plots"), report_path=str(report),
+        extra_command="", runner=runner,
+    )
+    assert result == (str(report),)
+    assert report.parent.exists()
+    assert len(runner.commands) == 1
+    assert "conda" not in runner.commands[0].argv
+
+
+def test_all_variant_nodes_registered_in_node_class_mappings():
+    import nodes
+
+    expected = {
+        "VariantInputValidatorNode", "BwaMem2IndexNode", "BwaMem2AlignNode",
+        "MarkDuplicatesNode", "BcftoolsCallNode", "BcftoolsFilterNode",
+        "VariantVisualizationNode", "VariantReportNode",
+    }
+    assert expected.issubset(nodes.NODE_CLASS_MAPPINGS.keys())

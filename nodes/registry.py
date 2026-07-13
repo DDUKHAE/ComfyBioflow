@@ -16,6 +16,16 @@ from .ref_nodes import (
     TenxCountNode,
     TximportNode,
 )
+from .variant_nodes import (
+    BcftoolsCallNode,
+    BcftoolsFilterNode,
+    BwaMem2AlignNode,
+    BwaMem2IndexNode,
+    MarkDuplicatesNode,
+    VariantInputValidatorNode,
+    VariantReportNode,
+    VariantVisualizationNode,
+)
 
 
 NODE_CLASS_MAPPINGS = {
@@ -35,6 +45,14 @@ NODE_CLASS_MAPPINGS = {
     "DESeq2AnalysisNode": DESeq2AnalysisNode,
     "DESeq2VisualizationNode": DESeq2VisualizationNode,
     "ComfyBIOReportNode": ComfyBIOReportNode,
+    "VariantInputValidatorNode": VariantInputValidatorNode,
+    "BwaMem2IndexNode": BwaMem2IndexNode,
+    "BwaMem2AlignNode": BwaMem2AlignNode,
+    "MarkDuplicatesNode": MarkDuplicatesNode,
+    "BcftoolsCallNode": BcftoolsCallNode,
+    "BcftoolsFilterNode": BcftoolsFilterNode,
+    "VariantVisualizationNode": VariantVisualizationNode,
+    "VariantReportNode": VariantReportNode,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {

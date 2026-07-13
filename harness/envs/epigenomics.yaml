@@ -1,0 +1,12 @@
+name: epigenomics
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python>=3.11
+  - fastp
+  - bwa-mem2
+  - samtools
+  - macs3
+  - bedtools
+  - matplotlib

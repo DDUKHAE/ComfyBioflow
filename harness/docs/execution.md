@@ -22,6 +22,13 @@ Variant analysis REF-only tool set (`variant_analysis_bwa_ref`):
 
 `gatk4` (GATK HaplotypeCaller) is **not** installed by the REF-only setup; selecting it requires an explicit context-routing decision, same as `STAR`/`featureCounts`/`MultiQC` for the bulk RNA-seq route.
 
+Epigenomics (ATAC-seq) REF-only tool set (`atac_seq_macs3_ref`):
+
+- Executables: `fastp`, `bwa-mem2`, `samtools`, `macs3`
+- Packages: `python>=3.11`, `fastp`, `bwa-mem2`, `samtools`, `macs3`, `bedtools`, `matplotlib`
+
+`macs2` and `genrich` are **not** installed by the REF-only setup; selecting either requires an explicit context-routing decision, same as `gatk4` for the variant_analysis route.
+
 ## Execution gating
 
 A node runs real tools only when the environment and inputs validate:

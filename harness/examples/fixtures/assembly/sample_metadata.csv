@@ -1,0 +1,2 @@
+sample_id,condition,fastq_1,fastq_2
+sample_a,bacterial_isolate,sample_a_R1.fastq,sample_a_R2.fastq

@@ -30,7 +30,7 @@ _BRACKEN_REPORT = (
 
 
 def test_parse_bracken_report_returns_top_taxa_sorted_by_fraction(tmp_path):
-    report = tmp_path / "bracken_report.txt"
+    report = tmp_path / "bracken_output.txt"
     report.write_text(_BRACKEN_REPORT, encoding="utf-8")
     top = metagenome_visualization.parse_bracken_report(report, top_n=2)
     assert top == [("Escherichia coli", 0.55), ("Bacteroides fragilis", 0.275)]
@@ -40,7 +40,7 @@ def test_main_writes_plot_png(tmp_path):
     reports_dir = tmp_path / "bracken"
     sample_dir = reports_dir / "sample_a"
     sample_dir.mkdir(parents=True)
-    (sample_dir / "bracken_report.txt").write_text(_BRACKEN_REPORT, encoding="utf-8")
+    (sample_dir / "bracken_output.txt").write_text(_BRACKEN_REPORT, encoding="utf-8")
     output_png = tmp_path / "metagenome_summary.png"
     sys.argv = ["metagenome_visualization.py", "--reports-dir", str(reports_dir), "--output", str(output_png)]
     metagenome_visualization.main()

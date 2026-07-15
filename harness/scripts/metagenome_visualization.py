@@ -26,9 +26,9 @@ def main() -> None:
     parser.add_argument("--top-n", type=int, default=5)
     args = parser.parse_args()
 
-    report_files = sorted(args.reports_dir.glob("*/bracken_report.txt"))
+    report_files = sorted(args.reports_dir.glob("*/bracken_output.txt"))
     if not report_files:
-        raise SystemExit(f"No bracken_report.txt files found under {args.reports_dir}")
+        raise SystemExit(f"No bracken_output.txt files found under {args.reports_dir}")
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
     fig, axes = plt.subplots(1, len(report_files), figsize=(6 * len(report_files), 4), squeeze=False)

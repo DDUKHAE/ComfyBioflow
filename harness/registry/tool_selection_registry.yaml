@@ -1,7 +1,7 @@
 {
   "metadata": {
     "name": "ComfyBIO MVP tool registry",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "official_route_id": "bulk_rna_seq_salmon_ref"
   },
   "supported_domains": [

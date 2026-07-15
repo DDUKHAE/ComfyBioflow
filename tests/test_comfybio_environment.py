@@ -79,3 +79,18 @@ def test_validate_environment_ready_for_epigenomics():
     report = validate_environment(EPIGENOMICS_REQUIREMENTS, _ReadyProbe())
     assert report.ready is True
     assert report.conda_env_name == "epigenomics"
+
+
+def test_metagenome_requirements_shape():
+    from bioflow_harness.runtime.environment import METAGENOME_REQUIREMENTS
+
+    assert METAGENOME_REQUIREMENTS.env_name == "metagenome"
+    assert METAGENOME_REQUIREMENTS.required_executables == ["fastp", "kraken2", "bracken"]
+
+
+def test_validate_environment_ready_for_metagenome():
+    from bioflow_harness.runtime.environment import METAGENOME_REQUIREMENTS
+
+    report = validate_environment(METAGENOME_REQUIREMENTS, _ReadyProbe())
+    assert report.ready is True
+    assert report.conda_env_name == "metagenome"

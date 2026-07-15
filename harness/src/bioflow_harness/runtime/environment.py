@@ -46,6 +46,13 @@ EPIGENOMICS_REQUIREMENTS = DomainEnvironmentRequirements(
     optional_alt_tools=["macs2", "genrich"],
 )
 
+METAGENOME_REQUIREMENTS = DomainEnvironmentRequirements(
+    env_name="metagenome",
+    required_executables=["fastp", "kraken2", "bracken"],
+    required_packages=["python>=3.11", "fastp", "kraken2", "bracken", "matplotlib"],
+    optional_alt_tools=["centrifuge"],
+)
+
 
 class EnvironmentProbe:
     def env_exists(self, env_name: str) -> bool:

@@ -4,8 +4,8 @@
     "version": "0.1.0",
     "official_route_id": "bulk_rna_seq_salmon_ref"
   },
-  "supported_domains": ["bulk_rna_seq", "scrna_seq", "variant_analysis", "epigenomics", "metagenome"],
-  "planned_domains": ["genome_assembly"],
+  "supported_domains": ["bulk_rna_seq", "scrna_seq", "variant_analysis", "epigenomics", "metagenome", "genome_assembly"],
+  "planned_domains": [],
   "routes": {
     "bulk_rna_seq_salmon_ref": [
       {"stage_id": "metadata_validation", "stage_label": "Input asset and sample metadata validation", "tool_id": "sample_metadata_validator", "operation_id": "validate_sample_metadata"},

@@ -29,6 +29,13 @@ Epigenomics (ATAC-seq) REF-only tool set (`atac_seq_macs3_ref`):
 
 `macs2` and `genrich` are **not** installed by the REF-only setup; selecting either requires an explicit context-routing decision, same as `gatk4` for the variant_analysis route.
 
+Metagenome REF-only tool set (`metagenome_kraken2_ref`):
+
+- Executables: `fastp`, `kraken2`, `bracken`
+- Packages: `python>=3.11`, `fastp`, `kraken2`, `bracken`, `matplotlib`
+
+`centrifuge` is **not** installed by the REF-only setup; selecting it requires an explicit context-routing decision, same as `gatk4`/`macs2`/`genrich` for the prior two routes. A Kraken2 database is not bundled — the user points `kraken2_db_dir` at their own downloaded database.
+
 ## Execution gating
 
 A node runs real tools only when the environment and inputs validate:

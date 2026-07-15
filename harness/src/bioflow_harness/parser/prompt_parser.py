@@ -13,6 +13,10 @@ def parse_prompt(request_text: str) -> AnalysisBrief:
         "metagenom", "kraken2", "kraken", "bracken", "taxonomic profil",
         "shotgun", "microbiome", "microbial communit",
     ]
+    genome_assembly_tokens = [
+        "de novo assembly", "genome assembly", "spades", "megahit", "contig",
+        "assemble the genome", "isolate genome",
+    ]
     variant_tokens = [
         "variant", "germline", "vcf", "bwa-mem2", "bwa mem2", "snp", "genotyp",
         "whole genome", "whole exome", " wgs", " wes", "bcftools",
@@ -23,6 +27,9 @@ def parse_prompt(request_text: str) -> AnalysisBrief:
     elif any(token in text for token in epigenomics_tokens):
         domain = "epigenomics"
         analysis_type = "peak_calling"
+    elif any(token in text for token in genome_assembly_tokens):
+        domain = "genome_assembly"
+        analysis_type = "de_novo_assembly"
     elif any(token in text for token in metagenome_tokens):
         domain = "metagenome"
         analysis_type = "taxonomic_profiling"
@@ -66,12 +73,17 @@ def parse_prompt(request_text: str) -> AnalysisBrief:
         for output in ["taxonomic_profile", "abundance_estimates"]:
             if output not in expected_outputs:
                 expected_outputs.append(output)
+    if domain == "genome_assembly":
+        for output in ["assembled_contigs", "assembly_qc_metrics"]:
+            if output not in expected_outputs:
+                expected_outputs.append(output)
 
     preferred_tools = [
         tool
         for tool in [
             "fastp", "salmon", "tximport", "deseq2", "cell ranger", "scanpy", "starsolo",
             "bwa-mem2", "samtools", "bcftools", "macs3", "macs2", "kraken2", "bracken",
+            "spades", "megahit", "quast",
         ]
         if tool in text
     ]
@@ -83,6 +95,8 @@ def parse_prompt(request_text: str) -> AnalysisBrief:
         preferred_tools.append("macs3")
     if domain == "metagenome" and "kraken2" not in preferred_tools:
         preferred_tools.append("kraken2")
+    if domain == "genome_assembly" and "spades" not in preferred_tools:
+        preferred_tools.append("spades")
 
     organism = None
     if "human" in text or "homo sapiens" in text:

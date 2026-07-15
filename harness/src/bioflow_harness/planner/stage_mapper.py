@@ -4,6 +4,7 @@ ROUTES_BY_DOMAIN = {
     "variant_analysis": "variant_analysis_bwa_ref",
     "epigenomics": "atac_seq_macs3_ref",
     "metagenome": "metagenome_kraken2_ref",
+    "genome_assembly": "genome_assembly_spades_ref",
 }
 
 

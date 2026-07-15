@@ -127,3 +127,54 @@ PYTHONPATH="harness/src:." python harness/skills/domain-bootstrap/scripts/valida
 ```
 
 prints `"ready": true` once all 6 nodes have real `run()` methods — the gate script itself needed zero changes for the third consecutive cycle.
+
+---
+
+# Domain Bootstrap: genome_assembly (SPAdes) worked example
+
+The fourth and final domain built for the `planned_domains` entries that existed when `domain-bootstrap` began.
+
+## Assay scope decision
+
+Single bacterial isolate, short-read de novo assembly only — no hybrid (long+short) assembly, no MAG binning, no genome annotation. This route has no reference genome input at all, unlike `variant_analysis`/`epigenomics`.
+
+## Stage decomposition
+
+| stage_id | tool_id (tier) | node_type |
+|---|---|---|
+| `input_validation` | `assembly_input_validator` (REF) | `AssemblyInputValidatorNode` |
+| `read_trimming` | `assembly_fastp_trim` (REF) | `AssemblyFastpTrimNode` |
+| `assembly` | `spades_assemble` (REF) / `megahit_assemble` (ALT, planned) | `SpadesAssembleNode` |
+| `assembly_qc` | `quast_qc` (REF) | `QuastQcNode` |
+| `assembly_visualization` | `assembly_visualization` (REF) | `AssemblyVisualizationNode` |
+| `reporting` | `assembly_report` (REF) | `AssemblyReportNode` |
+
+## REF selection rationale
+
+SPAdes (not MEGAHIT) for assembly: the de facto standard Illumina bacterial-isolate assembler, run in `--isolate` mode (SPAdes' own recommended flag for single-isolate short-read data). MEGAHIT trades assembly quality for speed/memory on large or complex genomes — recorded as `tier: "ALT"`, `runnable_node_status: "planned"`.
+
+QUAST for assembly QC: the standard reference-free assembly-quality-metrics tool (N50, total length, contig count) used across essentially every genome assembly pipeline.
+
+## Environment isolation
+
+`harness/envs/genome_assembly.yaml` is a separate conda environment (`fastp`, `spades`, `quast`, `matplotlib`).
+
+## Executable naming gotcha
+
+`spades.py` and `quast.py` are invoked with a `.py` suffix (the real name the bioconda packages install), unlike every other tool in every prior cycle (`bwa-mem2`, `samtools`, `kraken2`, `bracken`, all suffix-less) — `required_executables` in `DomainEnvironmentRequirements` must use the exact invoked name or `CondaEnvironmentProbe.executable_exists`'s `which` check silently fails to find them.
+
+## No shell pipes — and no stdout-capture workaround
+
+Both `spades.py -o` and `quast.py -o` write their own output directly to the given output directory — no `CommandRecord.stdout`-capture workaround needed, the second consecutive cycle (after `metagenome`) where this holds for every stage.
+
+## A lesson from the `metagenome` cycle: single-output-file tools avoid a whole bug class
+
+The `metagenome` cycle's final review caught one Important bug: Bracken writes *two* similarly-shaped output files (`-o` and `-w`), and the visualization script initially read the wrong one — invisible to tests because the test fixture was misnamed. QUAST writes exactly **one** report file (`report.tsv`) per run, so that specific failure mode structurally cannot recur here — worth calling out in this skill's examples as a concrete "prefer tools with one unambiguous output file where possible" data point for future domain-bootstrap cycles.
+
+## Promotion gate output
+
+```
+PYTHONPATH="harness/src:." python harness/skills/domain-bootstrap/scripts/validate_domain_promotion.py --route-id genome_assembly_spades_ref
+```
+
+prints `"ready": true` once all 6 nodes have real `run()` methods — the gate script itself needed zero changes for the fourth consecutive cycle.

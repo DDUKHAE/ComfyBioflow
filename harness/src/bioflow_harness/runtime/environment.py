@@ -53,6 +53,13 @@ METAGENOME_REQUIREMENTS = DomainEnvironmentRequirements(
     optional_alt_tools=["centrifuge"],
 )
 
+GENOME_ASSEMBLY_REQUIREMENTS = DomainEnvironmentRequirements(
+    env_name="genome_assembly",
+    required_executables=["fastp", "spades.py", "quast.py"],
+    required_packages=["python>=3.11", "fastp", "spades", "quast", "matplotlib"],
+    optional_alt_tools=["megahit"],
+)
+
 
 class EnvironmentProbe:
     def env_exists(self, env_name: str) -> bool:

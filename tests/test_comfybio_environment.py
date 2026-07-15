@@ -94,3 +94,18 @@ def test_validate_environment_ready_for_metagenome():
     report = validate_environment(METAGENOME_REQUIREMENTS, _ReadyProbe())
     assert report.ready is True
     assert report.conda_env_name == "metagenome"
+
+
+def test_genome_assembly_requirements_shape():
+    from bioflow_harness.runtime.environment import GENOME_ASSEMBLY_REQUIREMENTS
+
+    assert GENOME_ASSEMBLY_REQUIREMENTS.env_name == "genome_assembly"
+    assert GENOME_ASSEMBLY_REQUIREMENTS.required_executables == ["fastp", "spades.py", "quast.py"]
+
+
+def test_validate_environment_ready_for_genome_assembly():
+    from bioflow_harness.runtime.environment import GENOME_ASSEMBLY_REQUIREMENTS
+
+    report = validate_environment(GENOME_ASSEMBLY_REQUIREMENTS, _ReadyProbe())
+    assert report.ready is True
+    assert report.conda_env_name == "genome_assembly"

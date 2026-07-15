@@ -94,3 +94,80 @@ class SpadesAssembleNode(_BaseComfyBIONode):
                 sample_out,
             )
         return (str(out),)
+
+
+class QuastQcNode(_BaseComfyBIONode):
+    CATEGORY = "ComfyBIO/Assembly"
+    RETURN_NAMES = ("qc_dir",)
+
+    @classmethod
+    def INPUT_TYPES(cls) -> dict:
+        return {
+            "required": {
+                "assembly_dir": cls._upstream_input(),
+                "input_dir": cls._string_input("assembly"),
+                "output_dir": cls._string_input("quast"),
+                "extra_command": cls._extra_command_input(),
+            }
+        }
+
+    def run(self, assembly_dir, input_dir, output_dir, extra_command="", runner=None) -> tuple[str]:
+        runner = resolve_runner(runner)
+        out = Path(output_dir)
+        out.mkdir(parents=True, exist_ok=True)
+        in_dir = Path(input_dir)
+        for sample_dir in sorted(path for path in in_dir.iterdir() if path.is_dir()):
+            contigs = sample_dir / "contigs.fasta"
+            sample_out = out / sample_dir.name
+            sample_out.mkdir(parents=True, exist_ok=True)
+            runner.run(assembly_stage_commands.quast_qc_argv(contigs, sample_out, extra_command), sample_out)
+        return (str(out),)
+
+
+class AssemblyVisualizationNode(_BaseComfyBIONode):
+    CATEGORY = "ComfyBIO/Visualization"
+    RETURN_TYPES = ("STRING", "IMAGE")
+    RETURN_NAMES = ("plot_dir", "preview_plot")
+
+    @classmethod
+    def INPUT_TYPES(cls) -> dict:
+        return {
+            "required": {
+                "qc_dir": cls._upstream_input(),
+                "input_dir": cls._string_input("quast"),
+                "plot_dir": cls._string_input("plots"),
+                "extra_command": cls._extra_command_input(),
+            }
+        }
+
+    def run(self, qc_dir, input_dir, plot_dir, extra_command="", runner=None, preview_loader=None) -> tuple[str, object]:
+        runner = resolve_runner(runner)
+        loader = preview_loader if preview_loader is not None else load_preview_tensor
+        plots = Path(plot_dir)
+        plots.mkdir(parents=True, exist_ok=True)
+        runner.run(assembly_stage_commands.assembly_visualization_argv(input_dir, plots, extra_command), plots)
+        return (str(plots), loader(plots / "assembly_summary.png"))
+
+
+class AssemblyReportNode(_BaseComfyBIONode):
+    CATEGORY = "ComfyBIO/Reporting"
+    RETURN_NAMES = ("report_markdown",)
+
+    @classmethod
+    def INPUT_TYPES(cls) -> dict:
+        return {
+            "required": {
+                "plot_dir_path": cls._upstream_input(),
+                "qc_dir": cls._string_input("quast"),
+                "plot_dir": cls._string_input("plots"),
+                "report_path": cls._string_input("report/assembly_report.md"),
+                "extra_command": cls._extra_command_input(),
+            }
+        }
+
+    def run(self, plot_dir_path, qc_dir, plot_dir, report_path, extra_command="", runner=None) -> tuple[str]:
+        runner = resolve_runner(runner)
+        report = Path(report_path)
+        report.parent.mkdir(parents=True, exist_ok=True)
+        runner.run(assembly_stage_commands.assembly_report_argv(qc_dir, plot_dir, report), report.parent)
+        return (str(report),)

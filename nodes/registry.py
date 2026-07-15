@@ -45,6 +45,14 @@ from .metagenome_nodes import (
     MetagenomeReportNode,
     MetagenomeVisualizationNode,
 )
+from .assembly_nodes import (
+    AssemblyFastpTrimNode,
+    AssemblyInputValidatorNode,
+    AssemblyReportNode,
+    AssemblyVisualizationNode,
+    QuastQcNode,
+    SpadesAssembleNode,
+)
 
 
 NODE_CLASS_MAPPINGS = {
@@ -87,6 +95,12 @@ NODE_CLASS_MAPPINGS = {
     "BrackenAbundanceNode": BrackenAbundanceNode,
     "MetagenomeVisualizationNode": MetagenomeVisualizationNode,
     "MetagenomeReportNode": MetagenomeReportNode,
+    "AssemblyInputValidatorNode": AssemblyInputValidatorNode,
+    "AssemblyFastpTrimNode": AssemblyFastpTrimNode,
+    "SpadesAssembleNode": SpadesAssembleNode,
+    "QuastQcNode": QuastQcNode,
+    "AssemblyVisualizationNode": AssemblyVisualizationNode,
+    "AssemblyReportNode": AssemblyReportNode,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {

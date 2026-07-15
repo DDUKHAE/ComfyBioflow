@@ -77,3 +77,70 @@ def test_spades_assemble_runs_one_command_per_sample(tmp_path):
     assert runner.commands[0].argv[:5] == ["conda", "run", "-n", "genome_assembly", "spades.py"]
     assert "--pe1-1" in runner.commands[0].argv
     assert (out / "sample_a").exists()
+
+
+from nodes.assembly_nodes import AssemblyReportNode, AssemblyVisualizationNode, QuastQcNode
+
+
+def _assembly_fixture(tmp_path):
+    assembly = tmp_path / "assembly" / "sample_a"
+    assembly.mkdir(parents=True)
+    (assembly / "contigs.fasta").write_text(">contig1\nACGT\n", encoding="utf-8")
+    return tmp_path / "assembly"
+
+
+def test_quast_qc_runs_one_command_per_sample(tmp_path):
+    runner = DryRunCommandRunner()
+    input_dir = _assembly_fixture(tmp_path)
+    out = tmp_path / "quast"
+    node = QuastQcNode()
+    result = node.run(assembly_dir="upstream", input_dir=str(input_dir), output_dir=str(out), extra_command="", runner=runner)
+    assert result == (str(out),)
+    assert len(runner.commands) == 1
+    assert runner.commands[0].argv[:5] == ["conda", "run", "-n", "genome_assembly", "quast.py"]
+    assert (out / "sample_a").exists()
+
+
+def _quast_fixture(tmp_path):
+    quast = tmp_path / "quast" / "sample_a"
+    quast.mkdir(parents=True)
+    return tmp_path / "quast"
+
+
+def test_assembly_visualization_returns_plot_dir_and_image(tmp_path):
+    runner = DryRunCommandRunner()
+    input_dir = _quast_fixture(tmp_path)
+    plots = tmp_path / "plots"
+    node = AssemblyVisualizationNode()
+    result = node.run(
+        qc_dir="upstream", input_dir=str(input_dir), plot_dir=str(plots),
+        extra_command="", runner=runner, preview_loader=lambda path: "IMAGE_STUB",
+    )
+    assert result == (str(plots), "IMAGE_STUB")
+    assert plots.exists()
+    assert len(runner.commands) == 1
+
+
+def test_assembly_report_runs_report_script(tmp_path):
+    runner = DryRunCommandRunner()
+    report = tmp_path / "report" / "assembly_report.md"
+    node = AssemblyReportNode()
+    result = node.run(
+        plot_dir_path="upstream", qc_dir=str(tmp_path / "quast"),
+        plot_dir=str(tmp_path / "plots"), report_path=str(report),
+        extra_command="", runner=runner,
+    )
+    assert result == (str(report),)
+    assert report.parent.exists()
+    assert len(runner.commands) == 1
+    assert "conda" not in runner.commands[0].argv
+
+
+def test_all_assembly_nodes_registered_in_node_class_mappings():
+    import nodes
+
+    expected = {
+        "AssemblyInputValidatorNode", "AssemblyFastpTrimNode", "SpadesAssembleNode",
+        "QuastQcNode", "AssemblyVisualizationNode", "AssemblyReportNode",
+    }
+    assert expected.issubset(nodes.NODE_CLASS_MAPPINGS.keys())

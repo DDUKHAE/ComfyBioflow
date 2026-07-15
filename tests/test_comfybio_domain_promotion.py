@@ -43,3 +43,11 @@ def test_atac_seq_route_passes_promotion_gate():
     assert report.ready is True
     assert report.stub_node_types == []
     assert report.error is None
+
+
+def test_metagenome_route_passes_promotion_gate():
+    registry = load_registry(REGISTRY_PATH)
+    report = check_domain_promotion(registry, "metagenome_kraken2_ref", default_node_catalog(), nodes.NODE_CLASS_MAPPINGS)
+    assert report.ready is True
+    assert report.stub_node_types == []
+    assert report.error is None

@@ -84,3 +84,46 @@ PYTHONPATH="harness/src:." python harness/skills/domain-bootstrap/scripts/valida
 ```
 
 prints `"ready": true` once all 9 nodes have real `run()` methods and the route passes `validate_official_route` — the gate script itself needed zero changes from the `variant_analysis` cycle, confirming it generalizes across domains as intended.
+
+---
+
+# Domain Bootstrap: metagenome (Kraken2/Bracken) worked example
+
+The third domain built with the `domain-bootstrap` skill.
+
+## Assay scope decision
+
+Taxonomic profiling only — "what organisms are in this sample and in what abundance," not assembly-based MAG binning (nf-core/mag's heavier MEGAHIT+MetaBAT2+CheckM+GTDB-TK chain, deliberately excluded as too heavy for the REF-only philosophy).
+
+## Stage decomposition
+
+| stage_id | tool_id (tier) | node_type |
+|---|---|---|
+| `input_validation` | `metagenome_input_validator` (REF) | `MetagenomeInputValidatorNode` |
+| `read_trimming` | `metagenome_fastp_trim` (REF) | `MetagenomeFastpTrimNode` |
+| `taxonomic_classification` | `kraken2_classify` (REF) / `centrifuge_classify` (ALT, planned) | `Kraken2ClassifyNode` |
+| `abundance_estimation` | `bracken_reestimate` (REF) | `BrackenAbundanceNode` |
+| `profile_visualization` | `metagenome_visualization` (REF) | `MetagenomeVisualizationNode` |
+| `reporting` | `metagenome_report` (REF) | `MetagenomeReportNode` |
+
+## REF selection rationale
+
+Kraken2 (not Centrifuge) for classification: the fast, single-database-dependency community standard for shotgun metagenomic taxonomic classification. Centrifuge is a credible lower-memory alternative, recorded as `tier: "ALT"`, `runnable_node_status: "planned"`.
+
+Bracken for abundance re-estimation: Kraken2's standard companion tool, shares the same database, no extra dependency.
+
+## Environment isolation
+
+`harness/envs/metagenome.yaml` is a separate conda environment (`fastp`, `kraken2`, `bracken`, `matplotlib`) from `bulk_rna_seq`/`variant_analysis`/`epigenomics`, even though `fastp` overlaps with all three.
+
+## No shell pipes — and no stdout-capture workaround either
+
+Unlike `variant_analysis` (bwa-mem2 mem) and `epigenomics` (also bwa-mem2 mem), **every** tool in this route has a native output-file flag — Kraken2's `--report`/`--output`, Bracken's `-o`/`-w` — so this is the first domain-bootstrap cycle where no `CommandRecord.stdout`-capture workaround was needed anywhere in the route.
+
+## Promotion gate output
+
+```
+PYTHONPATH="harness/src:." python harness/skills/domain-bootstrap/scripts/validate_domain_promotion.py --route-id metagenome_kraken2_ref
+```
+
+prints `"ready": true` once all 6 nodes have real `run()` methods — the gate script itself needed zero changes for the third consecutive cycle.

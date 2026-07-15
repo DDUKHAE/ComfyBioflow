@@ -37,6 +37,14 @@ from .atac_nodes import (
     AtacReportNode,
     Macs3PeakCallingNode,
 )
+from .metagenome_nodes import (
+    BrackenAbundanceNode,
+    Kraken2ClassifyNode,
+    MetagenomeFastpTrimNode,
+    MetagenomeInputValidatorNode,
+    MetagenomeReportNode,
+    MetagenomeVisualizationNode,
+)
 
 
 NODE_CLASS_MAPPINGS = {
@@ -73,6 +81,12 @@ NODE_CLASS_MAPPINGS = {
     "Macs3PeakCallingNode": Macs3PeakCallingNode,
     "AtacPeakVisualizationNode": AtacPeakVisualizationNode,
     "AtacReportNode": AtacReportNode,
+    "MetagenomeInputValidatorNode": MetagenomeInputValidatorNode,
+    "MetagenomeFastpTrimNode": MetagenomeFastpTrimNode,
+    "Kraken2ClassifyNode": Kraken2ClassifyNode,
+    "BrackenAbundanceNode": BrackenAbundanceNode,
+    "MetagenomeVisualizationNode": MetagenomeVisualizationNode,
+    "MetagenomeReportNode": MetagenomeReportNode,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {

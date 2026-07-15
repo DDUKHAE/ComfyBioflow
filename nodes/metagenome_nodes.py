@@ -103,3 +103,91 @@ class Kraken2ClassifyNode(_BaseComfyBIONode):
                 sample_out,
             )
         return (str(out),)
+
+
+class BrackenAbundanceNode(_BaseComfyBIONode):
+    CATEGORY = "ComfyBIO/Taxonomic Classification"
+    RETURN_NAMES = ("bracken_dir",)
+
+    @classmethod
+    def INPUT_TYPES(cls) -> dict:
+        return {
+            "required": {
+                "kraken2_output_dir": cls._upstream_input(),
+                "input_dir": cls._string_input("kraken2"),
+                "kraken2_db_dir": cls._string_input("harness/examples/fixtures/metagenome/kraken2_db"),
+                "output_dir": cls._string_input("bracken"),
+                "read_length": ("INT", {"default": 100, "min": 1, "max": 1000}),
+                "level": cls._string_input("S"),
+                "threshold": ("INT", {"default": 10, "min": 0, "max": 10000}),
+                "extra_command": cls._extra_command_input(),
+            }
+        }
+
+    def run(self, kraken2_output_dir, input_dir, kraken2_db_dir, output_dir, read_length=100, level="S", threshold=10, extra_command="", runner=None) -> tuple[str]:
+        runner = resolve_runner(runner)
+        out = Path(output_dir)
+        out.mkdir(parents=True, exist_ok=True)
+        in_dir = Path(input_dir)
+        for sample_dir in sorted(path for path in in_dir.iterdir() if path.is_dir()):
+            kraken2_report = sample_dir / "kraken2_report.txt"
+            sample_out = out / sample_dir.name
+            sample_out.mkdir(parents=True, exist_ok=True)
+            output_path = sample_out / "bracken_output.txt"
+            report_path = sample_out / "bracken_report.txt"
+            runner.run(
+                metagenome_stage_commands.bracken_abundance_argv(
+                    kraken2_db_dir, kraken2_report, output_path, report_path, read_length, level, threshold, extra_command
+                ),
+                sample_out,
+            )
+        return (str(out),)
+
+
+class MetagenomeVisualizationNode(_BaseComfyBIONode):
+    CATEGORY = "ComfyBIO/Visualization"
+    RETURN_TYPES = ("STRING", "IMAGE")
+    RETURN_NAMES = ("plot_dir", "preview_plot")
+
+    @classmethod
+    def INPUT_TYPES(cls) -> dict:
+        return {
+            "required": {
+                "bracken_dir": cls._upstream_input(),
+                "input_dir": cls._string_input("bracken"),
+                "plot_dir": cls._string_input("plots"),
+                "extra_command": cls._extra_command_input(),
+            }
+        }
+
+    def run(self, bracken_dir, input_dir, plot_dir, extra_command="", runner=None, preview_loader=None) -> tuple[str, object]:
+        runner = resolve_runner(runner)
+        loader = preview_loader if preview_loader is not None else load_preview_tensor
+        plots = Path(plot_dir)
+        plots.mkdir(parents=True, exist_ok=True)
+        runner.run(metagenome_stage_commands.metagenome_visualization_argv(input_dir, plots, extra_command), plots)
+        return (str(plots), loader(plots / "metagenome_summary.png"))
+
+
+class MetagenomeReportNode(_BaseComfyBIONode):
+    CATEGORY = "ComfyBIO/Reporting"
+    RETURN_NAMES = ("report_markdown",)
+
+    @classmethod
+    def INPUT_TYPES(cls) -> dict:
+        return {
+            "required": {
+                "plot_dir_path": cls._upstream_input(),
+                "bracken_dir": cls._string_input("bracken"),
+                "plot_dir": cls._string_input("plots"),
+                "report_path": cls._string_input("report/metagenome_report.md"),
+                "extra_command": cls._extra_command_input(),
+            }
+        }
+
+    def run(self, plot_dir_path, bracken_dir, plot_dir, report_path, extra_command="", runner=None) -> tuple[str]:
+        runner = resolve_runner(runner)
+        report = Path(report_path)
+        report.parent.mkdir(parents=True, exist_ok=True)
+        runner.run(metagenome_stage_commands.metagenome_report_argv(bracken_dir, plot_dir, report), report.parent)
+        return (str(report),)

@@ -86,3 +86,73 @@ def test_kraken2_classify_runs_one_command_per_sample(tmp_path):
     assert len(runner.commands) == 1
     assert runner.commands[0].argv[:5] == ["conda", "run", "-n", "metagenome", "kraken2"]
     assert (out / "sample_a").exists()
+
+
+from nodes.metagenome_nodes import BrackenAbundanceNode, MetagenomeReportNode, MetagenomeVisualizationNode
+
+
+def _kraken2_fixture(tmp_path):
+    kraken2 = tmp_path / "kraken2" / "sample_a"
+    kraken2.mkdir(parents=True)
+    (kraken2 / "kraken2_report.txt").write_text("stub", encoding="utf-8")
+    return tmp_path / "kraken2"
+
+
+def test_bracken_abundance_runs_one_command_per_sample(tmp_path):
+    runner = DryRunCommandRunner()
+    input_dir = _kraken2_fixture(tmp_path)
+    out = tmp_path / "bracken"
+    node = BrackenAbundanceNode()
+    result = node.run(
+        kraken2_output_dir="upstream", input_dir=str(input_dir), kraken2_db_dir=META_DB,
+        output_dir=str(out), read_length=100, level="S", threshold=10, extra_command="", runner=runner,
+    )
+    assert result == (str(out),)
+    assert len(runner.commands) == 1
+    assert runner.commands[0].argv[:5] == ["conda", "run", "-n", "metagenome", "bracken"]
+    assert (out / "sample_a").exists()
+
+
+def _bracken_fixture(tmp_path):
+    bracken = tmp_path / "bracken" / "sample_a"
+    bracken.mkdir(parents=True)
+    return tmp_path / "bracken"
+
+
+def test_metagenome_visualization_returns_plot_dir_and_image(tmp_path):
+    runner = DryRunCommandRunner()
+    input_dir = _bracken_fixture(tmp_path)
+    plots = tmp_path / "plots"
+    node = MetagenomeVisualizationNode()
+    result = node.run(
+        bracken_dir="upstream", input_dir=str(input_dir), plot_dir=str(plots),
+        extra_command="", runner=runner, preview_loader=lambda path: "IMAGE_STUB",
+    )
+    assert result == (str(plots), "IMAGE_STUB")
+    assert plots.exists()
+    assert len(runner.commands) == 1
+
+
+def test_metagenome_report_runs_report_script(tmp_path):
+    runner = DryRunCommandRunner()
+    report = tmp_path / "report" / "metagenome_report.md"
+    node = MetagenomeReportNode()
+    result = node.run(
+        plot_dir_path="upstream", bracken_dir=str(tmp_path / "bracken"),
+        plot_dir=str(tmp_path / "plots"), report_path=str(report),
+        extra_command="", runner=runner,
+    )
+    assert result == (str(report),)
+    assert report.parent.exists()
+    assert len(runner.commands) == 1
+    assert "conda" not in runner.commands[0].argv
+
+
+def test_all_metagenome_nodes_registered_in_node_class_mappings():
+    import nodes
+
+    expected = {
+        "MetagenomeInputValidatorNode", "MetagenomeFastpTrimNode", "Kraken2ClassifyNode",
+        "BrackenAbundanceNode", "MetagenomeVisualizationNode", "MetagenomeReportNode",
+    }
+    assert expected.issubset(nodes.NODE_CLASS_MAPPINGS.keys())

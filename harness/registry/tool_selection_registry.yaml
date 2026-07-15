@@ -4,1036 +4,3544 @@
     "version": "0.1.0",
     "official_route_id": "bulk_rna_seq_salmon_ref"
   },
-  "supported_domains": ["bulk_rna_seq", "scrna_seq", "variant_analysis", "epigenomics", "metagenome", "genome_assembly"],
+  "supported_domains": [
+    "bulk_rna_seq",
+    "scrna_seq",
+    "variant_analysis",
+    "epigenomics",
+    "metagenome",
+    "genome_assembly"
+  ],
   "planned_domains": [],
   "routes": {
     "bulk_rna_seq_salmon_ref": [
-      {"stage_id": "metadata_validation", "stage_label": "Input asset and sample metadata validation", "tool_id": "sample_metadata_validator", "operation_id": "validate_sample_metadata"},
-      {"stage_id": "read_qc", "stage_label": "FASTQ QC", "tool_id": "fastp_qc", "operation_id": "fastq_qc"},
-      {"stage_id": "trimming", "stage_label": "Optional fastp trimming", "tool_id": "fastp_trim", "operation_id": "fastq_trim", "optional": true},
-      {"stage_id": "salmon_index", "stage_label": "salmon index", "tool_id": "salmon_index", "operation_id": "salmon_index"},
-      {"stage_id": "salmon_quant", "stage_label": "salmon quant", "tool_id": "salmon_quant", "operation_id": "salmon_quant"},
-      {"stage_id": "tximport_import", "stage_label": "tximport-compatible import", "tool_id": "tximport_import", "operation_id": "tximport_import"},
-      {"stage_id": "deseq2_analysis", "stage_label": "DESeq2 differential expression analysis", "tool_id": "deseq2_analysis", "operation_id": "deseq2_analysis"},
-      {"stage_id": "deseq2_visualization", "stage_label": "DESeq2 visualization artifact generation", "tool_id": "comfybio_deseq2_visualization", "operation_id": "deseq2_visualization"},
-      {"stage_id": "reporting", "stage_label": "Summary and report output", "tool_id": "comfybio_report", "operation_id": "report"}
+      {
+        "stage_id": "metadata_validation",
+        "stage_label": "Input asset and sample metadata validation",
+        "tool_id": "sample_metadata_validator",
+        "operation_id": "validate_sample_metadata"
+      },
+      {
+        "stage_id": "read_qc",
+        "stage_label": "FASTQ QC",
+        "tool_id": "fastp_qc",
+        "operation_id": "fastq_qc"
+      },
+      {
+        "stage_id": "trimming",
+        "stage_label": "Optional fastp trimming",
+        "tool_id": "fastp_trim",
+        "operation_id": "fastq_trim",
+        "optional": true
+      },
+      {
+        "stage_id": "salmon_index",
+        "stage_label": "salmon index",
+        "tool_id": "salmon_index",
+        "operation_id": "salmon_index"
+      },
+      {
+        "stage_id": "salmon_quant",
+        "stage_label": "salmon quant",
+        "tool_id": "salmon_quant",
+        "operation_id": "salmon_quant"
+      },
+      {
+        "stage_id": "tximport_import",
+        "stage_label": "tximport-compatible import",
+        "tool_id": "tximport_import",
+        "operation_id": "tximport_import"
+      },
+      {
+        "stage_id": "deseq2_analysis",
+        "stage_label": "DESeq2 differential expression analysis",
+        "tool_id": "deseq2_analysis",
+        "operation_id": "deseq2_analysis"
+      },
+      {
+        "stage_id": "deseq2_visualization",
+        "stage_label": "DESeq2 visualization artifact generation",
+        "tool_id": "comfybio_deseq2_visualization",
+        "operation_id": "deseq2_visualization"
+      },
+      {
+        "stage_id": "reporting",
+        "stage_label": "Summary and report output",
+        "tool_id": "comfybio_report",
+        "operation_id": "report"
+      }
     ],
     "scrna_seq_scanpy_ref": [
-      {"stage_id": "tenx_count", "stage_label": "10x count matrix generation", "tool_id": "tenx_count", "operation_id": "tenx_count"},
-      {"stage_id": "scrna_qc", "stage_label": "Single-cell QC and filtering", "tool_id": "scanpy_qc", "operation_id": "scanpy_qc"},
-      {"stage_id": "scrna_normalization", "stage_label": "Normalization and highly-variable gene selection", "tool_id": "scanpy_normalize", "operation_id": "scanpy_normalize"},
-      {"stage_id": "scrna_clustering", "stage_label": "PCA, neighbor graph, UMAP, and clustering", "tool_id": "scanpy_cluster", "operation_id": "scanpy_cluster"},
-      {"stage_id": "scrna_marker_genes", "stage_label": "Marker gene ranking", "tool_id": "scanpy_marker_genes", "operation_id": "scanpy_marker_genes"},
-      {"stage_id": "scrna_visualization", "stage_label": "UMAP and marker visualization", "tool_id": "comfybio_scrna_visualization", "operation_id": "scrna_visualization"},
-      {"stage_id": "scrna_reporting", "stage_label": "Single-cell report output", "tool_id": "comfybio_scrna_report", "operation_id": "scrna_report"}
+      {
+        "stage_id": "tenx_count",
+        "stage_label": "10x count matrix generation",
+        "tool_id": "tenx_count",
+        "operation_id": "tenx_count"
+      },
+      {
+        "stage_id": "scrna_qc",
+        "stage_label": "Single-cell QC and filtering",
+        "tool_id": "scanpy_qc",
+        "operation_id": "scanpy_qc"
+      },
+      {
+        "stage_id": "scrna_normalization",
+        "stage_label": "Normalization and highly-variable gene selection",
+        "tool_id": "scanpy_normalize",
+        "operation_id": "scanpy_normalize"
+      },
+      {
+        "stage_id": "scrna_clustering",
+        "stage_label": "PCA, neighbor graph, UMAP, and clustering",
+        "tool_id": "scanpy_cluster",
+        "operation_id": "scanpy_cluster"
+      },
+      {
+        "stage_id": "scrna_marker_genes",
+        "stage_label": "Marker gene ranking",
+        "tool_id": "scanpy_marker_genes",
+        "operation_id": "scanpy_marker_genes"
+      },
+      {
+        "stage_id": "scrna_visualization",
+        "stage_label": "UMAP and marker visualization",
+        "tool_id": "comfybio_scrna_visualization",
+        "operation_id": "scrna_visualization"
+      },
+      {
+        "stage_id": "scrna_reporting",
+        "stage_label": "Single-cell report output",
+        "tool_id": "comfybio_scrna_report",
+        "operation_id": "scrna_report"
+      }
     ],
     "variant_analysis_bwa_ref": [
-      {"stage_id": "input_validation", "stage_label": "Input asset and sample metadata validation", "tool_id": "variant_input_validator", "operation_id": "validate_variant_inputs"},
-      {"stage_id": "reference_indexing", "stage_label": "Optional bwa-mem2 reference indexing", "tool_id": "bwa_mem2_index", "operation_id": "bwa_mem2_index", "optional": true},
-      {"stage_id": "alignment", "stage_label": "bwa-mem2 alignment and coordinate sort", "tool_id": "bwa_mem2_align", "operation_id": "bwa_mem2_align"},
-      {"stage_id": "mark_duplicates", "stage_label": "Duplicate marking", "tool_id": "samtools_markdup", "operation_id": "mark_duplicates"},
-      {"stage_id": "variant_calling", "stage_label": "Germline variant calling", "tool_id": "bcftools_call", "operation_id": "bcftools_call"},
-      {"stage_id": "variant_filtering", "stage_label": "Variant quality filtering", "tool_id": "bcftools_filter", "operation_id": "bcftools_filter"},
-      {"stage_id": "variant_visualization", "stage_label": "Variant summary visualization", "tool_id": "variant_visualization", "operation_id": "variant_visualization"},
-      {"stage_id": "reporting", "stage_label": "Variant analysis report output", "tool_id": "variant_report", "operation_id": "variant_report"}
+      {
+        "stage_id": "input_validation",
+        "stage_label": "Input asset and sample metadata validation",
+        "tool_id": "variant_input_validator",
+        "operation_id": "validate_variant_inputs"
+      },
+      {
+        "stage_id": "reference_indexing",
+        "stage_label": "Optional bwa-mem2 reference indexing",
+        "tool_id": "bwa_mem2_index",
+        "operation_id": "bwa_mem2_index",
+        "optional": true
+      },
+      {
+        "stage_id": "alignment",
+        "stage_label": "bwa-mem2 alignment and coordinate sort",
+        "tool_id": "bwa_mem2_align",
+        "operation_id": "bwa_mem2_align"
+      },
+      {
+        "stage_id": "mark_duplicates",
+        "stage_label": "Duplicate marking",
+        "tool_id": "samtools_markdup",
+        "operation_id": "mark_duplicates"
+      },
+      {
+        "stage_id": "variant_calling",
+        "stage_label": "Germline variant calling",
+        "tool_id": "bcftools_call",
+        "operation_id": "bcftools_call"
+      },
+      {
+        "stage_id": "variant_filtering",
+        "stage_label": "Variant quality filtering",
+        "tool_id": "bcftools_filter",
+        "operation_id": "bcftools_filter"
+      },
+      {
+        "stage_id": "variant_visualization",
+        "stage_label": "Variant summary visualization",
+        "tool_id": "variant_visualization",
+        "operation_id": "variant_visualization"
+      },
+      {
+        "stage_id": "reporting",
+        "stage_label": "Variant analysis report output",
+        "tool_id": "variant_report",
+        "operation_id": "variant_report"
+      }
     ],
     "atac_seq_macs3_ref": [
-      {"stage_id": "input_validation", "stage_label": "Input asset and sample metadata validation", "tool_id": "atac_input_validator", "operation_id": "validate_atac_inputs"},
-      {"stage_id": "read_trimming", "stage_label": "fastp adapter/quality trimming", "tool_id": "atac_fastp_trim", "operation_id": "atac_fastq_trim"},
-      {"stage_id": "reference_indexing", "stage_label": "Optional bwa-mem2 reference indexing", "tool_id": "atac_bwa_mem2_index", "operation_id": "atac_bwa_mem2_index", "optional": true},
-      {"stage_id": "alignment", "stage_label": "bwa-mem2 alignment of trimmed reads", "tool_id": "atac_bwa_mem2_align", "operation_id": "atac_bwa_mem2_align"},
-      {"stage_id": "mark_duplicates", "stage_label": "Duplicate marking", "tool_id": "atac_samtools_markdup", "operation_id": "atac_mark_duplicates"},
-      {"stage_id": "quality_filtering", "stage_label": "MAPQ, flag, and mitochondrial-read filtering", "tool_id": "atac_quality_filter", "operation_id": "atac_quality_filter"},
-      {"stage_id": "peak_calling", "stage_label": "MACS3 peak calling", "tool_id": "atac_macs3_callpeak", "operation_id": "atac_macs3_callpeak"},
-      {"stage_id": "peak_visualization", "stage_label": "Peak count summary visualization", "tool_id": "atac_peak_visualization", "operation_id": "atac_peak_visualization"},
-      {"stage_id": "reporting", "stage_label": "ATAC-seq analysis report output", "tool_id": "atac_report", "operation_id": "atac_report"}
+      {
+        "stage_id": "input_validation",
+        "stage_label": "Input asset and sample metadata validation",
+        "tool_id": "atac_input_validator",
+        "operation_id": "validate_atac_inputs"
+      },
+      {
+        "stage_id": "read_trimming",
+        "stage_label": "fastp adapter/quality trimming",
+        "tool_id": "atac_fastp_trim",
+        "operation_id": "atac_fastq_trim"
+      },
+      {
+        "stage_id": "reference_indexing",
+        "stage_label": "Optional bwa-mem2 reference indexing",
+        "tool_id": "atac_bwa_mem2_index",
+        "operation_id": "atac_bwa_mem2_index",
+        "optional": true
+      },
+      {
+        "stage_id": "alignment",
+        "stage_label": "bwa-mem2 alignment of trimmed reads",
+        "tool_id": "atac_bwa_mem2_align",
+        "operation_id": "atac_bwa_mem2_align"
+      },
+      {
+        "stage_id": "mark_duplicates",
+        "stage_label": "Duplicate marking",
+        "tool_id": "atac_samtools_markdup",
+        "operation_id": "atac_mark_duplicates"
+      },
+      {
+        "stage_id": "quality_filtering",
+        "stage_label": "MAPQ, flag, and mitochondrial-read filtering",
+        "tool_id": "atac_quality_filter",
+        "operation_id": "atac_quality_filter"
+      },
+      {
+        "stage_id": "peak_calling",
+        "stage_label": "MACS3 peak calling",
+        "tool_id": "atac_macs3_callpeak",
+        "operation_id": "atac_macs3_callpeak"
+      },
+      {
+        "stage_id": "peak_visualization",
+        "stage_label": "Peak count summary visualization",
+        "tool_id": "atac_peak_visualization",
+        "operation_id": "atac_peak_visualization"
+      },
+      {
+        "stage_id": "reporting",
+        "stage_label": "ATAC-seq analysis report output",
+        "tool_id": "atac_report",
+        "operation_id": "atac_report"
+      }
     ],
     "metagenome_kraken2_ref": [
-      {"stage_id": "input_validation", "stage_label": "Input asset and sample metadata validation", "tool_id": "metagenome_input_validator", "operation_id": "validate_metagenome_inputs"},
-      {"stage_id": "read_trimming", "stage_label": "fastp adapter/quality trimming", "tool_id": "metagenome_fastp_trim", "operation_id": "metagenome_fastq_trim"},
-      {"stage_id": "taxonomic_classification", "stage_label": "Kraken2 taxonomic classification", "tool_id": "kraken2_classify", "operation_id": "kraken2_classify"},
-      {"stage_id": "abundance_estimation", "stage_label": "Bracken species-level abundance re-estimation", "tool_id": "bracken_reestimate", "operation_id": "bracken_reestimate"},
-      {"stage_id": "profile_visualization", "stage_label": "Taxonomic profile summary visualization", "tool_id": "metagenome_visualization", "operation_id": "metagenome_visualization"},
-      {"stage_id": "reporting", "stage_label": "Metagenome analysis report output", "tool_id": "metagenome_report", "operation_id": "metagenome_report"}
+      {
+        "stage_id": "input_validation",
+        "stage_label": "Input asset and sample metadata validation",
+        "tool_id": "metagenome_input_validator",
+        "operation_id": "validate_metagenome_inputs"
+      },
+      {
+        "stage_id": "read_trimming",
+        "stage_label": "fastp adapter/quality trimming",
+        "tool_id": "metagenome_fastp_trim",
+        "operation_id": "metagenome_fastq_trim"
+      },
+      {
+        "stage_id": "taxonomic_classification",
+        "stage_label": "Kraken2 taxonomic classification",
+        "tool_id": "kraken2_classify",
+        "operation_id": "kraken2_classify"
+      },
+      {
+        "stage_id": "abundance_estimation",
+        "stage_label": "Bracken species-level abundance re-estimation",
+        "tool_id": "bracken_reestimate",
+        "operation_id": "bracken_reestimate"
+      },
+      {
+        "stage_id": "profile_visualization",
+        "stage_label": "Taxonomic profile summary visualization",
+        "tool_id": "metagenome_visualization",
+        "operation_id": "metagenome_visualization"
+      },
+      {
+        "stage_id": "reporting",
+        "stage_label": "Metagenome analysis report output",
+        "tool_id": "metagenome_report",
+        "operation_id": "metagenome_report"
+      }
     ],
     "genome_assembly_spades_ref": [
-      {"stage_id": "input_validation", "stage_label": "Input asset and sample metadata validation", "tool_id": "assembly_input_validator", "operation_id": "validate_assembly_inputs"},
-      {"stage_id": "read_trimming", "stage_label": "fastp adapter/quality trimming", "tool_id": "assembly_fastp_trim", "operation_id": "assembly_fastq_trim"},
-      {"stage_id": "assembly", "stage_label": "SPAdes de novo isolate assembly", "tool_id": "spades_assemble", "operation_id": "spades_assemble"},
-      {"stage_id": "assembly_qc", "stage_label": "QUAST assembly quality metrics", "tool_id": "quast_qc", "operation_id": "quast_qc"},
-      {"stage_id": "assembly_visualization", "stage_label": "Assembly quality summary visualization", "tool_id": "assembly_visualization", "operation_id": "assembly_visualization"},
-      {"stage_id": "reporting", "stage_label": "Genome assembly report output", "tool_id": "assembly_report", "operation_id": "assembly_report"}
+      {
+        "stage_id": "input_validation",
+        "stage_label": "Input asset and sample metadata validation",
+        "tool_id": "assembly_input_validator",
+        "operation_id": "validate_assembly_inputs"
+      },
+      {
+        "stage_id": "read_trimming",
+        "stage_label": "fastp adapter/quality trimming",
+        "tool_id": "assembly_fastp_trim",
+        "operation_id": "assembly_fastq_trim"
+      },
+      {
+        "stage_id": "assembly",
+        "stage_label": "SPAdes de novo isolate assembly",
+        "tool_id": "spades_assemble",
+        "operation_id": "spades_assemble"
+      },
+      {
+        "stage_id": "assembly_qc",
+        "stage_label": "QUAST assembly quality metrics",
+        "tool_id": "quast_qc",
+        "operation_id": "quast_qc"
+      },
+      {
+        "stage_id": "assembly_visualization",
+        "stage_label": "Assembly quality summary visualization",
+        "tool_id": "assembly_visualization",
+        "operation_id": "assembly_visualization"
+      },
+      {
+        "stage_id": "reporting",
+        "stage_label": "Genome assembly report output",
+        "tool_id": "assembly_report",
+        "operation_id": "assembly_report"
+      }
     ]
   },
   "tools": [
     {
       "id": "sample_metadata_validator",
       "label": "Sample Metadata Validator",
-      "domain_tags": ["bulk_rna_seq"],
-      "stage_tags": ["metadata_validation"],
-      "input_types": ["request_payload", "sample_metadata_csv"],
-      "output_types": ["validated_metadata"],
+      "domain_tags": [
+        "bulk_rna_seq"
+      ],
+      "stage_tags": [
+        "metadata_validation"
+      ],
+      "input_types": [
+        "request_payload",
+        "sample_metadata_csv"
+      ],
+      "output_types": [
+        "validated_metadata"
+      ],
       "language": "python",
       "python_bindings": [],
       "summary": "Validates sample metadata fields before analysis.",
       "tier": "REF",
       "tier_rationale": "Small deterministic validation is required before launching external tools.",
       "context_routing_rules": [],
-      "applicability_constraints": ["bulk RNA-seq sample metadata"],
-      "selection_rules": ["Use before FASTQ QC."],
-      "operations": [{"id": "validate_sample_metadata", "label": "Validate sample metadata", "input_types": ["request_payload"], "output_types": ["validated_metadata"], "node_type": "SampleMetadataValidatorNode"}],
+      "applicability_constraints": [
+        "bulk RNA-seq sample metadata"
+      ],
+      "selection_rules": [
+        "Use before FASTQ QC."
+      ],
+      "operations": [
+        {
+          "id": "validate_sample_metadata",
+          "label": "Validate sample metadata",
+          "input_types": [
+            "request_payload"
+          ],
+          "output_types": [
+            "validated_metadata"
+          ],
+          "node_type": "SampleMetadataValidatorNode"
+        }
+      ],
       "future_comfy_node": "SampleMetadataValidatorNode",
       "runnable_node_status": "runnable"
     },
     {
       "id": "fastp_qc",
       "label": "fastp QC",
-      "domain_tags": ["bulk_rna_seq"],
-      "stage_tags": ["read_qc"],
-      "input_types": ["fastq"],
-      "output_types": ["qc_directory"],
+      "domain_tags": [
+        "bulk_rna_seq"
+      ],
+      "stage_tags": [
+        "read_qc"
+      ],
+      "input_types": [
+        "fastq"
+      ],
+      "output_types": [
+        "qc_directory"
+      ],
       "language": "external_cli",
       "python_bindings": [],
       "summary": "Runs fastp in QC mode for MVP FASTQ quality inspection.",
       "tier": "REF",
       "tier_rationale": "fastp is lightweight and covers MVP QC and optional trimming in one managed environment.",
-      "context_routing_rules": ["Prefer for quickstart fixture and REF-only install scope."],
-      "applicability_constraints": ["FASTQ input"],
-      "selection_rules": ["Use for official route read QC."],
-      "operations": [{"id": "fastq_qc", "label": "FASTQ QC", "input_types": ["validated_metadata"], "output_types": ["qc_directory"], "node_type": "FastpQCNode"}],
+      "context_routing_rules": [
+        "Prefer for quickstart fixture and REF-only install scope."
+      ],
+      "applicability_constraints": [
+        "FASTQ input"
+      ],
+      "selection_rules": [
+        "Use for official route read QC."
+      ],
+      "operations": [
+        {
+          "id": "fastq_qc",
+          "label": "FASTQ QC",
+          "input_types": [
+            "validated_metadata"
+          ],
+          "output_types": [
+            "qc_directory"
+          ],
+          "node_type": "FastpQCNode"
+        }
+      ],
       "future_comfy_node": "FastpQCNode",
       "runnable_node_status": "runnable"
     },
     {
       "id": "fastp_trim",
       "label": "fastp Trim",
-      "domain_tags": ["bulk_rna_seq"],
-      "stage_tags": ["trimming"],
-      "input_types": ["fastq"],
-      "output_types": ["trimmed_fastq_directory"],
+      "domain_tags": [
+        "bulk_rna_seq"
+      ],
+      "stage_tags": [
+        "trimming"
+      ],
+      "input_types": [
+        "fastq"
+      ],
+      "output_types": [
+        "trimmed_fastq_directory"
+      ],
       "language": "external_cli",
       "python_bindings": [],
       "summary": "Optionally trims adapters or low-quality bases with fastp.",
       "tier": "REF",
       "tier_rationale": "Reuses the REF QC dependency and keeps the route small.",
-      "context_routing_rules": ["Omit when request and fixture indicate no trimming is required."],
-      "applicability_constraints": ["FASTQ input"],
-      "selection_rules": ["Use for official route when trimming is required."],
-      "operations": [{"id": "fastq_trim", "label": "FASTQ trimming", "input_types": ["qc_directory"], "output_types": ["trimmed_fastq_directory"], "node_type": "FastpTrimNode"}],
+      "context_routing_rules": [
+        "Omit when request and fixture indicate no trimming is required."
+      ],
+      "applicability_constraints": [
+        "FASTQ input"
+      ],
+      "selection_rules": [
+        "Use for official route when trimming is required."
+      ],
+      "operations": [
+        {
+          "id": "fastq_trim",
+          "label": "FASTQ trimming",
+          "input_types": [
+            "qc_directory"
+          ],
+          "output_types": [
+            "trimmed_fastq_directory"
+          ],
+          "node_type": "FastpTrimNode"
+        }
+      ],
       "future_comfy_node": "FastpTrimNode",
       "runnable_node_status": "runnable"
     },
     {
       "id": "salmon_index",
       "label": "salmon index",
-      "domain_tags": ["bulk_rna_seq"],
-      "stage_tags": ["alignment_or_pseudoalignment"],
-      "input_types": ["transcriptome_fasta"],
-      "output_types": ["salmon_index_directory"],
+      "domain_tags": [
+        "bulk_rna_seq"
+      ],
+      "stage_tags": [
+        "alignment_or_pseudoalignment",
+        "salmon_index"
+      ],
+      "input_types": [
+        "transcriptome_fasta"
+      ],
+      "output_types": [
+        "salmon_index_directory"
+      ],
       "language": "external_cli",
       "python_bindings": [],
       "summary": "Builds the salmon transcriptome index as a separate reusable operation.",
       "tier": "REF",
       "tier_rationale": "salmon is the official transcript-focused quantification path.",
-      "context_routing_rules": ["Prefer for transcript-level quantification goals."],
-      "applicability_constraints": ["Transcriptome FASTA available"],
-      "selection_rules": ["Use before salmon quant."],
-      "operations": [{"id": "salmon_index", "label": "Build salmon index", "input_types": ["trimmed_fastq_directory"], "output_types": ["salmon_index_directory"], "node_type": "SalmonIndexNode"}],
+      "context_routing_rules": [
+        "Prefer for transcript-level quantification goals."
+      ],
+      "applicability_constraints": [
+        "Transcriptome FASTA available"
+      ],
+      "selection_rules": [
+        "Use before salmon quant."
+      ],
+      "operations": [
+        {
+          "id": "salmon_index",
+          "label": "Build salmon index",
+          "input_types": [
+            "trimmed_fastq_directory"
+          ],
+          "output_types": [
+            "salmon_index_directory"
+          ],
+          "node_type": "SalmonIndexNode"
+        }
+      ],
       "future_comfy_node": "SalmonIndexNode",
       "runnable_node_status": "runnable"
     },
     {
       "id": "salmon_quant",
       "label": "salmon quant",
-      "domain_tags": ["bulk_rna_seq"],
-      "stage_tags": ["quantification"],
-      "input_types": ["salmon_index_directory", "fastq"],
-      "output_types": ["salmon_quant_directory"],
+      "domain_tags": [
+        "bulk_rna_seq"
+      ],
+      "stage_tags": [
+        "quantification",
+        "salmon_quant"
+      ],
+      "input_types": [
+        "salmon_index_directory",
+        "fastq"
+      ],
+      "output_types": [
+        "salmon_quant_directory"
+      ],
       "language": "external_cli",
       "python_bindings": [],
       "summary": "Runs salmon quantification for the official REF path.",
       "tier": "REF",
       "tier_rationale": "salmon quantification is fast, widely used, and fits the MVP route.",
-      "context_routing_rules": ["Prefer for transcript-focused quantification."],
-      "applicability_constraints": ["salmon index and FASTQ input"],
-      "selection_rules": ["Use after salmon index."],
-      "operations": [{"id": "salmon_quant", "label": "Run salmon quant", "input_types": ["salmon_index_directory"], "output_types": ["salmon_quant_directory"], "node_type": "SalmonQuantNode"}],
+      "context_routing_rules": [
+        "Prefer for transcript-focused quantification."
+      ],
+      "applicability_constraints": [
+        "salmon index and FASTQ input"
+      ],
+      "selection_rules": [
+        "Use after salmon index."
+      ],
+      "operations": [
+        {
+          "id": "salmon_quant",
+          "label": "Run salmon quant",
+          "input_types": [
+            "salmon_index_directory"
+          ],
+          "output_types": [
+            "salmon_quant_directory"
+          ],
+          "node_type": "SalmonQuantNode"
+        }
+      ],
       "future_comfy_node": "SalmonQuantNode",
       "runnable_node_status": "runnable"
     },
     {
       "id": "tximport_import",
       "label": "tximport-compatible import",
-      "domain_tags": ["bulk_rna_seq"],
-      "stage_tags": ["differential_expression"],
-      "input_types": ["salmon_quant_directory"],
-      "output_types": ["deseq2_count_matrix"],
+      "domain_tags": [
+        "bulk_rna_seq"
+      ],
+      "stage_tags": [
+        "differential_expression",
+        "tximport_import"
+      ],
+      "input_types": [
+        "salmon_quant_directory"
+      ],
+      "output_types": [
+        "deseq2_count_matrix"
+      ],
       "language": "r",
       "python_bindings": [],
       "summary": "Imports salmon quantification outputs for DESeq2 analysis.",
       "tier": "REF",
       "tier_rationale": "tximport is the standard bridge from transcript quantification to DESeq2-ready count matrices.",
-      "context_routing_rules": ["Use with salmon REF quantification."],
-      "applicability_constraints": ["salmon quantification outputs"],
-      "selection_rules": ["Use before DESeq2 analysis."],
-      "operations": [{"id": "tximport_import", "label": "Import counts", "input_types": ["salmon_quant_directory"], "output_types": ["deseq2_count_matrix"], "node_type": "TximportNode"}],
+      "context_routing_rules": [
+        "Use with salmon REF quantification."
+      ],
+      "applicability_constraints": [
+        "salmon quantification outputs"
+      ],
+      "selection_rules": [
+        "Use before DESeq2 analysis."
+      ],
+      "operations": [
+        {
+          "id": "tximport_import",
+          "label": "Import counts",
+          "input_types": [
+            "salmon_quant_directory"
+          ],
+          "output_types": [
+            "deseq2_count_matrix"
+          ],
+          "node_type": "TximportNode"
+        }
+      ],
       "future_comfy_node": "TximportNode",
       "runnable_node_status": "runnable"
     },
     {
       "id": "deseq2_analysis",
       "label": "DESeq2 analysis",
-      "domain_tags": ["bulk_rna_seq"],
-      "stage_tags": ["differential_expression"],
-      "input_types": ["deseq2_count_matrix", "validated_metadata"],
-      "output_types": ["deseq2_results_table"],
+      "domain_tags": [
+        "bulk_rna_seq"
+      ],
+      "stage_tags": [
+        "differential_expression",
+        "deseq2_analysis"
+      ],
+      "input_types": [
+        "deseq2_count_matrix",
+        "validated_metadata"
+      ],
+      "output_types": [
+        "deseq2_results_table"
+      ],
       "language": "r",
       "python_bindings": [],
       "summary": "Runs DESeq2 differential expression analysis for the official REF path.",
       "tier": "REF",
       "tier_rationale": "DESeq2 result tables are part of the implementation success criteria.",
-      "context_routing_rules": ["Use for default condition-vs-control bulk RNA-seq designs."],
-      "applicability_constraints": ["Replicated bulk RNA-seq sample metadata"],
-      "selection_rules": ["Use after tximport-compatible import."],
-      "operations": [{"id": "deseq2_analysis", "label": "Run DESeq2", "input_types": ["deseq2_count_matrix"], "output_types": ["deseq2_results_table"], "node_type": "DESeq2AnalysisNode"}],
+      "context_routing_rules": [
+        "Use for default condition-vs-control bulk RNA-seq designs."
+      ],
+      "applicability_constraints": [
+        "Replicated bulk RNA-seq sample metadata"
+      ],
+      "selection_rules": [
+        "Use after tximport-compatible import."
+      ],
+      "operations": [
+        {
+          "id": "deseq2_analysis",
+          "label": "Run DESeq2",
+          "input_types": [
+            "deseq2_count_matrix"
+          ],
+          "output_types": [
+            "deseq2_results_table"
+          ],
+          "node_type": "DESeq2AnalysisNode"
+        }
+      ],
       "future_comfy_node": "DESeq2AnalysisNode",
       "runnable_node_status": "runnable"
     },
     {
       "id": "comfybio_deseq2_visualization",
       "label": "ComfyBIO DESeq2 visualization",
-      "domain_tags": ["bulk_rna_seq"],
-      "stage_tags": ["reporting", "visualization"],
-      "input_types": ["deseq2_results_table"],
-      "output_types": ["plot_directory", "preview_image"],
+      "domain_tags": [
+        "bulk_rna_seq"
+      ],
+      "stage_tags": [
+        "reporting",
+        "visualization",
+        "deseq2_visualization"
+      ],
+      "input_types": [
+        "deseq2_results_table"
+      ],
+      "output_types": [
+        "plot_directory",
+        "preview_image"
+      ],
       "language": "python_or_r",
       "python_bindings": [],
       "summary": "Generates PCA, MA plot, volcano plot, and heatmap outputs from DESeq2 artifacts.",
       "tier": "REF",
       "tier_rationale": "Visualization artifacts are part of the implementation success criteria.",
-      "context_routing_rules": ["Use for all official route DESeq2 outputs."],
-      "applicability_constraints": ["DESeq2 result table available"],
-      "selection_rules": ["Use after DESeq2 analysis."],
-      "operations": [{"id": "deseq2_visualization", "label": "Generate DESeq2 plots", "input_types": ["deseq2_results_table"], "output_types": ["plot_directory", "preview_image"], "node_type": "DESeq2VisualizationNode"}],
+      "context_routing_rules": [
+        "Use for all official route DESeq2 outputs."
+      ],
+      "applicability_constraints": [
+        "DESeq2 result table available"
+      ],
+      "selection_rules": [
+        "Use after DESeq2 analysis."
+      ],
+      "operations": [
+        {
+          "id": "deseq2_visualization",
+          "label": "Generate DESeq2 plots",
+          "input_types": [
+            "deseq2_results_table"
+          ],
+          "output_types": [
+            "plot_directory",
+            "preview_image"
+          ],
+          "node_type": "DESeq2VisualizationNode"
+        }
+      ],
       "future_comfy_node": "DESeq2VisualizationNode",
       "runnable_node_status": "runnable"
     },
     {
       "id": "comfybio_report",
       "label": "ComfyBIO report",
-      "domain_tags": ["bulk_rna_seq"],
-      "stage_tags": ["reporting"],
-      "input_types": ["deseq2_results_table", "plot_directory"],
-      "output_types": ["report_artifact"],
+      "domain_tags": [
+        "bulk_rna_seq"
+      ],
+      "stage_tags": [
+        "reporting"
+      ],
+      "input_types": [
+        "deseq2_results_table",
+        "plot_directory"
+      ],
+      "output_types": [
+        "report_artifact"
+      ],
       "language": "python",
       "python_bindings": [],
       "summary": "Writes the official MVP report from quantification, DESeq2, and visualization artifacts.",
       "tier": "REF",
       "tier_rationale": "A report artifact is required for MVP completion.",
       "context_routing_rules": [],
-      "applicability_constraints": ["DESeq2 outputs available"],
-      "selection_rules": ["Use after visualization generation."],
-      "operations": [{"id": "report", "label": "Write report", "input_types": ["plot_directory"], "output_types": ["report_artifact"], "node_type": "ComfyBIOReportNode"}],
+      "applicability_constraints": [
+        "DESeq2 outputs available"
+      ],
+      "selection_rules": [
+        "Use after visualization generation."
+      ],
+      "operations": [
+        {
+          "id": "report",
+          "label": "Write report",
+          "input_types": [
+            "plot_directory"
+          ],
+          "output_types": [
+            "report_artifact"
+          ],
+          "node_type": "ComfyBIOReportNode"
+        }
+      ],
       "future_comfy_node": "ComfyBIOReportNode",
       "runnable_node_status": "runnable"
     },
     {
       "id": "multiqc",
       "label": "MultiQC",
-      "domain_tags": ["bulk_rna_seq"],
-      "stage_tags": ["reporting", "read_qc"],
-      "input_types": ["qc_directory"],
-      "output_types": ["multiqc_report"],
+      "domain_tags": [
+        "bulk_rna_seq"
+      ],
+      "stage_tags": [
+        "reporting",
+        "read_qc"
+      ],
+      "input_types": [
+        "qc_directory"
+      ],
+      "output_types": [
+        "multiqc_report"
+      ],
       "language": "external_cli",
       "python_bindings": [],
       "summary": "Optional enhanced QC aggregation for reports outside the core DESeq2 visualization REF gate.",
       "tier": "ALT",
       "tier_rationale": "Useful for enhanced QC aggregation, but not the required DESeq2 visualization or report node.",
-      "context_routing_rules": ["Select when enhanced QC aggregation is requested."],
-      "applicability_constraints": ["QC outputs available"],
-      "selection_rules": ["Do not include in MVP completion gate unless explicitly requested."],
-      "operations": [{"id": "multiqc_report", "label": "Aggregate QC", "input_types": ["qc_directory"], "output_types": ["multiqc_report"], "node_type": "MultiQCNode"}],
+      "context_routing_rules": [
+        "Select when enhanced QC aggregation is requested."
+      ],
+      "applicability_constraints": [
+        "QC outputs available"
+      ],
+      "selection_rules": [
+        "Do not include in MVP completion gate unless explicitly requested."
+      ],
+      "operations": [
+        {
+          "id": "multiqc_report",
+          "label": "Aggregate QC",
+          "input_types": [
+            "qc_directory"
+          ],
+          "output_types": [
+            "multiqc_report"
+          ],
+          "node_type": "MultiQCNode"
+        }
+      ],
       "future_comfy_node": "MultiQCNode",
       "runnable_node_status": "planned"
     },
     {
       "id": "tenx_count",
       "label": "10x count matrix generation",
-      "domain_tags": ["scrna_seq"],
-      "stage_tags": ["quantification"],
-      "input_types": ["fastq_directory", "reference_directory"],
-      "output_types": ["filtered_feature_bc_matrix"],
+      "domain_tags": [
+        "scrna_seq"
+      ],
+      "stage_tags": [
+        "quantification",
+        "tenx_count"
+      ],
+      "input_types": [
+        "fastq_directory",
+        "reference_directory"
+      ],
+      "output_types": [
+        "filtered_feature_bc_matrix"
+      ],
       "language": "external_cli",
       "python_bindings": [],
       "summary": "Generates a 10x-style filtered feature-barcode matrix from FASTQ inputs.",
       "tier": "REF",
       "tier_rationale": "A filtered feature-barcode matrix is the standard entry artifact for the Scanpy REF path.",
-      "context_routing_rules": ["Use for 10x Genomics FASTQ requests."],
-      "applicability_constraints": ["10x FASTQ input and reference available"],
-      "selection_rules": ["Use before Scanpy QC."],
-      "operations": [{"id": "tenx_count", "label": "Generate count matrix", "input_types": ["request_payload"], "output_types": ["filtered_feature_bc_matrix"], "node_type": "TenxCountNode"}],
+      "context_routing_rules": [
+        "Use for 10x Genomics FASTQ requests."
+      ],
+      "applicability_constraints": [
+        "10x FASTQ input and reference available"
+      ],
+      "selection_rules": [
+        "Use before Scanpy QC."
+      ],
+      "operations": [
+        {
+          "id": "tenx_count",
+          "label": "Generate count matrix",
+          "input_types": [
+            "request_payload"
+          ],
+          "output_types": [
+            "filtered_feature_bc_matrix"
+          ],
+          "node_type": "TenxCountNode"
+        }
+      ],
       "future_comfy_node": "TenxCountNode",
       "runnable_node_status": "runnable"
     },
     {
       "id": "scanpy_qc",
       "label": "Scanpy QC",
-      "domain_tags": ["scrna_seq"],
-      "stage_tags": ["qc"],
-      "input_types": ["filtered_feature_bc_matrix"],
-      "output_types": ["qc_h5ad"],
+      "domain_tags": [
+        "scrna_seq"
+      ],
+      "stage_tags": [
+        "qc",
+        "scrna_qc"
+      ],
+      "input_types": [
+        "filtered_feature_bc_matrix"
+      ],
+      "output_types": [
+        "qc_h5ad"
+      ],
       "language": "python",
-      "python_bindings": ["scanpy"],
+      "python_bindings": [
+        "scanpy"
+      ],
       "summary": "Applies cell and gene QC filters and records QC metrics in an AnnData file.",
       "tier": "REF",
       "tier_rationale": "Cell filtering and QC metrics are required for interpretable scRNA-seq analysis.",
       "context_routing_rules": [],
-      "applicability_constraints": ["feature-barcode matrix available"],
-      "selection_rules": ["Use before normalization."],
-      "operations": [{"id": "scanpy_qc", "label": "Filter cells and genes", "input_types": ["filtered_feature_bc_matrix"], "output_types": ["qc_h5ad"], "node_type": "ScanpyQCNode"}],
+      "applicability_constraints": [
+        "feature-barcode matrix available"
+      ],
+      "selection_rules": [
+        "Use before normalization."
+      ],
+      "operations": [
+        {
+          "id": "scanpy_qc",
+          "label": "Filter cells and genes",
+          "input_types": [
+            "filtered_feature_bc_matrix"
+          ],
+          "output_types": [
+            "qc_h5ad"
+          ],
+          "node_type": "ScanpyQCNode"
+        }
+      ],
       "future_comfy_node": "ScanpyQCNode",
       "runnable_node_status": "runnable"
     },
     {
       "id": "scanpy_normalize",
       "label": "Scanpy normalization",
-      "domain_tags": ["scrna_seq"],
-      "stage_tags": ["normalization"],
-      "input_types": ["qc_h5ad"],
-      "output_types": ["normalized_h5ad"],
+      "domain_tags": [
+        "scrna_seq"
+      ],
+      "stage_tags": [
+        "normalization",
+        "scrna_normalization"
+      ],
+      "input_types": [
+        "qc_h5ad"
+      ],
+      "output_types": [
+        "normalized_h5ad"
+      ],
       "language": "python",
-      "python_bindings": ["scanpy"],
+      "python_bindings": [
+        "scanpy"
+      ],
       "summary": "Normalizes counts, log-transforms expression, and selects highly variable genes.",
       "tier": "REF",
       "tier_rationale": "Normalization is required before PCA, neighborhood graph construction, and clustering.",
       "context_routing_rules": [],
-      "applicability_constraints": ["QC AnnData available"],
-      "selection_rules": ["Use after Scanpy QC."],
-      "operations": [{"id": "scanpy_normalize", "label": "Normalize expression", "input_types": ["qc_h5ad"], "output_types": ["normalized_h5ad"], "node_type": "ScanpyNormalizeNode"}],
+      "applicability_constraints": [
+        "QC AnnData available"
+      ],
+      "selection_rules": [
+        "Use after Scanpy QC."
+      ],
+      "operations": [
+        {
+          "id": "scanpy_normalize",
+          "label": "Normalize expression",
+          "input_types": [
+            "qc_h5ad"
+          ],
+          "output_types": [
+            "normalized_h5ad"
+          ],
+          "node_type": "ScanpyNormalizeNode"
+        }
+      ],
       "future_comfy_node": "ScanpyNormalizeNode",
       "runnable_node_status": "runnable"
     },
     {
       "id": "scanpy_cluster",
       "label": "Scanpy clustering",
-      "domain_tags": ["scrna_seq"],
-      "stage_tags": ["clustering", "visualization"],
-      "input_types": ["normalized_h5ad"],
-      "output_types": ["clustered_h5ad"],
+      "domain_tags": [
+        "scrna_seq"
+      ],
+      "stage_tags": [
+        "clustering",
+        "visualization",
+        "scrna_clustering"
+      ],
+      "input_types": [
+        "normalized_h5ad"
+      ],
+      "output_types": [
+        "clustered_h5ad"
+      ],
       "language": "python",
-      "python_bindings": ["scanpy"],
+      "python_bindings": [
+        "scanpy"
+      ],
       "summary": "Runs PCA, neighbors, UMAP, and graph clustering on normalized single-cell data.",
       "tier": "REF",
       "tier_rationale": "Clustering and UMAP are core scRNA-seq exploratory outputs.",
       "context_routing_rules": [],
-      "applicability_constraints": ["normalized AnnData available"],
-      "selection_rules": ["Use before marker gene ranking."],
-      "operations": [{"id": "scanpy_cluster", "label": "Cluster cells", "input_types": ["normalized_h5ad"], "output_types": ["clustered_h5ad"], "node_type": "ScanpyClusterNode"}],
+      "applicability_constraints": [
+        "normalized AnnData available"
+      ],
+      "selection_rules": [
+        "Use before marker gene ranking."
+      ],
+      "operations": [
+        {
+          "id": "scanpy_cluster",
+          "label": "Cluster cells",
+          "input_types": [
+            "normalized_h5ad"
+          ],
+          "output_types": [
+            "clustered_h5ad"
+          ],
+          "node_type": "ScanpyClusterNode"
+        }
+      ],
       "future_comfy_node": "ScanpyClusterNode",
       "runnable_node_status": "runnable"
     },
     {
       "id": "scanpy_marker_genes",
       "label": "Scanpy marker genes",
-      "domain_tags": ["scrna_seq"],
-      "stage_tags": ["marker_genes"],
-      "input_types": ["clustered_h5ad"],
-      "output_types": ["marker_gene_table"],
+      "domain_tags": [
+        "scrna_seq"
+      ],
+      "stage_tags": [
+        "marker_genes",
+        "scrna_marker_genes"
+      ],
+      "input_types": [
+        "clustered_h5ad"
+      ],
+      "output_types": [
+        "marker_gene_table"
+      ],
       "language": "python",
-      "python_bindings": ["scanpy"],
+      "python_bindings": [
+        "scanpy"
+      ],
       "summary": "Ranks marker genes for graph clusters.",
       "tier": "REF",
       "tier_rationale": "Marker genes are required to interpret discovered cell clusters.",
       "context_routing_rules": [],
-      "applicability_constraints": ["clustered AnnData available"],
-      "selection_rules": ["Use after clustering."],
-      "operations": [{"id": "scanpy_marker_genes", "label": "Rank marker genes", "input_types": ["clustered_h5ad"], "output_types": ["marker_gene_table"], "node_type": "ScanpyMarkerGenesNode"}],
+      "applicability_constraints": [
+        "clustered AnnData available"
+      ],
+      "selection_rules": [
+        "Use after clustering."
+      ],
+      "operations": [
+        {
+          "id": "scanpy_marker_genes",
+          "label": "Rank marker genes",
+          "input_types": [
+            "clustered_h5ad"
+          ],
+          "output_types": [
+            "marker_gene_table"
+          ],
+          "node_type": "ScanpyMarkerGenesNode"
+        }
+      ],
       "future_comfy_node": "ScanpyMarkerGenesNode",
       "runnable_node_status": "runnable"
     },
     {
       "id": "comfybio_scrna_visualization",
       "label": "ComfyBIO scRNA visualization",
-      "domain_tags": ["scrna_seq"],
-      "stage_tags": ["visualization"],
-      "input_types": ["clustered_h5ad", "marker_gene_table"],
-      "output_types": ["plot_directory", "preview_image"],
+      "domain_tags": [
+        "scrna_seq"
+      ],
+      "stage_tags": [
+        "visualization",
+        "scrna_visualization"
+      ],
+      "input_types": [
+        "clustered_h5ad",
+        "marker_gene_table"
+      ],
+      "output_types": [
+        "plot_directory",
+        "preview_image"
+      ],
       "language": "python",
-      "python_bindings": ["scanpy"],
+      "python_bindings": [
+        "scanpy"
+      ],
       "summary": "Generates UMAP, cluster, and marker visualizations for scRNA-seq workflows.",
       "tier": "REF",
       "tier_rationale": "Visual cluster inspection is part of the scRNA-seq success gate.",
       "context_routing_rules": [],
-      "applicability_constraints": ["clustered AnnData and marker table available"],
-      "selection_rules": ["Use after marker gene ranking."],
-      "operations": [{"id": "scrna_visualization", "label": "Generate scRNA plots", "input_types": ["clustered_h5ad"], "output_types": ["plot_directory", "preview_image"], "node_type": "ScRNAVisualizationNode"}],
+      "applicability_constraints": [
+        "clustered AnnData and marker table available"
+      ],
+      "selection_rules": [
+        "Use after marker gene ranking."
+      ],
+      "operations": [
+        {
+          "id": "scrna_visualization",
+          "label": "Generate scRNA plots",
+          "input_types": [
+            "clustered_h5ad"
+          ],
+          "output_types": [
+            "plot_directory",
+            "preview_image"
+          ],
+          "node_type": "ScRNAVisualizationNode"
+        }
+      ],
       "future_comfy_node": "ScRNAVisualizationNode",
       "runnable_node_status": "runnable"
     },
     {
       "id": "comfybio_scrna_report",
       "label": "ComfyBIO scRNA report",
-      "domain_tags": ["scrna_seq"],
-      "stage_tags": ["reporting"],
-      "input_types": ["clustered_h5ad", "marker_gene_table", "plot_directory"],
-      "output_types": ["report_artifact"],
+      "domain_tags": [
+        "scrna_seq"
+      ],
+      "stage_tags": [
+        "reporting",
+        "scrna_reporting"
+      ],
+      "input_types": [
+        "clustered_h5ad",
+        "marker_gene_table",
+        "plot_directory"
+      ],
+      "output_types": [
+        "report_artifact"
+      ],
       "language": "python",
       "python_bindings": [],
       "summary": "Writes a report summarizing QC, clustering, UMAP, and marker gene outputs.",
       "tier": "REF",
       "tier_rationale": "A concise report is required for the scRNA-seq workflow contract.",
       "context_routing_rules": [],
-      "applicability_constraints": ["single-cell outputs available"],
-      "selection_rules": ["Use after scRNA visualization."],
-      "operations": [{"id": "scrna_report", "label": "Write scRNA report", "input_types": ["plot_directory"], "output_types": ["report_artifact"], "node_type": "ScRNAReportNode"}],
+      "applicability_constraints": [
+        "single-cell outputs available"
+      ],
+      "selection_rules": [
+        "Use after scRNA visualization."
+      ],
+      "operations": [
+        {
+          "id": "scrna_report",
+          "label": "Write scRNA report",
+          "input_types": [
+            "plot_directory"
+          ],
+          "output_types": [
+            "report_artifact"
+          ],
+          "node_type": "ScRNAReportNode"
+        }
+      ],
       "future_comfy_node": "ScRNAReportNode",
       "runnable_node_status": "runnable"
     },
     {
       "id": "variant_input_validator",
       "label": "Variant Input Validator",
-      "domain_tags": ["variant_analysis"],
-      "stage_tags": ["input_validation"],
-      "input_types": ["request_payload", "sample_metadata_csv", "reference_fasta"],
-      "output_types": ["validated_metadata"],
+      "domain_tags": [
+        "variant_analysis"
+      ],
+      "stage_tags": [
+        "input_validation"
+      ],
+      "input_types": [
+        "request_payload",
+        "sample_metadata_csv",
+        "reference_fasta"
+      ],
+      "output_types": [
+        "validated_metadata"
+      ],
       "language": "python",
       "python_bindings": [],
       "summary": "Validates FASTQ pair, reference FASTA, and sample metadata before variant calling.",
       "tier": "REF",
       "tier_rationale": "Small deterministic validation is required before launching external tools.",
       "context_routing_rules": [],
-      "applicability_constraints": ["Paired or single-end FASTQ with a reference FASTA"],
-      "selection_rules": ["Use before bwa-mem2 indexing/alignment."],
-      "operations": [{"id": "validate_variant_inputs", "label": "Validate variant inputs", "input_types": ["request_payload"], "output_types": ["validated_metadata"], "node_type": "VariantInputValidatorNode"}],
+      "applicability_constraints": [
+        "Paired or single-end FASTQ with a reference FASTA"
+      ],
+      "selection_rules": [
+        "Use before bwa-mem2 indexing/alignment."
+      ],
+      "operations": [
+        {
+          "id": "validate_variant_inputs",
+          "label": "Validate variant inputs",
+          "input_types": [
+            "request_payload"
+          ],
+          "output_types": [
+            "validated_metadata"
+          ],
+          "node_type": "VariantInputValidatorNode"
+        }
+      ],
       "future_comfy_node": "VariantInputValidatorNode",
       "runnable_node_status": "runnable"
     },
     {
       "id": "bwa_mem2_index",
       "label": "bwa-mem2 index",
-      "domain_tags": ["variant_analysis"],
-      "stage_tags": ["reference_indexing"],
-      "input_types": ["reference_fasta"],
-      "output_types": ["indexed_reference"],
+      "domain_tags": [
+        "variant_analysis"
+      ],
+      "stage_tags": [
+        "reference_indexing"
+      ],
+      "input_types": [
+        "reference_fasta"
+      ],
+      "output_types": [
+        "indexed_reference"
+      ],
       "language": "external_cli",
       "python_bindings": [],
       "summary": "Builds the bwa-mem2 FM-index for the reference genome, skipped if already present.",
       "tier": "REF",
       "tier_rationale": "bwa-mem2 is the fastest maintained successor to bwa-mem for short-read germline alignment.",
-      "context_routing_rules": ["Skip when the reference is already indexed."],
-      "applicability_constraints": ["FASTA reference"],
-      "selection_rules": ["Use for official route reference indexing."],
-      "operations": [{"id": "bwa_mem2_index", "label": "bwa-mem2 index", "input_types": ["reference_fasta"], "output_types": ["indexed_reference"], "node_type": "BwaMem2IndexNode"}],
+      "context_routing_rules": [
+        "Skip when the reference is already indexed."
+      ],
+      "applicability_constraints": [
+        "FASTA reference"
+      ],
+      "selection_rules": [
+        "Use for official route reference indexing."
+      ],
+      "operations": [
+        {
+          "id": "bwa_mem2_index",
+          "label": "bwa-mem2 index",
+          "input_types": [
+            "reference_fasta"
+          ],
+          "output_types": [
+            "indexed_reference"
+          ],
+          "node_type": "BwaMem2IndexNode"
+        }
+      ],
       "future_comfy_node": "BwaMem2IndexNode",
       "runnable_node_status": "runnable"
     },
     {
       "id": "bwa_mem2_align",
       "label": "bwa-mem2 align",
-      "domain_tags": ["variant_analysis"],
-      "stage_tags": ["alignment"],
-      "input_types": ["indexed_reference", "fastq"],
-      "output_types": ["sorted_bam_directory"],
+      "domain_tags": [
+        "variant_analysis"
+      ],
+      "stage_tags": [
+        "alignment"
+      ],
+      "input_types": [
+        "indexed_reference",
+        "fastq"
+      ],
+      "output_types": [
+        "sorted_bam_directory"
+      ],
       "language": "external_cli",
       "python_bindings": [],
       "summary": "Aligns paired- or single-end FASTQ reads against the reference and produces a coordinate-sorted, indexed BAM.",
       "tier": "REF",
       "tier_rationale": "bwa-mem2 is the official alignment path for the germline short-variant REF route.",
       "context_routing_rules": [],
-      "applicability_constraints": ["Indexed reference FASTA"],
-      "selection_rules": ["Use for official route alignment."],
-      "operations": [{"id": "bwa_mem2_align", "label": "bwa-mem2 alignment", "input_types": ["indexed_reference"], "output_types": ["sorted_bam_directory"], "node_type": "BwaMem2AlignNode"}],
+      "applicability_constraints": [
+        "Indexed reference FASTA"
+      ],
+      "selection_rules": [
+        "Use for official route alignment."
+      ],
+      "operations": [
+        {
+          "id": "bwa_mem2_align",
+          "label": "bwa-mem2 alignment",
+          "input_types": [
+            "indexed_reference"
+          ],
+          "output_types": [
+            "sorted_bam_directory"
+          ],
+          "node_type": "BwaMem2AlignNode"
+        }
+      ],
       "future_comfy_node": "BwaMem2AlignNode",
       "runnable_node_status": "runnable"
     },
     {
       "id": "samtools_markdup",
       "label": "samtools markdup",
-      "domain_tags": ["variant_analysis"],
-      "stage_tags": ["mark_duplicates"],
-      "input_types": ["sorted_bam_directory"],
-      "output_types": ["dedup_bam_directory"],
+      "domain_tags": [
+        "variant_analysis"
+      ],
+      "stage_tags": [
+        "mark_duplicates"
+      ],
+      "input_types": [
+        "sorted_bam_directory"
+      ],
+      "output_types": [
+        "dedup_bam_directory"
+      ],
       "language": "external_cli",
       "python_bindings": [],
       "summary": "Marks PCR/optical duplicates via the samtools collate/fixmate/sort/markdup pipeline.",
       "tier": "REF",
       "tier_rationale": "samtools is already a lightweight, widely used dependency; no separate Picard/GATK install is needed.",
       "context_routing_rules": [],
-      "applicability_constraints": ["Coordinate-sorted BAM input"],
-      "selection_rules": ["Use for official route duplicate marking."],
-      "operations": [{"id": "mark_duplicates", "label": "Mark duplicates", "input_types": ["sorted_bam_directory"], "output_types": ["dedup_bam_directory"], "node_type": "MarkDuplicatesNode"}],
+      "applicability_constraints": [
+        "Coordinate-sorted BAM input"
+      ],
+      "selection_rules": [
+        "Use for official route duplicate marking."
+      ],
+      "operations": [
+        {
+          "id": "mark_duplicates",
+          "label": "Mark duplicates",
+          "input_types": [
+            "sorted_bam_directory"
+          ],
+          "output_types": [
+            "dedup_bam_directory"
+          ],
+          "node_type": "MarkDuplicatesNode"
+        }
+      ],
       "future_comfy_node": "MarkDuplicatesNode",
       "runnable_node_status": "runnable"
     },
     {
       "id": "bcftools_call",
       "label": "bcftools call",
-      "domain_tags": ["variant_analysis"],
-      "stage_tags": ["variant_calling"],
-      "input_types": ["dedup_bam_directory"],
-      "output_types": ["raw_vcf_directory"],
+      "domain_tags": [
+        "variant_analysis"
+      ],
+      "stage_tags": [
+        "variant_calling"
+      ],
+      "input_types": [
+        "dedup_bam_directory"
+      ],
+      "output_types": [
+        "raw_vcf_directory"
+      ],
       "language": "external_cli",
       "python_bindings": [],
       "summary": "Calls germline SNPs/indels via bcftools mpileup piped through an intermediate BCF into bcftools call.",
       "tier": "REF",
       "tier_rationale": "bcftools is a lightweight single-dependency caller, avoiding GATK's Java/BQSR/known-sites overhead for the MVP REF route.",
-      "context_routing_rules": ["Prefer for the lightweight REF-only install scope."],
-      "applicability_constraints": ["Deduplicated, coordinate-sorted BAM"],
-      "selection_rules": ["Use for official route variant calling."],
-      "operations": [{"id": "bcftools_call", "label": "bcftools variant calling", "input_types": ["dedup_bam_directory"], "output_types": ["raw_vcf_directory"], "node_type": "BcftoolsCallNode"}],
+      "context_routing_rules": [
+        "Prefer for the lightweight REF-only install scope."
+      ],
+      "applicability_constraints": [
+        "Deduplicated, coordinate-sorted BAM"
+      ],
+      "selection_rules": [
+        "Use for official route variant calling."
+      ],
+      "operations": [
+        {
+          "id": "bcftools_call",
+          "label": "bcftools variant calling",
+          "input_types": [
+            "dedup_bam_directory"
+          ],
+          "output_types": [
+            "raw_vcf_directory"
+          ],
+          "node_type": "BcftoolsCallNode"
+        }
+      ],
       "future_comfy_node": "BcftoolsCallNode",
       "runnable_node_status": "runnable"
     },
     {
       "id": "gatk_haplotype_caller",
       "label": "GATK HaplotypeCaller",
-      "domain_tags": ["variant_analysis"],
-      "stage_tags": ["variant_calling"],
-      "input_types": ["dedup_bam_directory"],
-      "output_types": ["raw_vcf_directory"],
+      "domain_tags": [
+        "variant_analysis"
+      ],
+      "stage_tags": [
+        "variant_calling"
+      ],
+      "input_types": [
+        "dedup_bam_directory"
+      ],
+      "output_types": [
+        "raw_vcf_directory"
+      ],
       "language": "external_cli",
       "python_bindings": [],
       "summary": "Joint-genotyping-capable germline caller with a heavier Java/GATK dependency than the bcftools REF path.",
       "tier": "ALT",
       "tier_rationale": "Community-standard caller with stronger joint-genotyping support, but its Java/GATK dependency and BQSR/known-sites requirements are heavier than the lightweight bcftools REF path.",
-      "context_routing_rules": ["Select when joint genotyping across many samples or GATK-specific downstream tooling is explicitly requested."],
-      "applicability_constraints": ["Coordinate-sorted, deduplicated BAM input"],
-      "selection_rules": ["Do not include in MVP completion gate unless explicitly requested."],
-      "operations": [{"id": "gatk_haplotype_caller", "label": "GATK HaplotypeCaller variant calling", "input_types": ["dedup_bam_directory"], "output_types": ["raw_vcf_directory"], "node_type": "GatkHaplotypeCallerNode"}],
+      "context_routing_rules": [
+        "Select when joint genotyping across many samples or GATK-specific downstream tooling is explicitly requested."
+      ],
+      "applicability_constraints": [
+        "Coordinate-sorted, deduplicated BAM input"
+      ],
+      "selection_rules": [
+        "Do not include in MVP completion gate unless explicitly requested."
+      ],
+      "operations": [
+        {
+          "id": "gatk_haplotype_caller",
+          "label": "GATK HaplotypeCaller variant calling",
+          "input_types": [
+            "dedup_bam_directory"
+          ],
+          "output_types": [
+            "raw_vcf_directory"
+          ],
+          "node_type": "GatkHaplotypeCallerNode"
+        }
+      ],
       "future_comfy_node": "GatkHaplotypeCallerNode",
       "runnable_node_status": "planned"
     },
     {
       "id": "bcftools_filter",
       "label": "bcftools filter",
-      "domain_tags": ["variant_analysis"],
-      "stage_tags": ["variant_filtering"],
-      "input_types": ["raw_vcf_directory"],
-      "output_types": ["filtered_vcf_directory"],
+      "domain_tags": [
+        "variant_analysis"
+      ],
+      "stage_tags": [
+        "variant_filtering"
+      ],
+      "input_types": [
+        "raw_vcf_directory"
+      ],
+      "output_types": [
+        "filtered_vcf_directory"
+      ],
       "language": "external_cli",
       "python_bindings": [],
       "summary": "Soft-filters low-quality/low-depth variant calls, tagging them LOWQUAL rather than dropping them.",
       "tier": "REF",
       "tier_rationale": "bcftools filter is the natural companion to bcftools call with no extra dependency.",
       "context_routing_rules": [],
-      "applicability_constraints": ["Raw VCF from bcftools call"],
-      "selection_rules": ["Use for official route variant filtering."],
-      "operations": [{"id": "bcftools_filter", "label": "bcftools variant filtering", "input_types": ["raw_vcf_directory"], "output_types": ["filtered_vcf_directory"], "node_type": "BcftoolsFilterNode"}],
+      "applicability_constraints": [
+        "Raw VCF from bcftools call"
+      ],
+      "selection_rules": [
+        "Use for official route variant filtering."
+      ],
+      "operations": [
+        {
+          "id": "bcftools_filter",
+          "label": "bcftools variant filtering",
+          "input_types": [
+            "raw_vcf_directory"
+          ],
+          "output_types": [
+            "filtered_vcf_directory"
+          ],
+          "node_type": "BcftoolsFilterNode"
+        }
+      ],
       "future_comfy_node": "BcftoolsFilterNode",
       "runnable_node_status": "runnable"
     },
     {
       "id": "variant_visualization",
       "label": "Variant Visualization",
-      "domain_tags": ["variant_analysis"],
-      "stage_tags": ["variant_visualization"],
-      "input_types": ["filtered_vcf_directory"],
-      "output_types": ["variant_plot_directory"],
+      "domain_tags": [
+        "variant_analysis"
+      ],
+      "stage_tags": [
+        "variant_visualization"
+      ],
+      "input_types": [
+        "filtered_vcf_directory"
+      ],
+      "output_types": [
+        "variant_plot_directory"
+      ],
       "language": "external_cli",
       "python_bindings": [],
       "summary": "Runs bcftools stats per sample and plots SNP/indel counts and Ts/Tv ratio.",
       "tier": "REF",
       "tier_rationale": "bcftools stats is the standard variant-calling QC summary tool; matplotlib rendering matches the existing DESeq2/Scanpy visualization node pattern.",
       "context_routing_rules": [],
-      "applicability_constraints": ["Filtered VCF directory"],
-      "selection_rules": ["Use for official route variant visualization."],
-      "operations": [{"id": "variant_visualization", "label": "Variant summary visualization", "input_types": ["filtered_vcf_directory"], "output_types": ["variant_plot_directory"], "node_type": "VariantVisualizationNode"}],
+      "applicability_constraints": [
+        "Filtered VCF directory"
+      ],
+      "selection_rules": [
+        "Use for official route variant visualization."
+      ],
+      "operations": [
+        {
+          "id": "variant_visualization",
+          "label": "Variant summary visualization",
+          "input_types": [
+            "filtered_vcf_directory"
+          ],
+          "output_types": [
+            "variant_plot_directory"
+          ],
+          "node_type": "VariantVisualizationNode"
+        }
+      ],
       "future_comfy_node": "VariantVisualizationNode",
       "runnable_node_status": "runnable"
     },
     {
       "id": "variant_report",
       "label": "Variant Report",
-      "domain_tags": ["variant_analysis"],
-      "stage_tags": ["reporting"],
-      "input_types": ["variant_plot_directory"],
-      "output_types": ["variant_report_markdown"],
+      "domain_tags": [
+        "variant_analysis"
+      ],
+      "stage_tags": [
+        "reporting"
+      ],
+      "input_types": [
+        "variant_plot_directory"
+      ],
+      "output_types": [
+        "variant_report_markdown"
+      ],
       "language": "python",
       "python_bindings": [],
       "summary": "Writes a markdown summary referencing the filtered VCF directory and variant summary plot.",
       "tier": "REF",
       "tier_rationale": "Small deterministic report writer, consistent with the bulk RNA-seq report node.",
       "context_routing_rules": [],
-      "applicability_constraints": ["Variant plot directory"],
-      "selection_rules": ["Use for official route reporting."],
-      "operations": [{"id": "variant_report", "label": "Variant analysis report", "input_types": ["variant_plot_directory"], "output_types": ["variant_report_markdown"], "node_type": "VariantReportNode"}],
+      "applicability_constraints": [
+        "Variant plot directory"
+      ],
+      "selection_rules": [
+        "Use for official route reporting."
+      ],
+      "operations": [
+        {
+          "id": "variant_report",
+          "label": "Variant analysis report",
+          "input_types": [
+            "variant_plot_directory"
+          ],
+          "output_types": [
+            "variant_report_markdown"
+          ],
+          "node_type": "VariantReportNode"
+        }
+      ],
       "future_comfy_node": "VariantReportNode",
       "runnable_node_status": "runnable"
     },
     {
       "id": "atac_input_validator",
       "label": "ATAC-seq Input Validator",
-      "domain_tags": ["epigenomics"],
-      "stage_tags": ["input_validation"],
-      "input_types": ["request_payload", "sample_metadata_csv", "reference_fasta"],
-      "output_types": ["validated_metadata"],
+      "domain_tags": [
+        "epigenomics"
+      ],
+      "stage_tags": [
+        "input_validation"
+      ],
+      "input_types": [
+        "request_payload",
+        "sample_metadata_csv",
+        "reference_fasta"
+      ],
+      "output_types": [
+        "validated_metadata"
+      ],
       "language": "python",
       "python_bindings": [],
       "summary": "Validates FASTQ pair, reference FASTA, and sample metadata before ATAC-seq processing.",
       "tier": "REF",
       "tier_rationale": "Small deterministic validation is required before launching external tools.",
       "context_routing_rules": [],
-      "applicability_constraints": ["Paired or single-end FASTQ with a reference FASTA"],
-      "selection_rules": ["Use before fastp trimming."],
-      "operations": [{"id": "validate_atac_inputs", "label": "Validate ATAC-seq inputs", "input_types": ["request_payload"], "output_types": ["validated_metadata"], "node_type": "AtacInputValidatorNode"}],
+      "applicability_constraints": [
+        "Paired or single-end FASTQ with a reference FASTA"
+      ],
+      "selection_rules": [
+        "Use before fastp trimming."
+      ],
+      "operations": [
+        {
+          "id": "validate_atac_inputs",
+          "label": "Validate ATAC-seq inputs",
+          "input_types": [
+            "request_payload"
+          ],
+          "output_types": [
+            "validated_metadata"
+          ],
+          "node_type": "AtacInputValidatorNode"
+        }
+      ],
       "future_comfy_node": "AtacInputValidatorNode",
       "runnable_node_status": "runnable"
     },
     {
       "id": "atac_fastp_trim",
       "label": "fastp Trim (ATAC-seq)",
-      "domain_tags": ["epigenomics"],
-      "stage_tags": ["read_trimming"],
-      "input_types": ["fastq"],
-      "output_types": ["trimmed_fastq_directory"],
+      "domain_tags": [
+        "epigenomics"
+      ],
+      "stage_tags": [
+        "read_trimming"
+      ],
+      "input_types": [
+        "fastq"
+      ],
+      "output_types": [
+        "trimmed_fastq_directory"
+      ],
       "language": "external_cli",
       "python_bindings": [],
       "summary": "Trims adapters and low-quality bases with fastp before alignment.",
       "tier": "REF",
       "tier_rationale": "fastp is already a proven-lightweight REF dependency in the bulk_rna_seq route; TrimGalore (nf-core's default) adds a Perl/Cutadapt dependency chain for no accuracy gain at this scope.",
       "context_routing_rules": [],
-      "applicability_constraints": ["FASTQ input"],
-      "selection_rules": ["Use for official route read trimming."],
-      "operations": [{"id": "atac_fastq_trim", "label": "ATAC-seq FASTQ trimming", "input_types": ["validated_metadata"], "output_types": ["trimmed_fastq_directory"], "node_type": "AtacFastpTrimNode"}],
+      "applicability_constraints": [
+        "FASTQ input"
+      ],
+      "selection_rules": [
+        "Use for official route read trimming."
+      ],
+      "operations": [
+        {
+          "id": "atac_fastq_trim",
+          "label": "ATAC-seq FASTQ trimming",
+          "input_types": [
+            "validated_metadata"
+          ],
+          "output_types": [
+            "trimmed_fastq_directory"
+          ],
+          "node_type": "AtacFastpTrimNode"
+        }
+      ],
       "future_comfy_node": "AtacFastpTrimNode",
       "runnable_node_status": "runnable"
     },
     {
       "id": "atac_bwa_mem2_index",
       "label": "bwa-mem2 index (ATAC-seq)",
-      "domain_tags": ["epigenomics"],
-      "stage_tags": ["reference_indexing"],
-      "input_types": ["reference_fasta"],
-      "output_types": ["indexed_reference"],
+      "domain_tags": [
+        "epigenomics"
+      ],
+      "stage_tags": [
+        "reference_indexing"
+      ],
+      "input_types": [
+        "reference_fasta"
+      ],
+      "output_types": [
+        "indexed_reference"
+      ],
       "language": "external_cli",
       "python_bindings": [],
       "summary": "Builds the bwa-mem2 FM-index for the reference genome, skipped if already present.",
       "tier": "REF",
       "tier_rationale": "Same aligner as the variant_analysis route for consistency; each domain installs it into its own isolated conda environment.",
-      "context_routing_rules": ["Skip when the reference is already indexed."],
-      "applicability_constraints": ["FASTA reference"],
-      "selection_rules": ["Use for official route reference indexing."],
-      "operations": [{"id": "atac_bwa_mem2_index", "label": "bwa-mem2 index", "input_types": ["reference_fasta"], "output_types": ["indexed_reference"], "node_type": "AtacBwaMem2IndexNode"}],
+      "context_routing_rules": [
+        "Skip when the reference is already indexed."
+      ],
+      "applicability_constraints": [
+        "FASTA reference"
+      ],
+      "selection_rules": [
+        "Use for official route reference indexing."
+      ],
+      "operations": [
+        {
+          "id": "atac_bwa_mem2_index",
+          "label": "bwa-mem2 index",
+          "input_types": [
+            "reference_fasta"
+          ],
+          "output_types": [
+            "indexed_reference"
+          ],
+          "node_type": "AtacBwaMem2IndexNode"
+        }
+      ],
       "future_comfy_node": "AtacBwaMem2IndexNode",
       "runnable_node_status": "runnable"
     },
     {
       "id": "atac_bwa_mem2_align",
       "label": "bwa-mem2 align (ATAC-seq)",
-      "domain_tags": ["epigenomics"],
-      "stage_tags": ["alignment"],
-      "input_types": ["indexed_reference", "trimmed_fastq_directory"],
-      "output_types": ["sorted_bam_directory"],
+      "domain_tags": [
+        "epigenomics"
+      ],
+      "stage_tags": [
+        "alignment"
+      ],
+      "input_types": [
+        "indexed_reference",
+        "trimmed_fastq_directory"
+      ],
+      "output_types": [
+        "sorted_bam_directory"
+      ],
       "language": "external_cli",
       "python_bindings": [],
       "summary": "Aligns trimmed paired- or single-end reads against the reference and produces a coordinate-sorted, indexed BAM.",
       "tier": "REF",
       "tier_rationale": "bwa-mem2 is nf-core/atacseq's default aligner family (BWA); the mem2 reimplementation is a faster drop-in already proven in the variant_analysis route.",
       "context_routing_rules": [],
-      "applicability_constraints": ["Indexed reference FASTA, trimmed FASTQ"],
-      "selection_rules": ["Use for official route alignment."],
-      "operations": [{"id": "atac_bwa_mem2_align", "label": "bwa-mem2 alignment", "input_types": ["indexed_reference"], "output_types": ["sorted_bam_directory"], "node_type": "AtacBwaMem2AlignNode"}],
+      "applicability_constraints": [
+        "Indexed reference FASTA, trimmed FASTQ"
+      ],
+      "selection_rules": [
+        "Use for official route alignment."
+      ],
+      "operations": [
+        {
+          "id": "atac_bwa_mem2_align",
+          "label": "bwa-mem2 alignment",
+          "input_types": [
+            "indexed_reference"
+          ],
+          "output_types": [
+            "sorted_bam_directory"
+          ],
+          "node_type": "AtacBwaMem2AlignNode"
+        }
+      ],
       "future_comfy_node": "AtacBwaMem2AlignNode",
       "runnable_node_status": "runnable"
     },
     {
       "id": "atac_samtools_markdup",
       "label": "samtools markdup (ATAC-seq)",
-      "domain_tags": ["epigenomics"],
-      "stage_tags": ["mark_duplicates"],
-      "input_types": ["sorted_bam_directory"],
-      "output_types": ["dedup_bam_directory"],
+      "domain_tags": [
+        "epigenomics"
+      ],
+      "stage_tags": [
+        "mark_duplicates"
+      ],
+      "input_types": [
+        "sorted_bam_directory"
+      ],
+      "output_types": [
+        "dedup_bam_directory"
+      ],
       "language": "external_cli",
       "python_bindings": [],
       "summary": "Marks PCR/optical duplicates via the samtools collate/fixmate/sort/markdup pipeline.",
       "tier": "REF",
       "tier_rationale": "Same duplicate-marking approach as the variant_analysis route; samtools is already a lightweight dependency.",
       "context_routing_rules": [],
-      "applicability_constraints": ["Coordinate-sorted BAM input"],
-      "selection_rules": ["Use for official route duplicate marking."],
-      "operations": [{"id": "atac_mark_duplicates", "label": "Mark duplicates", "input_types": ["sorted_bam_directory"], "output_types": ["dedup_bam_directory"], "node_type": "AtacMarkDuplicatesNode"}],
+      "applicability_constraints": [
+        "Coordinate-sorted BAM input"
+      ],
+      "selection_rules": [
+        "Use for official route duplicate marking."
+      ],
+      "operations": [
+        {
+          "id": "atac_mark_duplicates",
+          "label": "Mark duplicates",
+          "input_types": [
+            "sorted_bam_directory"
+          ],
+          "output_types": [
+            "dedup_bam_directory"
+          ],
+          "node_type": "AtacMarkDuplicatesNode"
+        }
+      ],
       "future_comfy_node": "AtacMarkDuplicatesNode",
       "runnable_node_status": "runnable"
     },
     {
       "id": "atac_quality_filter",
       "label": "ATAC-seq Quality Filter",
-      "domain_tags": ["epigenomics"],
-      "stage_tags": ["quality_filtering"],
-      "input_types": ["dedup_bam_directory"],
-      "output_types": ["filtered_bam_directory"],
+      "domain_tags": [
+        "epigenomics"
+      ],
+      "stage_tags": [
+        "quality_filtering"
+      ],
+      "input_types": [
+        "dedup_bam_directory"
+      ],
+      "output_types": [
+        "filtered_bam_directory"
+      ],
       "language": "external_cli",
       "python_bindings": [],
       "summary": "Filters deduplicated reads by MAPQ, SAM flags (unmapped/secondary/qcfail/duplicate/supplementary), and mitochondrial contig, via samtools view.",
       "tier": "REF",
       "tier_rationale": "The standard nf-core/atacseq post-alignment filter (MAPQ >= 30, -F 1804, chrM exclusion); reuses the already-installed samtools dependency.",
       "context_routing_rules": [],
-      "applicability_constraints": ["Deduplicated, coordinate-sorted BAM"],
-      "selection_rules": ["Use for official route quality filtering."],
-      "operations": [{"id": "atac_quality_filter", "label": "ATAC-seq quality filtering", "input_types": ["dedup_bam_directory"], "output_types": ["filtered_bam_directory"], "node_type": "AtacQualityFilterNode"}],
+      "applicability_constraints": [
+        "Deduplicated, coordinate-sorted BAM"
+      ],
+      "selection_rules": [
+        "Use for official route quality filtering."
+      ],
+      "operations": [
+        {
+          "id": "atac_quality_filter",
+          "label": "ATAC-seq quality filtering",
+          "input_types": [
+            "dedup_bam_directory"
+          ],
+          "output_types": [
+            "filtered_bam_directory"
+          ],
+          "node_type": "AtacQualityFilterNode"
+        }
+      ],
       "future_comfy_node": "AtacQualityFilterNode",
       "runnable_node_status": "runnable"
     },
     {
       "id": "atac_macs3_callpeak",
       "label": "MACS3 callpeak",
-      "domain_tags": ["epigenomics"],
-      "stage_tags": ["peak_calling"],
-      "input_types": ["filtered_bam_directory"],
-      "output_types": ["peaks_directory"],
+      "domain_tags": [
+        "epigenomics"
+      ],
+      "stage_tags": [
+        "peak_calling"
+      ],
+      "input_types": [
+        "filtered_bam_directory"
+      ],
+      "output_types": [
+        "peaks_directory"
+      ],
       "language": "external_cli",
       "python_bindings": [],
       "summary": "Calls accessible-chromatin peaks from filtered paired-end BAM via MACS3 in BAMPE mode.",
       "tier": "REF",
       "tier_rationale": "MACS3 is the actively maintained successor to MACS2 (the nf-core/atacseq default); same peak-calling semantics, no accuracy tradeoff.",
-      "context_routing_rules": ["Prefer for the lightweight REF-only install scope."],
-      "applicability_constraints": ["Filtered, paired-end BAM"],
-      "selection_rules": ["Use for official route peak calling."],
-      "operations": [{"id": "atac_macs3_callpeak", "label": "MACS3 peak calling", "input_types": ["filtered_bam_directory"], "output_types": ["peaks_directory"], "node_type": "Macs3PeakCallingNode"}],
+      "context_routing_rules": [
+        "Prefer for the lightweight REF-only install scope."
+      ],
+      "applicability_constraints": [
+        "Filtered, paired-end BAM"
+      ],
+      "selection_rules": [
+        "Use for official route peak calling."
+      ],
+      "operations": [
+        {
+          "id": "atac_macs3_callpeak",
+          "label": "MACS3 peak calling",
+          "input_types": [
+            "filtered_bam_directory"
+          ],
+          "output_types": [
+            "peaks_directory"
+          ],
+          "node_type": "Macs3PeakCallingNode"
+        }
+      ],
       "future_comfy_node": "Macs3PeakCallingNode",
       "runnable_node_status": "runnable"
     },
     {
       "id": "atac_macs2_callpeak",
       "label": "MACS2 callpeak",
-      "domain_tags": ["epigenomics"],
-      "stage_tags": ["peak_calling"],
-      "input_types": ["filtered_bam_directory"],
-      "output_types": ["peaks_directory"],
+      "domain_tags": [
+        "epigenomics"
+      ],
+      "stage_tags": [
+        "peak_calling"
+      ],
+      "input_types": [
+        "filtered_bam_directory"
+      ],
+      "output_types": [
+        "peaks_directory"
+      ],
       "language": "external_cli",
       "python_bindings": [],
       "summary": "The pre-MACS3 community-standard peak caller; still the nf-core/atacseq default at time of writing.",
       "tier": "ALT",
       "tier_rationale": "MACS2 remains widely used and cited, but MACS3 is the actively maintained successor with equivalent semantics, so it is preferred as REF.",
-      "context_routing_rules": ["Select when reproducing a MACS2-based published analysis exactly is explicitly requested."],
-      "applicability_constraints": ["Filtered, paired-end BAM"],
-      "selection_rules": ["Do not include in MVP completion gate unless explicitly requested."],
-      "operations": [{"id": "atac_macs2_callpeak", "label": "MACS2 peak calling", "input_types": ["filtered_bam_directory"], "output_types": ["peaks_directory"], "node_type": "Macs2PeakCallingNode"}],
+      "context_routing_rules": [
+        "Select when reproducing a MACS2-based published analysis exactly is explicitly requested."
+      ],
+      "applicability_constraints": [
+        "Filtered, paired-end BAM"
+      ],
+      "selection_rules": [
+        "Do not include in MVP completion gate unless explicitly requested."
+      ],
+      "operations": [
+        {
+          "id": "atac_macs2_callpeak",
+          "label": "MACS2 peak calling",
+          "input_types": [
+            "filtered_bam_directory"
+          ],
+          "output_types": [
+            "peaks_directory"
+          ],
+          "node_type": "Macs2PeakCallingNode"
+        }
+      ],
       "future_comfy_node": "Macs2PeakCallingNode",
       "runnable_node_status": "planned"
     },
     {
       "id": "atac_genrich_callpeak",
       "label": "Genrich",
-      "domain_tags": ["epigenomics"],
-      "stage_tags": ["peak_calling"],
-      "input_types": ["filtered_bam_directory"],
-      "output_types": ["peaks_directory"],
+      "domain_tags": [
+        "epigenomics"
+      ],
+      "stage_tags": [
+        "peak_calling"
+      ],
+      "input_types": [
+        "filtered_bam_directory"
+      ],
+      "output_types": [
+        "peaks_directory"
+      ],
       "language": "external_cli",
       "python_bindings": [],
       "summary": "An ATAC-seq-native peak caller with built-in multi-replicate handling, sometimes preferred over MACS-family callers for ATAC-seq specifically.",
       "tier": "ALT",
       "tier_rationale": "Genrich is ATAC-seq-purpose-built and has advocates over MACS in the community, but MACS3 has broader adoption and tooling familiarity, so MACS3 is REF.",
-      "context_routing_rules": ["Select when multi-replicate joint peak calling is explicitly requested."],
-      "applicability_constraints": ["Filtered, paired-end BAM, name-sorted"],
-      "selection_rules": ["Do not include in MVP completion gate unless explicitly requested."],
-      "operations": [{"id": "atac_genrich_callpeak", "label": "Genrich peak calling", "input_types": ["filtered_bam_directory"], "output_types": ["peaks_directory"], "node_type": "GenrichPeakCallingNode"}],
+      "context_routing_rules": [
+        "Select when multi-replicate joint peak calling is explicitly requested."
+      ],
+      "applicability_constraints": [
+        "Filtered, paired-end BAM, name-sorted"
+      ],
+      "selection_rules": [
+        "Do not include in MVP completion gate unless explicitly requested."
+      ],
+      "operations": [
+        {
+          "id": "atac_genrich_callpeak",
+          "label": "Genrich peak calling",
+          "input_types": [
+            "filtered_bam_directory"
+          ],
+          "output_types": [
+            "peaks_directory"
+          ],
+          "node_type": "GenrichPeakCallingNode"
+        }
+      ],
       "future_comfy_node": "GenrichPeakCallingNode",
       "runnable_node_status": "planned"
     },
     {
       "id": "atac_peak_visualization",
       "label": "ATAC-seq Peak Visualization",
-      "domain_tags": ["epigenomics"],
-      "stage_tags": ["peak_visualization"],
-      "input_types": ["peaks_directory"],
-      "output_types": ["atac_plot_directory"],
+      "domain_tags": [
+        "epigenomics"
+      ],
+      "stage_tags": [
+        "peak_visualization"
+      ],
+      "input_types": [
+        "peaks_directory"
+      ],
+      "output_types": [
+        "atac_plot_directory"
+      ],
       "language": "external_cli",
       "python_bindings": [],
       "summary": "Counts called peaks per sample from narrowPeak output and bar-charts the summary.",
       "tier": "REF",
       "tier_rationale": "narrowPeak line-counting plus a matplotlib bar chart matches the existing DESeq2/variant visualization node's counts-plus-one-plot scope.",
       "context_routing_rules": [],
-      "applicability_constraints": ["narrowPeak output directory"],
-      "selection_rules": ["Use for official route peak visualization."],
-      "operations": [{"id": "atac_peak_visualization", "label": "Peak count visualization", "input_types": ["peaks_directory"], "output_types": ["atac_plot_directory"], "node_type": "AtacPeakVisualizationNode"}],
+      "applicability_constraints": [
+        "narrowPeak output directory"
+      ],
+      "selection_rules": [
+        "Use for official route peak visualization."
+      ],
+      "operations": [
+        {
+          "id": "atac_peak_visualization",
+          "label": "Peak count visualization",
+          "input_types": [
+            "peaks_directory"
+          ],
+          "output_types": [
+            "atac_plot_directory"
+          ],
+          "node_type": "AtacPeakVisualizationNode"
+        }
+      ],
       "future_comfy_node": "AtacPeakVisualizationNode",
       "runnable_node_status": "runnable"
     },
     {
       "id": "atac_report",
       "label": "ATAC-seq Report",
-      "domain_tags": ["epigenomics"],
-      "stage_tags": ["reporting"],
-      "input_types": ["atac_plot_directory"],
-      "output_types": ["atac_report_markdown"],
+      "domain_tags": [
+        "epigenomics"
+      ],
+      "stage_tags": [
+        "reporting"
+      ],
+      "input_types": [
+        "atac_plot_directory"
+      ],
+      "output_types": [
+        "atac_report_markdown"
+      ],
       "language": "python",
       "python_bindings": [],
       "summary": "Writes a markdown summary referencing the peaks directory and peak summary plot.",
       "tier": "REF",
       "tier_rationale": "Small deterministic report writer, consistent with the bulk RNA-seq and variant_analysis report nodes.",
       "context_routing_rules": [],
-      "applicability_constraints": ["ATAC-seq plot directory"],
-      "selection_rules": ["Use for official route reporting."],
-      "operations": [{"id": "atac_report", "label": "ATAC-seq analysis report", "input_types": ["atac_plot_directory"], "output_types": ["atac_report_markdown"], "node_type": "AtacReportNode"}],
+      "applicability_constraints": [
+        "ATAC-seq plot directory"
+      ],
+      "selection_rules": [
+        "Use for official route reporting."
+      ],
+      "operations": [
+        {
+          "id": "atac_report",
+          "label": "ATAC-seq analysis report",
+          "input_types": [
+            "atac_plot_directory"
+          ],
+          "output_types": [
+            "atac_report_markdown"
+          ],
+          "node_type": "AtacReportNode"
+        }
+      ],
       "future_comfy_node": "AtacReportNode",
       "runnable_node_status": "runnable"
     },
     {
       "id": "metagenome_input_validator",
       "label": "Metagenome Input Validator",
-      "domain_tags": ["metagenome"],
-      "stage_tags": ["input_validation"],
-      "input_types": ["request_payload", "sample_metadata_csv", "kraken2_db_dir"],
-      "output_types": ["validated_metadata"],
+      "domain_tags": [
+        "metagenome"
+      ],
+      "stage_tags": [
+        "input_validation"
+      ],
+      "input_types": [
+        "request_payload",
+        "sample_metadata_csv",
+        "kraken2_db_dir"
+      ],
+      "output_types": [
+        "validated_metadata"
+      ],
       "language": "python",
       "python_bindings": [],
       "summary": "Validates FASTQ pair, Kraken2 database directory, and sample metadata before taxonomic profiling.",
       "tier": "REF",
       "tier_rationale": "Small deterministic validation is required before launching external tools.",
       "context_routing_rules": [],
-      "applicability_constraints": ["Paired or single-end FASTQ with a Kraken2 database"],
-      "selection_rules": ["Use before fastp trimming."],
-      "operations": [{"id": "validate_metagenome_inputs", "label": "Validate metagenome inputs", "input_types": ["request_payload"], "output_types": ["validated_metadata"], "node_type": "MetagenomeInputValidatorNode"}],
+      "applicability_constraints": [
+        "Paired or single-end FASTQ with a Kraken2 database"
+      ],
+      "selection_rules": [
+        "Use before fastp trimming."
+      ],
+      "operations": [
+        {
+          "id": "validate_metagenome_inputs",
+          "label": "Validate metagenome inputs",
+          "input_types": [
+            "request_payload"
+          ],
+          "output_types": [
+            "validated_metadata"
+          ],
+          "node_type": "MetagenomeInputValidatorNode"
+        }
+      ],
       "future_comfy_node": "MetagenomeInputValidatorNode",
       "runnable_node_status": "runnable"
     },
     {
       "id": "metagenome_fastp_trim",
       "label": "fastp Trim (Metagenome)",
-      "domain_tags": ["metagenome"],
-      "stage_tags": ["read_trimming"],
-      "input_types": ["fastq"],
-      "output_types": ["trimmed_fastq_directory"],
+      "domain_tags": [
+        "metagenome"
+      ],
+      "stage_tags": [
+        "read_trimming"
+      ],
+      "input_types": [
+        "fastq"
+      ],
+      "output_types": [
+        "trimmed_fastq_directory"
+      ],
       "language": "external_cli",
       "python_bindings": [],
       "summary": "Trims adapters and low-quality bases with fastp before taxonomic classification.",
       "tier": "REF",
       "tier_rationale": "Same lightweight REF trimming choice already made in bulk_rna_seq and epigenomics.",
       "context_routing_rules": [],
-      "applicability_constraints": ["FASTQ input"],
-      "selection_rules": ["Use for official route read trimming."],
-      "operations": [{"id": "metagenome_fastq_trim", "label": "Metagenome FASTQ trimming", "input_types": ["validated_metadata"], "output_types": ["trimmed_fastq_directory"], "node_type": "MetagenomeFastpTrimNode"}],
+      "applicability_constraints": [
+        "FASTQ input"
+      ],
+      "selection_rules": [
+        "Use for official route read trimming."
+      ],
+      "operations": [
+        {
+          "id": "metagenome_fastq_trim",
+          "label": "Metagenome FASTQ trimming",
+          "input_types": [
+            "validated_metadata"
+          ],
+          "output_types": [
+            "trimmed_fastq_directory"
+          ],
+          "node_type": "MetagenomeFastpTrimNode"
+        }
+      ],
       "future_comfy_node": "MetagenomeFastpTrimNode",
       "runnable_node_status": "runnable"
     },
     {
       "id": "kraken2_classify",
       "label": "Kraken2 Classify",
-      "domain_tags": ["metagenome"],
-      "stage_tags": ["taxonomic_classification"],
-      "input_types": ["trimmed_fastq_directory"],
-      "output_types": ["kraken2_output_directory"],
+      "domain_tags": [
+        "metagenome"
+      ],
+      "stage_tags": [
+        "taxonomic_classification"
+      ],
+      "input_types": [
+        "trimmed_fastq_directory"
+      ],
+      "output_types": [
+        "kraken2_output_directory"
+      ],
       "language": "external_cli",
       "python_bindings": [],
       "summary": "Classifies shotgun reads against a Kraken2 database, producing per-read and per-taxon reports.",
       "tier": "REF",
       "tier_rationale": "Kraken2 is the fast, single-database-dependency standard for shotgun metagenomic taxonomic classification.",
-      "context_routing_rules": ["Prefer for the lightweight REF-only install scope."],
-      "applicability_constraints": ["Trimmed FASTQ, Kraken2 database directory"],
-      "selection_rules": ["Use for official route taxonomic classification."],
-      "operations": [{"id": "kraken2_classify", "label": "Kraken2 classification", "input_types": ["trimmed_fastq_directory"], "output_types": ["kraken2_output_directory"], "node_type": "Kraken2ClassifyNode"}],
+      "context_routing_rules": [
+        "Prefer for the lightweight REF-only install scope."
+      ],
+      "applicability_constraints": [
+        "Trimmed FASTQ, Kraken2 database directory"
+      ],
+      "selection_rules": [
+        "Use for official route taxonomic classification."
+      ],
+      "operations": [
+        {
+          "id": "kraken2_classify",
+          "label": "Kraken2 classification",
+          "input_types": [
+            "trimmed_fastq_directory"
+          ],
+          "output_types": [
+            "kraken2_output_directory"
+          ],
+          "node_type": "Kraken2ClassifyNode"
+        }
+      ],
       "future_comfy_node": "Kraken2ClassifyNode",
       "runnable_node_status": "runnable"
     },
     {
       "id": "centrifuge_classify",
       "label": "Centrifuge Classify",
-      "domain_tags": ["metagenome"],
-      "stage_tags": ["taxonomic_classification"],
-      "input_types": ["trimmed_fastq_directory"],
-      "output_types": ["kraken2_output_directory"],
+      "domain_tags": [
+        "metagenome"
+      ],
+      "stage_tags": [
+        "taxonomic_classification"
+      ],
+      "input_types": [
+        "trimmed_fastq_directory"
+      ],
+      "output_types": [
+        "kraken2_output_directory"
+      ],
       "language": "external_cli",
       "python_bindings": [],
       "summary": "A lower-memory-footprint alternative classifier with a different index/database format than Kraken2.",
       "tier": "ALT",
       "tier_rationale": "Credible for memory-constrained environments, but Kraken2 has broader community adoption for the REF-only default.",
-      "context_routing_rules": ["Select when Kraken2's memory footprint is prohibitive and explicitly requested."],
-      "applicability_constraints": ["Trimmed FASTQ, Centrifuge index"],
-      "selection_rules": ["Do not include in MVP completion gate unless explicitly requested."],
-      "operations": [{"id": "centrifuge_classify", "label": "Centrifuge classification", "input_types": ["trimmed_fastq_directory"], "output_types": ["kraken2_output_directory"], "node_type": "CentrifugeClassifyNode"}],
+      "context_routing_rules": [
+        "Select when Kraken2's memory footprint is prohibitive and explicitly requested."
+      ],
+      "applicability_constraints": [
+        "Trimmed FASTQ, Centrifuge index"
+      ],
+      "selection_rules": [
+        "Do not include in MVP completion gate unless explicitly requested."
+      ],
+      "operations": [
+        {
+          "id": "centrifuge_classify",
+          "label": "Centrifuge classification",
+          "input_types": [
+            "trimmed_fastq_directory"
+          ],
+          "output_types": [
+            "kraken2_output_directory"
+          ],
+          "node_type": "CentrifugeClassifyNode"
+        }
+      ],
       "future_comfy_node": "CentrifugeClassifyNode",
       "runnable_node_status": "planned"
     },
     {
       "id": "bracken_reestimate",
       "label": "Bracken Re-estimate",
-      "domain_tags": ["metagenome"],
-      "stage_tags": ["abundance_estimation"],
-      "input_types": ["kraken2_output_directory"],
-      "output_types": ["bracken_directory"],
+      "domain_tags": [
+        "metagenome"
+      ],
+      "stage_tags": [
+        "abundance_estimation"
+      ],
+      "input_types": [
+        "kraken2_output_directory"
+      ],
+      "output_types": [
+        "bracken_directory"
+      ],
       "language": "external_cli",
       "python_bindings": [],
       "summary": "Re-estimates species-level abundance from Kraken2's raw classification report using the same database.",
       "tier": "REF",
       "tier_rationale": "Bracken is Kraken2's standard companion tool, no extra dependency beyond the shared database.",
       "context_routing_rules": [],
-      "applicability_constraints": ["Kraken2 report, matching Kraken2 database"],
-      "selection_rules": ["Use for official route abundance estimation."],
-      "operations": [{"id": "bracken_reestimate", "label": "Bracken abundance re-estimation", "input_types": ["kraken2_output_directory"], "output_types": ["bracken_directory"], "node_type": "BrackenAbundanceNode"}],
+      "applicability_constraints": [
+        "Kraken2 report, matching Kraken2 database"
+      ],
+      "selection_rules": [
+        "Use for official route abundance estimation."
+      ],
+      "operations": [
+        {
+          "id": "bracken_reestimate",
+          "label": "Bracken abundance re-estimation",
+          "input_types": [
+            "kraken2_output_directory"
+          ],
+          "output_types": [
+            "bracken_directory"
+          ],
+          "node_type": "BrackenAbundanceNode"
+        }
+      ],
       "future_comfy_node": "BrackenAbundanceNode",
       "runnable_node_status": "runnable"
     },
     {
       "id": "metagenome_visualization",
       "label": "Metagenome Visualization",
-      "domain_tags": ["metagenome"],
-      "stage_tags": ["profile_visualization"],
-      "input_types": ["bracken_directory"],
-      "output_types": ["metagenome_plot_directory"],
+      "domain_tags": [
+        "metagenome"
+      ],
+      "stage_tags": [
+        "profile_visualization"
+      ],
+      "input_types": [
+        "bracken_directory"
+      ],
+      "output_types": [
+        "metagenome_plot_directory"
+      ],
       "language": "external_cli",
       "python_bindings": [],
       "summary": "Bar-charts the top taxa by abundance fraction per sample from Bracken's report.",
       "tier": "REF",
       "tier_rationale": "Matches the existing counts-plus-one-plot scope of every prior visualization node.",
       "context_routing_rules": [],
-      "applicability_constraints": ["Bracken report directory"],
-      "selection_rules": ["Use for official route profile visualization."],
-      "operations": [{"id": "metagenome_visualization", "label": "Taxonomic profile visualization", "input_types": ["bracken_directory"], "output_types": ["metagenome_plot_directory"], "node_type": "MetagenomeVisualizationNode"}],
+      "applicability_constraints": [
+        "Bracken report directory"
+      ],
+      "selection_rules": [
+        "Use for official route profile visualization."
+      ],
+      "operations": [
+        {
+          "id": "metagenome_visualization",
+          "label": "Taxonomic profile visualization",
+          "input_types": [
+            "bracken_directory"
+          ],
+          "output_types": [
+            "metagenome_plot_directory"
+          ],
+          "node_type": "MetagenomeVisualizationNode"
+        }
+      ],
       "future_comfy_node": "MetagenomeVisualizationNode",
       "runnable_node_status": "runnable"
     },
     {
       "id": "metagenome_report",
       "label": "Metagenome Report",
-      "domain_tags": ["metagenome"],
-      "stage_tags": ["reporting"],
-      "input_types": ["metagenome_plot_directory"],
-      "output_types": ["metagenome_report_markdown"],
+      "domain_tags": [
+        "metagenome"
+      ],
+      "stage_tags": [
+        "reporting"
+      ],
+      "input_types": [
+        "metagenome_plot_directory"
+      ],
+      "output_types": [
+        "metagenome_report_markdown"
+      ],
       "language": "python",
       "python_bindings": [],
       "summary": "Writes a markdown summary referencing the Bracken output directory and taxonomic summary plot.",
       "tier": "REF",
       "tier_rationale": "Small deterministic report writer, consistent with every prior domain's report node.",
       "context_routing_rules": [],
-      "applicability_constraints": ["Metagenome plot directory"],
-      "selection_rules": ["Use for official route reporting."],
-      "operations": [{"id": "metagenome_report", "label": "Metagenome analysis report", "input_types": ["metagenome_plot_directory"], "output_types": ["metagenome_report_markdown"], "node_type": "MetagenomeReportNode"}],
+      "applicability_constraints": [
+        "Metagenome plot directory"
+      ],
+      "selection_rules": [
+        "Use for official route reporting."
+      ],
+      "operations": [
+        {
+          "id": "metagenome_report",
+          "label": "Metagenome analysis report",
+          "input_types": [
+            "metagenome_plot_directory"
+          ],
+          "output_types": [
+            "metagenome_report_markdown"
+          ],
+          "node_type": "MetagenomeReportNode"
+        }
+      ],
       "future_comfy_node": "MetagenomeReportNode",
       "runnable_node_status": "runnable"
     },
     {
       "id": "assembly_input_validator",
       "label": "Genome Assembly Input Validator",
-      "domain_tags": ["genome_assembly"],
-      "stage_tags": ["input_validation"],
-      "input_types": ["request_payload", "sample_metadata_csv"],
-      "output_types": ["validated_metadata"],
+      "domain_tags": [
+        "genome_assembly"
+      ],
+      "stage_tags": [
+        "input_validation"
+      ],
+      "input_types": [
+        "request_payload",
+        "sample_metadata_csv"
+      ],
+      "output_types": [
+        "validated_metadata"
+      ],
       "language": "python",
       "python_bindings": [],
-      "summary": "Validates FASTQ pair and sample metadata before de novo assembly. No reference genome — this route is purely de novo.",
+      "summary": "Validates FASTQ pair and sample metadata before de novo assembly. No reference genome \u2014 this route is purely de novo.",
       "tier": "REF",
       "tier_rationale": "Small deterministic validation is required before launching external tools.",
       "context_routing_rules": [],
-      "applicability_constraints": ["Paired or single-end FASTQ"],
-      "selection_rules": ["Use before fastp trimming."],
-      "operations": [{"id": "validate_assembly_inputs", "label": "Validate genome assembly inputs", "input_types": ["request_payload"], "output_types": ["validated_metadata"], "node_type": "AssemblyInputValidatorNode"}],
+      "applicability_constraints": [
+        "Paired or single-end FASTQ"
+      ],
+      "selection_rules": [
+        "Use before fastp trimming."
+      ],
+      "operations": [
+        {
+          "id": "validate_assembly_inputs",
+          "label": "Validate genome assembly inputs",
+          "input_types": [
+            "request_payload"
+          ],
+          "output_types": [
+            "validated_metadata"
+          ],
+          "node_type": "AssemblyInputValidatorNode"
+        }
+      ],
       "future_comfy_node": "AssemblyInputValidatorNode",
       "runnable_node_status": "runnable"
     },
     {
       "id": "assembly_fastp_trim",
       "label": "fastp Trim (Genome Assembly)",
-      "domain_tags": ["genome_assembly"],
-      "stage_tags": ["read_trimming"],
-      "input_types": ["fastq"],
-      "output_types": ["trimmed_fastq_directory"],
+      "domain_tags": [
+        "genome_assembly"
+      ],
+      "stage_tags": [
+        "read_trimming"
+      ],
+      "input_types": [
+        "fastq"
+      ],
+      "output_types": [
+        "trimmed_fastq_directory"
+      ],
       "language": "external_cli",
       "python_bindings": [],
       "summary": "Trims adapters and low-quality bases with fastp before assembly.",
       "tier": "REF",
       "tier_rationale": "Same lightweight REF trimming choice already made in every prior domain.",
       "context_routing_rules": [],
-      "applicability_constraints": ["FASTQ input"],
-      "selection_rules": ["Use for official route read trimming."],
-      "operations": [{"id": "assembly_fastq_trim", "label": "Genome assembly FASTQ trimming", "input_types": ["validated_metadata"], "output_types": ["trimmed_fastq_directory"], "node_type": "AssemblyFastpTrimNode"}],
+      "applicability_constraints": [
+        "FASTQ input"
+      ],
+      "selection_rules": [
+        "Use for official route read trimming."
+      ],
+      "operations": [
+        {
+          "id": "assembly_fastq_trim",
+          "label": "Genome assembly FASTQ trimming",
+          "input_types": [
+            "validated_metadata"
+          ],
+          "output_types": [
+            "trimmed_fastq_directory"
+          ],
+          "node_type": "AssemblyFastpTrimNode"
+        }
+      ],
       "future_comfy_node": "AssemblyFastpTrimNode",
       "runnable_node_status": "runnable"
     },
     {
       "id": "spades_assemble",
       "label": "SPAdes Assemble",
-      "domain_tags": ["genome_assembly"],
-      "stage_tags": ["assembly"],
-      "input_types": ["trimmed_fastq_directory"],
-      "output_types": ["assembly_directory"],
+      "domain_tags": [
+        "genome_assembly"
+      ],
+      "stage_tags": [
+        "assembly"
+      ],
+      "input_types": [
+        "trimmed_fastq_directory"
+      ],
+      "output_types": [
+        "assembly_directory"
+      ],
       "language": "external_cli",
       "python_bindings": [],
       "summary": "De novo assembles a single bacterial isolate genome from trimmed short reads using SPAdes' --isolate mode.",
       "tier": "REF",
       "tier_rationale": "SPAdes is the de facto standard Illumina bacterial-isolate assembler.",
-      "context_routing_rules": ["Prefer for the lightweight REF-only install scope."],
-      "applicability_constraints": ["Trimmed paired- or single-end FASTQ"],
-      "selection_rules": ["Use for official route assembly."],
-      "operations": [{"id": "spades_assemble", "label": "SPAdes de novo assembly", "input_types": ["trimmed_fastq_directory"], "output_types": ["assembly_directory"], "node_type": "SpadesAssembleNode"}],
+      "context_routing_rules": [
+        "Prefer for the lightweight REF-only install scope."
+      ],
+      "applicability_constraints": [
+        "Trimmed paired- or single-end FASTQ"
+      ],
+      "selection_rules": [
+        "Use for official route assembly."
+      ],
+      "operations": [
+        {
+          "id": "spades_assemble",
+          "label": "SPAdes de novo assembly",
+          "input_types": [
+            "trimmed_fastq_directory"
+          ],
+          "output_types": [
+            "assembly_directory"
+          ],
+          "node_type": "SpadesAssembleNode"
+        }
+      ],
       "future_comfy_node": "SpadesAssembleNode",
       "runnable_node_status": "runnable"
     },
     {
       "id": "megahit_assemble",
       "label": "MEGAHIT Assemble",
-      "domain_tags": ["genome_assembly"],
-      "stage_tags": ["assembly"],
-      "input_types": ["trimmed_fastq_directory"],
-      "output_types": ["assembly_directory"],
+      "domain_tags": [
+        "genome_assembly"
+      ],
+      "stage_tags": [
+        "assembly"
+      ],
+      "input_types": [
+        "trimmed_fastq_directory"
+      ],
+      "output_types": [
+        "assembly_directory"
+      ],
       "language": "external_cli",
       "python_bindings": [],
       "summary": "A lower-memory, faster alternative assembler, trading some assembly quality for speed on large or complex genomes.",
       "tier": "ALT",
       "tier_rationale": "Credible for memory-constrained environments or very large genomes, but SPAdes has broader adoption for single-isolate assembly quality as the REF default.",
-      "context_routing_rules": ["Select when SPAdes' memory footprint is prohibitive and explicitly requested."],
-      "applicability_constraints": ["Trimmed FASTQ"],
-      "selection_rules": ["Do not include in MVP completion gate unless explicitly requested."],
-      "operations": [{"id": "megahit_assemble", "label": "MEGAHIT de novo assembly", "input_types": ["trimmed_fastq_directory"], "output_types": ["assembly_directory"], "node_type": "MegahitAssembleNode"}],
+      "context_routing_rules": [
+        "Select when SPAdes' memory footprint is prohibitive and explicitly requested."
+      ],
+      "applicability_constraints": [
+        "Trimmed FASTQ"
+      ],
+      "selection_rules": [
+        "Do not include in MVP completion gate unless explicitly requested."
+      ],
+      "operations": [
+        {
+          "id": "megahit_assemble",
+          "label": "MEGAHIT de novo assembly",
+          "input_types": [
+            "trimmed_fastq_directory"
+          ],
+          "output_types": [
+            "assembly_directory"
+          ],
+          "node_type": "MegahitAssembleNode"
+        }
+      ],
       "future_comfy_node": "MegahitAssembleNode",
       "runnable_node_status": "planned"
     },
     {
       "id": "quast_qc",
       "label": "QUAST QC",
-      "domain_tags": ["genome_assembly"],
-      "stage_tags": ["assembly_qc"],
-      "input_types": ["assembly_directory"],
-      "output_types": ["assembly_qc_directory"],
+      "domain_tags": [
+        "genome_assembly"
+      ],
+      "stage_tags": [
+        "assembly_qc"
+      ],
+      "input_types": [
+        "assembly_directory"
+      ],
+      "output_types": [
+        "assembly_qc_directory"
+      ],
       "language": "external_cli",
       "python_bindings": [],
       "summary": "Computes reference-free assembly quality metrics (N50, total length, contig count) from the assembled contigs.",
       "tier": "REF",
       "tier_rationale": "QUAST is the standard reference-free assembly-quality-metrics tool used across essentially every genome assembly pipeline.",
       "context_routing_rules": [],
-      "applicability_constraints": ["Assembled contigs.fasta"],
-      "selection_rules": ["Use for official route assembly QC."],
-      "operations": [{"id": "quast_qc", "label": "QUAST assembly quality metrics", "input_types": ["assembly_directory"], "output_types": ["assembly_qc_directory"], "node_type": "QuastQcNode"}],
+      "applicability_constraints": [
+        "Assembled contigs.fasta"
+      ],
+      "selection_rules": [
+        "Use for official route assembly QC."
+      ],
+      "operations": [
+        {
+          "id": "quast_qc",
+          "label": "QUAST assembly quality metrics",
+          "input_types": [
+            "assembly_directory"
+          ],
+          "output_types": [
+            "assembly_qc_directory"
+          ],
+          "node_type": "QuastQcNode"
+        }
+      ],
       "future_comfy_node": "QuastQcNode",
       "runnable_node_status": "runnable"
     },
     {
       "id": "assembly_visualization",
       "label": "Genome Assembly Visualization",
-      "domain_tags": ["genome_assembly"],
-      "stage_tags": ["assembly_visualization"],
-      "input_types": ["assembly_qc_directory"],
-      "output_types": ["assembly_plot_directory"],
+      "domain_tags": [
+        "genome_assembly"
+      ],
+      "stage_tags": [
+        "assembly_visualization"
+      ],
+      "input_types": [
+        "assembly_qc_directory"
+      ],
+      "output_types": [
+        "assembly_plot_directory"
+      ],
       "language": "external_cli",
       "python_bindings": [],
       "summary": "Bar-charts the key QUAST metrics (# contigs, total length, N50) per sample.",
       "tier": "REF",
       "tier_rationale": "Matches the existing counts-plus-one-plot scope of every prior visualization node.",
       "context_routing_rules": [],
-      "applicability_constraints": ["QUAST report.tsv directory"],
-      "selection_rules": ["Use for official route assembly visualization."],
-      "operations": [{"id": "assembly_visualization", "label": "Assembly quality visualization", "input_types": ["assembly_qc_directory"], "output_types": ["assembly_plot_directory"], "node_type": "AssemblyVisualizationNode"}],
+      "applicability_constraints": [
+        "QUAST report.tsv directory"
+      ],
+      "selection_rules": [
+        "Use for official route assembly visualization."
+      ],
+      "operations": [
+        {
+          "id": "assembly_visualization",
+          "label": "Assembly quality visualization",
+          "input_types": [
+            "assembly_qc_directory"
+          ],
+          "output_types": [
+            "assembly_plot_directory"
+          ],
+          "node_type": "AssemblyVisualizationNode"
+        }
+      ],
       "future_comfy_node": "AssemblyVisualizationNode",
       "runnable_node_status": "runnable"
     },
     {
       "id": "assembly_report",
       "label": "Genome Assembly Report",
-      "domain_tags": ["genome_assembly"],
-      "stage_tags": ["reporting"],
-      "input_types": ["assembly_plot_directory"],
-      "output_types": ["assembly_report_markdown"],
+      "domain_tags": [
+        "genome_assembly"
+      ],
+      "stage_tags": [
+        "reporting"
+      ],
+      "input_types": [
+        "assembly_plot_directory"
+      ],
+      "output_types": [
+        "assembly_report_markdown"
+      ],
       "language": "python",
       "python_bindings": [],
       "summary": "Writes a markdown summary referencing the QUAST output directory and assembly summary plot.",
       "tier": "REF",
       "tier_rationale": "Small deterministic report writer, consistent with every prior domain's report node.",
       "context_routing_rules": [],
-      "applicability_constraints": ["Assembly plot directory"],
-      "selection_rules": ["Use for official route reporting."],
-      "operations": [{"id": "assembly_report", "label": "Genome assembly report", "input_types": ["assembly_plot_directory"], "output_types": ["assembly_report_markdown"], "node_type": "AssemblyReportNode"}],
+      "applicability_constraints": [
+        "Assembly plot directory"
+      ],
+      "selection_rules": [
+        "Use for official route reporting."
+      ],
+      "operations": [
+        {
+          "id": "assembly_report",
+          "label": "Genome assembly report",
+          "input_types": [
+            "assembly_plot_directory"
+          ],
+          "output_types": [
+            "assembly_report_markdown"
+          ],
+          "node_type": "AssemblyReportNode"
+        }
+      ],
       "future_comfy_node": "AssemblyReportNode",
       "runnable_node_status": "runnable"
+    },
+    {
+      "id": "trimmomatic_trim",
+      "label": "Trimmomatic",
+      "domain_tags": [
+        "bulk_rna_seq",
+        "epigenomics",
+        "metagenome",
+        "genome_assembly"
+      ],
+      "stage_tags": [
+        "trimming",
+        "read_trimming"
+      ],
+      "input_types": [
+        "fastq"
+      ],
+      "output_types": [
+        "trimmed_fastq_directory"
+      ],
+      "language": "external_cli",
+      "python_bindings": [],
+      "summary": "Java-based adapter/quality trimmer, the long-standing alternative to fastp across most short-read pipelines.",
+      "tier": "ALT",
+      "tier_rationale": "Widely used and well-documented, but requires an explicit adapter file and minimum-length policy that fastp handles with sane defaults.",
+      "context_routing_rules": [
+        "Select when reproducing a Trimmomatic-based published analysis exactly is explicitly requested."
+      ],
+      "applicability_constraints": [
+        "FASTQ input"
+      ],
+      "selection_rules": [
+        "Do not include in MVP completion gate unless explicitly requested."
+      ],
+      "operations": [
+        {
+          "id": "trimmomatic_trim",
+          "label": "Trimmomatic adapter/quality trimming",
+          "input_types": [
+            "fastq"
+          ],
+          "output_types": [
+            "trimmed_fastq_directory"
+          ],
+          "node_type": "TrimmomaticTrimNode"
+        }
+      ],
+      "future_comfy_node": "TrimmomaticTrimNode",
+      "runnable_node_status": "planned"
+    },
+    {
+      "id": "kallisto_index",
+      "label": "kallisto index",
+      "domain_tags": [
+        "bulk_rna_seq"
+      ],
+      "stage_tags": [
+        "salmon_index"
+      ],
+      "input_types": [
+        "transcriptome_fasta"
+      ],
+      "output_types": [
+        "indexed_reference"
+      ],
+      "language": "external_cli",
+      "python_bindings": [],
+      "summary": "Builds the kallisto pseudoalignment index, the other major transcript-quantification pseudoaligner alongside salmon.",
+      "tier": "ALT",
+      "tier_rationale": "kallisto and salmon are functionally equivalent pseudoaligners; salmon is REF for downstream tximport/DESeq2 compatibility already proven in this route.",
+      "context_routing_rules": [
+        "Select when reproducing a kallisto-based published analysis exactly is explicitly requested."
+      ],
+      "applicability_constraints": [
+        "Transcriptome FASTA"
+      ],
+      "selection_rules": [
+        "Do not include in MVP completion gate unless explicitly requested."
+      ],
+      "operations": [
+        {
+          "id": "kallisto_index",
+          "label": "kallisto index",
+          "input_types": [
+            "transcriptome_fasta"
+          ],
+          "output_types": [
+            "indexed_reference"
+          ],
+          "node_type": "KallistoIndexNode"
+        }
+      ],
+      "future_comfy_node": "KallistoIndexNode",
+      "runnable_node_status": "planned"
+    },
+    {
+      "id": "kallisto_quant",
+      "label": "kallisto quant",
+      "domain_tags": [
+        "bulk_rna_seq"
+      ],
+      "stage_tags": [
+        "salmon_quant"
+      ],
+      "input_types": [
+        "indexed_reference",
+        "fastq"
+      ],
+      "output_types": [
+        "salmon_quant_dir"
+      ],
+      "language": "external_cli",
+      "python_bindings": [],
+      "summary": "Pseudoalignment-based transcript quantification, kallisto's counterpart to salmon quant.",
+      "tier": "ALT",
+      "tier_rationale": "Equivalent quantification paradigm to salmon; kept ALT since the REF route's downstream tximport/DESeq2 wiring is proven against salmon output.",
+      "context_routing_rules": [
+        "Select when reproducing a kallisto-based published analysis exactly is explicitly requested."
+      ],
+      "applicability_constraints": [
+        "kallisto index output"
+      ],
+      "selection_rules": [
+        "Do not include in MVP completion gate unless explicitly requested."
+      ],
+      "operations": [
+        {
+          "id": "kallisto_quant",
+          "label": "kallisto quantification",
+          "input_types": [
+            "indexed_reference",
+            "fastq"
+          ],
+          "output_types": [
+            "salmon_quant_dir"
+          ],
+          "node_type": "KallistoQuantNode"
+        }
+      ],
+      "future_comfy_node": "KallistoQuantNode",
+      "runnable_node_status": "planned"
+    },
+    {
+      "id": "star_align",
+      "label": "STAR",
+      "domain_tags": [
+        "bulk_rna_seq"
+      ],
+      "stage_tags": [
+        "salmon_quant"
+      ],
+      "input_types": [
+        "fastq"
+      ],
+      "output_types": [
+        "salmon_quant_dir"
+      ],
+      "language": "external_cli",
+      "python_bindings": [],
+      "summary": "Splice-aware genome aligner; the standard entry point for a genome-alignment-based (rather than pseudoalignment-based) bulk RNA-seq route.",
+      "tier": "ALT",
+      "tier_rationale": "Genome-alignment-specific requests may select STAR as an ALT route per the context-routing skill, but it requires a separate genome index/annotation and a featureCounts counting step instead of salmon+tximport.",
+      "context_routing_rules": [
+        "Select for genome-alignment-specific requests instead of the transcript-focused REF route."
+      ],
+      "applicability_constraints": [
+        "FASTQ input, genome index"
+      ],
+      "selection_rules": [
+        "Do not include in MVP completion gate unless explicitly requested."
+      ],
+      "operations": [
+        {
+          "id": "star_align",
+          "label": "STAR genome alignment",
+          "input_types": [
+            "fastq"
+          ],
+          "output_types": [
+            "salmon_quant_dir"
+          ],
+          "node_type": "StarAlignNode"
+        }
+      ],
+      "future_comfy_node": "StarAlignNode",
+      "runnable_node_status": "planned"
+    },
+    {
+      "id": "featurecounts",
+      "label": "featureCounts",
+      "domain_tags": [
+        "bulk_rna_seq"
+      ],
+      "stage_tags": [
+        "tximport_import"
+      ],
+      "input_types": [
+        "salmon_quant_dir"
+      ],
+      "output_types": [
+        "deseq2_count_matrix"
+      ],
+      "language": "external_cli",
+      "python_bindings": [],
+      "summary": "Gene-level read counting from aligned BAM files, the standard counting step for a STAR-based genome-alignment route.",
+      "tier": "ALT",
+      "tier_rationale": "Pairs with the STAR ALT route rather than salmon's pseudoalignment output; produces a DESeq2-compatible count matrix directly, without tximport.",
+      "context_routing_rules": [
+        "Select alongside the STAR ALT route for genome-alignment-based counting."
+      ],
+      "applicability_constraints": [
+        "Aligned BAM, gene annotation"
+      ],
+      "selection_rules": [
+        "Do not include in MVP completion gate unless explicitly requested."
+      ],
+      "operations": [
+        {
+          "id": "featurecounts",
+          "label": "featureCounts gene counting",
+          "input_types": [
+            "salmon_quant_dir"
+          ],
+          "output_types": [
+            "deseq2_count_matrix"
+          ],
+          "node_type": "FeatureCountsNode"
+        }
+      ],
+      "future_comfy_node": "FeatureCountsNode",
+      "runnable_node_status": "planned"
+    },
+    {
+      "id": "edger_analysis",
+      "label": "edgeR",
+      "domain_tags": [
+        "bulk_rna_seq"
+      ],
+      "stage_tags": [
+        "deseq2_analysis"
+      ],
+      "input_types": [
+        "deseq2_count_matrix"
+      ],
+      "output_types": [
+        "deseq2_results_table"
+      ],
+      "language": "external_cli",
+      "python_bindings": [],
+      "summary": "Bioconductor differential expression package, the most widely used alternative statistical model to DESeq2.",
+      "tier": "ALT",
+      "tier_rationale": "edgeR and DESeq2 are both well-validated negative-binomial DE frameworks; DESeq2 is REF for this route's default statistical model.",
+      "context_routing_rules": [
+        "Select when reproducing an edgeR-based published analysis or its dispersion model is explicitly requested."
+      ],
+      "applicability_constraints": [
+        "Count matrix, sample metadata"
+      ],
+      "selection_rules": [
+        "Do not include in MVP completion gate unless explicitly requested."
+      ],
+      "operations": [
+        {
+          "id": "edger_analysis",
+          "label": "edgeR differential expression",
+          "input_types": [
+            "deseq2_count_matrix"
+          ],
+          "output_types": [
+            "deseq2_results_table"
+          ],
+          "node_type": "EdgeRAnalysisNode"
+        }
+      ],
+      "future_comfy_node": "EdgeRAnalysisNode",
+      "runnable_node_status": "planned"
+    },
+    {
+      "id": "enhancedvolcano",
+      "label": "EnhancedVolcano",
+      "domain_tags": [
+        "bulk_rna_seq"
+      ],
+      "stage_tags": [
+        "deseq2_visualization"
+      ],
+      "input_types": [
+        "deseq2_results_table"
+      ],
+      "output_types": [
+        "plot_dir"
+      ],
+      "language": "external_cli",
+      "python_bindings": [],
+      "summary": "Bioconductor package for publication-quality volcano plots with automatic point labeling.",
+      "tier": "ALT",
+      "tier_rationale": "A more polished volcano-plot-specific alternative to the REF visualization node's base-R plotting; not required for the MVP completion gate.",
+      "context_routing_rules": [
+        "Select when publication-quality volcano plot labeling is explicitly requested."
+      ],
+      "applicability_constraints": [
+        "DESeq2 results table"
+      ],
+      "selection_rules": [
+        "Do not include in MVP completion gate unless explicitly requested."
+      ],
+      "operations": [
+        {
+          "id": "enhancedvolcano_plot",
+          "label": "EnhancedVolcano plotting",
+          "input_types": [
+            "deseq2_results_table"
+          ],
+          "output_types": [
+            "plot_dir"
+          ],
+          "node_type": "EnhancedVolcanoNode"
+        }
+      ],
+      "future_comfy_node": "EnhancedVolcanoNode",
+      "runnable_node_status": "planned"
+    },
+    {
+      "id": "starsolo_count",
+      "label": "STARsolo",
+      "domain_tags": [
+        "scrna_seq"
+      ],
+      "stage_tags": [
+        "tenx_count"
+      ],
+      "input_types": [
+        "fastq_directory",
+        "reference_directory"
+      ],
+      "output_types": [
+        "filtered_feature_bc_matrix"
+      ],
+      "language": "external_cli",
+      "python_bindings": [],
+      "summary": "A free, open-source alternative to Cell Ranger for 10x-style UMI counting, built into the STAR aligner.",
+      "tier": "ALT",
+      "tier_rationale": "STARsolo produces a comparable filtered feature-barcode matrix without Cell Ranger's proprietary licensing; Cell Ranger (via the REF tenx_count tool) remains the community-standard default.",
+      "context_routing_rules": [
+        "Select when avoiding Cell Ranger's licensing is explicitly requested."
+      ],
+      "applicability_constraints": [
+        "FASTQ directory, STAR-formatted reference"
+      ],
+      "selection_rules": [
+        "Do not include in MVP completion gate unless explicitly requested."
+      ],
+      "operations": [
+        {
+          "id": "starsolo_count",
+          "label": "STARsolo UMI counting",
+          "input_types": [
+            "fastq_directory",
+            "reference_directory"
+          ],
+          "output_types": [
+            "filtered_feature_bc_matrix"
+          ],
+          "node_type": "StarSoloCountNode"
+        }
+      ],
+      "future_comfy_node": "StarSoloCountNode",
+      "runnable_node_status": "planned"
+    },
+    {
+      "id": "dropletutils_qc",
+      "label": "DropletUtils",
+      "domain_tags": [
+        "scrna_seq"
+      ],
+      "stage_tags": [
+        "scrna_qc"
+      ],
+      "input_types": [
+        "filtered_feature_bc_matrix"
+      ],
+      "output_types": [
+        "qc_h5ad"
+      ],
+      "language": "external_cli",
+      "python_bindings": [],
+      "summary": "Bioconductor package for empty-droplet and doublet-aware single-cell QC, complementary to Scanpy's threshold-based QC.",
+      "tier": "ALT",
+      "tier_rationale": "Provides statistical empty-droplet detection Scanpy's simple threshold-based QC doesn't; Scanpy QC is REF for its tight integration with the rest of this route.",
+      "context_routing_rules": [
+        "Select when statistical empty-droplet/doublet detection is explicitly requested."
+      ],
+      "applicability_constraints": [
+        "Filtered feature-barcode matrix"
+      ],
+      "selection_rules": [
+        "Do not include in MVP completion gate unless explicitly requested."
+      ],
+      "operations": [
+        {
+          "id": "dropletutils_qc",
+          "label": "DropletUtils QC",
+          "input_types": [
+            "filtered_feature_bc_matrix"
+          ],
+          "output_types": [
+            "qc_h5ad"
+          ],
+          "node_type": "DropletUtilsQcNode"
+        }
+      ],
+      "future_comfy_node": "DropletUtilsQcNode",
+      "runnable_node_status": "planned"
+    },
+    {
+      "id": "scran_normalize",
+      "label": "scran",
+      "domain_tags": [
+        "scrna_seq"
+      ],
+      "stage_tags": [
+        "scrna_normalization"
+      ],
+      "input_types": [
+        "qc_h5ad"
+      ],
+      "output_types": [
+        "normalized_h5ad"
+      ],
+      "language": "external_cli",
+      "python_bindings": [],
+      "summary": "Bioconductor deconvolution-based normalization, a widely used alternative to Scanpy's default total-count normalization.",
+      "tier": "ALT",
+      "tier_rationale": "scran's pool-based size-factor estimation is a credible alternative for datasets with strong compositional bias; Scanpy normalization is REF for this route's default.",
+      "context_routing_rules": [
+        "Select when deconvolution-based size-factor normalization is explicitly requested."
+      ],
+      "applicability_constraints": [
+        "QC-filtered h5ad"
+      ],
+      "selection_rules": [
+        "Do not include in MVP completion gate unless explicitly requested."
+      ],
+      "operations": [
+        {
+          "id": "scran_normalize",
+          "label": "scran normalization",
+          "input_types": [
+            "qc_h5ad"
+          ],
+          "output_types": [
+            "normalized_h5ad"
+          ],
+          "node_type": "ScranNormalizeNode"
+        }
+      ],
+      "future_comfy_node": "ScranNormalizeNode",
+      "runnable_node_status": "planned"
+    },
+    {
+      "id": "seurat_pipeline",
+      "label": "Seurat",
+      "domain_tags": [
+        "scrna_seq"
+      ],
+      "stage_tags": [
+        "scrna_clustering",
+        "scrna_marker_genes",
+        "scrna_visualization"
+      ],
+      "input_types": [
+        "normalized_h5ad"
+      ],
+      "output_types": [
+        "clustered_h5ad"
+      ],
+      "language": "external_cli",
+      "python_bindings": [],
+      "summary": "The major R-based single-cell analysis ecosystem, an alternative to the Scanpy/Python stack for clustering, marker genes, and visualization together.",
+      "tier": "ALT",
+      "tier_rationale": "Seurat and Scanpy are both community-standard, broadly equivalent single-cell toolkits; Scanpy is REF for this route's Python-native integration.",
+      "context_routing_rules": [
+        "Select when reproducing a Seurat-based published analysis exactly is explicitly requested."
+      ],
+      "applicability_constraints": [
+        "Normalized h5ad (or equivalent Seurat object)"
+      ],
+      "selection_rules": [
+        "Do not include in MVP completion gate unless explicitly requested."
+      ],
+      "operations": [
+        {
+          "id": "seurat_pipeline",
+          "label": "Seurat clustering/markers/visualization",
+          "input_types": [
+            "normalized_h5ad"
+          ],
+          "output_types": [
+            "clustered_h5ad"
+          ],
+          "node_type": "SeuratPipelineNode"
+        }
+      ],
+      "future_comfy_node": "SeuratPipelineNode",
+      "runnable_node_status": "planned"
+    },
+    {
+      "id": "bwa_align",
+      "label": "bwa (classic)",
+      "domain_tags": [
+        "variant_analysis",
+        "epigenomics"
+      ],
+      "stage_tags": [
+        "reference_indexing",
+        "alignment"
+      ],
+      "input_types": [
+        "reference_fasta",
+        "fastq"
+      ],
+      "output_types": [
+        "sorted_bam_directory"
+      ],
+      "language": "external_cli",
+      "python_bindings": [],
+      "summary": "The original bwa-mem aligner that bwa-mem2 reimplements for speed; identical alignment algorithm and output semantics.",
+      "tier": "ALT",
+      "tier_rationale": "bwa-mem2 is REF as the faster drop-in reimplementation already proven in this codebase; classic bwa remains a credible, more widely pre-installed fallback.",
+      "context_routing_rules": [
+        "Select when bwa-mem2 is unavailable or exact bwa-mem output reproduction is explicitly requested."
+      ],
+      "applicability_constraints": [
+        "Reference FASTA, FASTQ input"
+      ],
+      "selection_rules": [
+        "Do not include in MVP completion gate unless explicitly requested."
+      ],
+      "operations": [
+        {
+          "id": "bwa_align",
+          "label": "bwa-mem alignment",
+          "input_types": [
+            "reference_fasta",
+            "fastq"
+          ],
+          "output_types": [
+            "sorted_bam_directory"
+          ],
+          "node_type": "BwaAlignNode"
+        }
+      ],
+      "future_comfy_node": "BwaAlignNode",
+      "runnable_node_status": "planned"
+    },
+    {
+      "id": "picard_markduplicates",
+      "label": "Picard MarkDuplicates",
+      "domain_tags": [
+        "variant_analysis",
+        "epigenomics"
+      ],
+      "stage_tags": [
+        "mark_duplicates"
+      ],
+      "input_types": [
+        "sorted_bam_directory"
+      ],
+      "output_types": [
+        "dedup_bam_directory"
+      ],
+      "language": "external_cli",
+      "python_bindings": [],
+      "summary": "The GATK-ecosystem standard duplicate-marking tool, an alternative to samtools markdup with a different duplicate-detection heuristic.",
+      "tier": "ALT",
+      "tier_rationale": "Picard MarkDuplicates is the most widely used tool in GATK-based germline pipelines; samtools markdup is REF here for its lighter single-dependency footprint.",
+      "context_routing_rules": [
+        "Select when reproducing a GATK-best-practices pipeline exactly is explicitly requested."
+      ],
+      "applicability_constraints": [
+        "Coordinate-sorted BAM"
+      ],
+      "selection_rules": [
+        "Do not include in MVP completion gate unless explicitly requested."
+      ],
+      "operations": [
+        {
+          "id": "picard_markduplicates",
+          "label": "Picard duplicate marking",
+          "input_types": [
+            "sorted_bam_directory"
+          ],
+          "output_types": [
+            "dedup_bam_directory"
+          ],
+          "node_type": "PicardMarkDuplicatesNode"
+        }
+      ],
+      "future_comfy_node": "PicardMarkDuplicatesNode",
+      "runnable_node_status": "planned"
+    },
+    {
+      "id": "gatk_variant_filtration",
+      "label": "GATK VariantFiltration",
+      "domain_tags": [
+        "variant_analysis"
+      ],
+      "stage_tags": [
+        "variant_filtering"
+      ],
+      "input_types": [
+        "raw_vcf_directory"
+      ],
+      "output_types": [
+        "filtered_vcf_directory"
+      ],
+      "language": "external_cli",
+      "python_bindings": [],
+      "summary": "GATK's hard-filtering tool for VCF records, the natural filtering companion to gatk_haplotype_caller.",
+      "tier": "ALT",
+      "tier_rationale": "Pairs with the GATK HaplotypeCaller ALT route rather than bcftools call's output; bcftools filter is REF for the lightweight bcftools-based default.",
+      "context_routing_rules": [
+        "Select alongside the GATK HaplotypeCaller ALT route for GATK-based filtering."
+      ],
+      "applicability_constraints": [
+        "Raw VCF from GATK HaplotypeCaller"
+      ],
+      "selection_rules": [
+        "Do not include in MVP completion gate unless explicitly requested."
+      ],
+      "operations": [
+        {
+          "id": "gatk_variant_filtration",
+          "label": "GATK hard-filtering",
+          "input_types": [
+            "raw_vcf_directory"
+          ],
+          "output_types": [
+            "filtered_vcf_directory"
+          ],
+          "node_type": "GatkVariantFiltrationNode"
+        }
+      ],
+      "future_comfy_node": "GatkVariantFiltrationNode",
+      "runnable_node_status": "planned"
+    },
+    {
+      "id": "vcftools_stats",
+      "label": "vcftools",
+      "domain_tags": [
+        "variant_analysis"
+      ],
+      "stage_tags": [
+        "variant_visualization"
+      ],
+      "input_types": [
+        "filtered_vcf_directory"
+      ],
+      "output_types": [
+        "variant_plot_directory"
+      ],
+      "language": "external_cli",
+      "python_bindings": [],
+      "summary": "A widely used VCF summary-statistics tool, an alternative source of variant QC metrics to bcftools stats.",
+      "tier": "ALT",
+      "tier_rationale": "vcftools and bcftools stats report largely overlapping summary metrics; bcftools stats is REF since bcftools is already a required dependency for calling/filtering.",
+      "context_routing_rules": [
+        "Select when vcftools-specific metrics (e.g. per-individual heterozygosity) are explicitly requested."
+      ],
+      "applicability_constraints": [
+        "Filtered VCF"
+      ],
+      "selection_rules": [
+        "Do not include in MVP completion gate unless explicitly requested."
+      ],
+      "operations": [
+        {
+          "id": "vcftools_stats",
+          "label": "vcftools summary statistics",
+          "input_types": [
+            "filtered_vcf_directory"
+          ],
+          "output_types": [
+            "variant_plot_directory"
+          ],
+          "node_type": "VcftoolsStatsNode"
+        }
+      ],
+      "future_comfy_node": "VcftoolsStatsNode",
+      "runnable_node_status": "planned"
+    },
+    {
+      "id": "sambamba",
+      "label": "sambamba",
+      "domain_tags": [
+        "variant_analysis",
+        "epigenomics"
+      ],
+      "stage_tags": [
+        "mark_duplicates",
+        "quality_filtering"
+      ],
+      "input_types": [
+        "sorted_bam_directory"
+      ],
+      "output_types": [
+        "filtered_bam_directory"
+      ],
+      "language": "external_cli",
+      "python_bindings": [],
+      "summary": "A faster, multithreaded reimplementation of common samtools operations (markdup, view/filter), used as a drop-in speed upgrade in high-throughput pipelines.",
+      "tier": "ALT",
+      "tier_rationale": "Meaningfully faster than samtools on large BAM files, but samtools is REF as the already-required, single-dependency default across every route in this codebase.",
+      "context_routing_rules": [
+        "Select when samtools-based dedup/filtering is a throughput bottleneck and sambamba is explicitly requested."
+      ],
+      "applicability_constraints": [
+        "Coordinate-sorted or deduplicated BAM"
+      ],
+      "selection_rules": [
+        "Do not include in MVP completion gate unless explicitly requested."
+      ],
+      "operations": [
+        {
+          "id": "sambamba_process",
+          "label": "sambamba mark/filter",
+          "input_types": [
+            "sorted_bam_directory"
+          ],
+          "output_types": [
+            "filtered_bam_directory"
+          ],
+          "node_type": "SambambaNode"
+        }
+      ],
+      "future_comfy_node": "SambambaNode",
+      "runnable_node_status": "planned"
+    },
+    {
+      "id": "deeptools_visualization",
+      "label": "deepTools",
+      "domain_tags": [
+        "epigenomics"
+      ],
+      "stage_tags": [
+        "peak_visualization"
+      ],
+      "input_types": [
+        "peaks_directory"
+      ],
+      "output_types": [
+        "atac_plot_directory"
+      ],
+      "language": "external_cli",
+      "python_bindings": [],
+      "summary": "The standard ATAC/ChIP-seq visualization toolkit (bamCoverage, computeMatrix, plotHeatmap) for signal-track and TSS-enrichment plots.",
+      "tier": "ALT",
+      "tier_rationale": "deepTools produces genome-browser-style signal tracks and heatmaps beyond the REF node's peak-count bar chart; deferred to ALT since bigWig/signal-track generation is explicitly out of this route's MVP scope.",
+      "context_routing_rules": [
+        "Select when signal-track or TSS-enrichment visualization beyond peak counts is explicitly requested."
+      ],
+      "applicability_constraints": [
+        "Filtered BAM or peaks directory"
+      ],
+      "selection_rules": [
+        "Do not include in MVP completion gate unless explicitly requested."
+      ],
+      "operations": [
+        {
+          "id": "deeptools_visualization",
+          "label": "deepTools signal visualization",
+          "input_types": [
+            "peaks_directory"
+          ],
+          "output_types": [
+            "atac_plot_directory"
+          ],
+          "node_type": "DeeptoolsVisualizationNode"
+        }
+      ],
+      "future_comfy_node": "DeeptoolsVisualizationNode",
+      "runnable_node_status": "planned"
+    },
+    {
+      "id": "metaphlan_profile",
+      "label": "MetaPhlAn",
+      "domain_tags": [
+        "metagenome"
+      ],
+      "stage_tags": [
+        "taxonomic_classification",
+        "abundance_estimation"
+      ],
+      "input_types": [
+        "trimmed_fastq_directory"
+      ],
+      "output_types": [
+        "bracken_directory"
+      ],
+      "language": "external_cli",
+      "python_bindings": [],
+      "summary": "A marker-gene-based taxonomic profiler, a fundamentally different approach from Kraken2/Bracken's k-mer-based classification, combining classification and abundance estimation in one tool.",
+      "tier": "ALT",
+      "tier_rationale": "MetaPhlAn's marker-gene approach trades some sensitivity for a smaller, curated database and different bias profile than Kraken2/Bracken's k-mer approach; Kraken2+Bracken is REF for this route's speed and database flexibility.",
+      "context_routing_rules": [
+        "Select when marker-gene-based profiling or MetaPhlAn-specific outputs are explicitly requested."
+      ],
+      "applicability_constraints": [
+        "Trimmed FASTQ"
+      ],
+      "selection_rules": [
+        "Do not include in MVP completion gate unless explicitly requested."
+      ],
+      "operations": [
+        {
+          "id": "metaphlan_profile",
+          "label": "MetaPhlAn taxonomic profiling",
+          "input_types": [
+            "trimmed_fastq_directory"
+          ],
+          "output_types": [
+            "bracken_directory"
+          ],
+          "node_type": "MetaphlanProfileNode"
+        }
+      ],
+      "future_comfy_node": "MetaphlanProfileNode",
+      "runnable_node_status": "planned"
+    },
+    {
+      "id": "krona_visualization",
+      "label": "Krona",
+      "domain_tags": [
+        "metagenome"
+      ],
+      "stage_tags": [
+        "profile_visualization"
+      ],
+      "input_types": [
+        "bracken_directory"
+      ],
+      "output_types": [
+        "metagenome_plot_directory"
+      ],
+      "language": "external_cli",
+      "python_bindings": [],
+      "summary": "Interactive multi-layered pie-chart visualization of taxonomic hierarchies, the community-standard interactive alternative to a static bar chart.",
+      "tier": "ALT",
+      "tier_rationale": "Krona's interactive HTML output is richer than the REF node's static top-taxa bar chart but was explicitly deferred from the MVP's 'counts plus one plot' visualization scope.",
+      "context_routing_rules": [
+        "Select when an interactive taxonomic hierarchy visualization is explicitly requested."
+      ],
+      "applicability_constraints": [
+        "Kraken2/Bracken report directory"
+      ],
+      "selection_rules": [
+        "Do not include in MVP completion gate unless explicitly requested."
+      ],
+      "operations": [
+        {
+          "id": "krona_visualization",
+          "label": "Krona interactive visualization",
+          "input_types": [
+            "bracken_directory"
+          ],
+          "output_types": [
+            "metagenome_plot_directory"
+          ],
+          "node_type": "KronaVisualizationNode"
+        }
+      ],
+      "future_comfy_node": "KronaVisualizationNode",
+      "runnable_node_status": "planned"
+    },
+    {
+      "id": "busco_qc",
+      "label": "BUSCO",
+      "domain_tags": [
+        "genome_assembly"
+      ],
+      "stage_tags": [
+        "assembly_qc"
+      ],
+      "input_types": [
+        "assembly_directory"
+      ],
+      "output_types": [
+        "assembly_qc_directory"
+      ],
+      "language": "external_cli",
+      "python_bindings": [],
+      "summary": "Gene-completeness-based assembly QC, assessing recovery of universal single-copy orthologs rather than QUAST's contiguity/length metrics.",
+      "tier": "ALT",
+      "tier_rationale": "BUSCO answers a different QC question (biological completeness) than QUAST (contiguity/length); QUAST is REF as the standard reference-free contiguity metric this route reports.",
+      "context_routing_rules": [
+        "Select when gene-completeness assessment alongside contiguity metrics is explicitly requested."
+      ],
+      "applicability_constraints": [
+        "Assembled contigs.fasta, lineage dataset"
+      ],
+      "selection_rules": [
+        "Do not include in MVP completion gate unless explicitly requested."
+      ],
+      "operations": [
+        {
+          "id": "busco_qc",
+          "label": "BUSCO completeness assessment",
+          "input_types": [
+            "assembly_directory"
+          ],
+          "output_types": [
+            "assembly_qc_directory"
+          ],
+          "node_type": "BuscoQcNode"
+        }
+      ],
+      "future_comfy_node": "BuscoQcNode",
+      "runnable_node_status": "planned"
+    },
+    {
+      "id": "bandage_visualization",
+      "label": "Bandage",
+      "domain_tags": [
+        "genome_assembly"
+      ],
+      "stage_tags": [
+        "assembly_visualization"
+      ],
+      "input_types": [
+        "assembly_directory"
+      ],
+      "output_types": [
+        "assembly_plot_directory"
+      ],
+      "language": "external_cli",
+      "python_bindings": [],
+      "summary": "Interactive assembly graph visualizer, showing contig connectivity rather than the REF node's summary-metric bar charts.",
+      "tier": "ALT",
+      "tier_rationale": "Bandage visualizes the assembly graph topology itself (useful for spotting mis-assemblies/repeats), a different visualization angle than the REF node's N50/contig-count/length summary plot.",
+      "context_routing_rules": [
+        "Select when assembly graph topology visualization is explicitly requested."
+      ],
+      "applicability_constraints": [
+        "SPAdes assembly_graph.gfa"
+      ],
+      "selection_rules": [
+        "Do not include in MVP completion gate unless explicitly requested."
+      ],
+      "operations": [
+        {
+          "id": "bandage_visualization",
+          "label": "Bandage assembly graph visualization",
+          "input_types": [
+            "assembly_directory"
+          ],
+          "output_types": [
+            "assembly_plot_directory"
+          ],
+          "node_type": "BandageVisualizationNode"
+        }
+      ],
+      "future_comfy_node": "BandageVisualizationNode",
+      "runnable_node_status": "planned"
     }
   ]
 }

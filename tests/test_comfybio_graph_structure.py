@@ -80,3 +80,34 @@ def test_variant_and_scrna_and_bulk_prompts_still_route_correctly_after_atac_add
     assert parse_prompt("bulk RNA-seq human treated vs control with DESeq2 plots and report").domain == "bulk_rna_seq"
     assert parse_prompt("single-cell RNA-seq with scanpy, clustering and umap and marker genes").domain == "scrna_seq"
     assert parse_prompt("call germline SNPs and indels from WGS FASTQs with bwa-mem2 and bcftools").domain == "variant_analysis"
+
+
+def test_metagenome_graph_starts_at_input_validator_ends_at_preview():
+    types = _types("profile the microbial community in this shotgun metagenomic sample with kraken2 and bracken")
+    assert types[0] == "MetagenomeInputValidatorNode"
+    assert types[-1] == "PreviewImage"
+    assert types[-2] == "MetagenomeReportNode"
+    assert "Kraken2ClassifyNode" in types
+    assert "BrackenAbundanceNode" in types
+
+
+def test_metagenome_route_resolves_through_stage_mapper():
+    from bioflow_harness.planner.stage_mapper import route_for_domain
+
+    assert route_for_domain("metagenome") == "metagenome_kraken2_ref"
+
+
+def test_metagenome_prompt_parses_to_metagenome_domain():
+    from bioflow_harness.parser.prompt_parser import parse_prompt
+
+    brief = parse_prompt("run taxonomic profiling on this shotgun microbiome sample using kraken2")
+    assert brief.domain == "metagenome"
+
+
+def test_all_five_domains_still_route_correctly_after_metagenome_addition():
+    from bioflow_harness.parser.prompt_parser import parse_prompt
+
+    assert parse_prompt("bulk RNA-seq human treated vs control with DESeq2 plots and report").domain == "bulk_rna_seq"
+    assert parse_prompt("single-cell RNA-seq with scanpy, clustering and umap and marker genes").domain == "scrna_seq"
+    assert parse_prompt("call germline SNPs and indels from WGS FASTQs with bwa-mem2 and bcftools").domain == "variant_analysis"
+    assert parse_prompt("call ATAC-seq peaks from paired-end open chromatin FASTQs with bwa-mem2 and macs3").domain == "epigenomics"

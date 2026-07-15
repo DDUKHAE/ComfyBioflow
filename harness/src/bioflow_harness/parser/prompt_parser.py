@@ -5,13 +5,17 @@ def parse_prompt(request_text: str) -> AnalysisBrief:
     text = request_text.lower()
 
     scrna_tokens = ["single-cell", "single cell", "scrna", "10x", "cell ranger", "starsolo", "umap", "marker genes"]
-    variant_tokens = [
-        "variant", "germline", "vcf", "bwa-mem2", "bwa mem2", "snp", "genotyp",
-        "whole genome", "whole exome", " wgs", " wes", "bcftools",
-    ]
     epigenomics_tokens = [
         "atac-seq", "atac seq", "chromatin accessibility", "open chromatin",
         "peak calling", "macs3", "macs2", "narrowpeak", "chip-seq", "chip seq",
+    ]
+    metagenome_tokens = [
+        "metagenom", "kraken2", "kraken", "bracken", "taxonomic profil",
+        "shotgun", "microbiome", "microbial communit",
+    ]
+    variant_tokens = [
+        "variant", "germline", "vcf", "bwa-mem2", "bwa mem2", "snp", "genotyp",
+        "whole genome", "whole exome", " wgs", " wes", "bcftools",
     ]
     if any(token in text for token in scrna_tokens):
         domain = "scrna_seq"
@@ -19,6 +23,9 @@ def parse_prompt(request_text: str) -> AnalysisBrief:
     elif any(token in text for token in epigenomics_tokens):
         domain = "epigenomics"
         analysis_type = "peak_calling"
+    elif any(token in text for token in metagenome_tokens):
+        domain = "metagenome"
+        analysis_type = "taxonomic_profiling"
     elif any(token in text for token in variant_tokens):
         domain = "variant_analysis"
         analysis_type = "variant_calling"
@@ -55,12 +62,16 @@ def parse_prompt(request_text: str) -> AnalysisBrief:
         for output in ["filtered_bam", "peaks", "peak_summary_plot"]:
             if output not in expected_outputs:
                 expected_outputs.append(output)
+    if domain == "metagenome":
+        for output in ["taxonomic_profile", "abundance_estimates"]:
+            if output not in expected_outputs:
+                expected_outputs.append(output)
 
     preferred_tools = [
         tool
         for tool in [
             "fastp", "salmon", "tximport", "deseq2", "cell ranger", "scanpy", "starsolo",
-            "bwa-mem2", "samtools", "bcftools", "macs3", "macs2",
+            "bwa-mem2", "samtools", "bcftools", "macs3", "macs2", "kraken2", "bracken",
         ]
         if tool in text
     ]
@@ -70,6 +81,8 @@ def parse_prompt(request_text: str) -> AnalysisBrief:
         preferred_tools.append("bwa-mem2")
     if domain == "epigenomics" and "macs3" not in preferred_tools:
         preferred_tools.append("macs3")
+    if domain == "metagenome" and "kraken2" not in preferred_tools:
+        preferred_tools.append("kraken2")
 
     organism = None
     if "human" in text or "homo sapiens" in text:

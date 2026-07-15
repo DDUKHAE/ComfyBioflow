@@ -3,6 +3,7 @@ ROUTES_BY_DOMAIN = {
     "scrna_seq": "scrna_seq_scanpy_ref",
     "variant_analysis": "variant_analysis_bwa_ref",
     "epigenomics": "atac_seq_macs3_ref",
+    "metagenome": "metagenome_kraken2_ref",
 }
 
 

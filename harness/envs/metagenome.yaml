@@ -1,0 +1,10 @@
+name: metagenome
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python>=3.11
+  - fastp
+  - kraken2
+  - bracken
+  - matplotlib

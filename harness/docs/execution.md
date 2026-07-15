@@ -36,6 +36,13 @@ Metagenome REF-only tool set (`metagenome_kraken2_ref`):
 
 `centrifuge` is **not** installed by the REF-only setup; selecting it requires an explicit context-routing decision, same as `gatk4`/`macs2`/`genrich` for the prior two routes. A Kraken2 database is not bundled — the user points `kraken2_db_dir` at their own downloaded database.
 
+Genome assembly REF-only tool set (`genome_assembly_spades_ref`):
+
+- Executables: `fastp`, `spades.py`, `quast.py`
+- Packages: `python>=3.11`, `fastp`, `spades`, `quast`, `matplotlib`
+
+`megahit` is **not** installed by the REF-only setup; selecting it requires an explicit context-routing decision, same as `centrifuge`/`macs2`/`genrich`/`gatk4` for the prior three routes.
+
 ## Execution gating
 
 A node runs real tools only when the environment and inputs validate:

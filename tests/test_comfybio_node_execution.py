@@ -84,20 +84,27 @@ def test_salmon_index_runs_once_and_creates_dir(tmp_path):
     assert runner.commands[0].argv[:6] == ["conda", "run", "-n", "bulk_rna_seq", "salmon", "index"]
 
 
-def test_salmon_quant_uses_trimmed_reads_sibling_of_output(tmp_path):
+def test_salmon_quant_uses_explicit_trimmed_dir_input(tmp_path):
+    # Regression test: SalmonQuantNode used to guess the trimmed-reads directory as a
+    # sibling of output_dir (output_dir.parent / "trimmed"), unlike every other domain's
+    # equivalent node (e.g. Kraken2ClassifyNode, SpadesAssembleNode), which take the
+    # trimmed directory as an explicit widget. That guess silently broke if output_dir
+    # wasn't placed as a sibling of the trimmed directory. trimmed_dir is now an explicit
+    # input, independent of output_dir's location.
     runner = DryRunCommandRunner()
     base = tmp_path / "run"
-    quant = base / "salmon_quant"
+    trimmed = tmp_path / "elsewhere" / "trimmed"
+    quant = base / "nested" / "salmon_quant"
     node = nodes.NODE_CLASS_MAPPINGS["SalmonQuantNode"]()
     result = node.run(
         salmon_index_dir="upstream", index_dir=str(base / "salmon_index"),
-        fastq_dir=QS, metadata_csv=QS_META, output_dir=str(quant),
+        fastq_dir=QS, metadata_csv=QS_META, trimmed_dir=str(trimmed), output_dir=str(quant),
         read_layout="A", threads=2, extra_command="", runner=runner,
     )
     assert result == (str(quant),)
     assert len(runner.commands) == 4
     joined = " ".join(runner.commands[0].argv)
-    assert str(base / "trimmed" / "sample_a" / "R1.fastq") in joined
+    assert str(trimmed / "sample_a" / "R1.fastq") in joined
     assert (quant / "sample_a").exists()
 
 

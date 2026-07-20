@@ -137,6 +137,7 @@ class SalmonQuantNode(_BaseComfyBIONode):
                 "index_dir": cls._string_input("salmon_index"),
                 "fastq_dir": cls._string_input("fastq"),
                 "metadata_csv": cls._string_input("sample_metadata.csv"),
+                "trimmed_dir": cls._string_input("trimmed"),
                 "output_dir": cls._string_input("salmon_quant"),
                 "read_layout": ("STRING", {"default": "A"}),
                 "threads": ("INT", {"default": 2, "min": 1, "max": 64}),
@@ -144,11 +145,11 @@ class SalmonQuantNode(_BaseComfyBIONode):
             }
         }
 
-    def run(self, salmon_index_dir, index_dir, fastq_dir, metadata_csv, output_dir, read_layout="A", threads=2, extra_command="", runner=None) -> tuple[str]:
+    def run(self, salmon_index_dir, index_dir, fastq_dir, metadata_csv, trimmed_dir, output_dir, read_layout="A", threads=2, extra_command="", runner=None) -> tuple[str]:
         runner = resolve_runner(runner)
         quant = Path(output_dir)
         quant.mkdir(parents=True, exist_ok=True)
-        trimmed = quant.parent / "trimmed"
+        trimmed = Path(trimmed_dir)
         for sample in load_samples(Path(fastq_dir), Path(metadata_csv) if metadata_csv else None):
             sample_out = quant / sample.sample_id
             sample_out.mkdir(parents=True, exist_ok=True)

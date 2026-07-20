@@ -36,10 +36,11 @@ def test_build_injects_panel_paths():
     )
     workflow = WorkflowBuilder(default_node_catalog()).build(plan, bindings)
     salmon = next(n for n in workflow["nodes"] if n["type"] == "SalmonQuantNode")
-    # widgets order: index_dir, fastq_dir, metadata_csv, output_dir, read_layout, threads, extra
+    # widgets order: index_dir, fastq_dir, metadata_csv, trimmed_dir, output_dir, read_layout, threads, extra
     assert salmon["widgets_values"][1] == "/data/fastq"
     assert salmon["widgets_values"][2] == "/data/meta.csv"
-    assert salmon["widgets_values"][3] == "/data/out/salmon_quant"
+    assert salmon["widgets_values"][3] == "/data/out/trimmed"
+    assert salmon["widgets_values"][4] == "/data/out/salmon_quant"
     index = next(n for n in workflow["nodes"] if n["type"] == "SalmonIndexNode")
     assert index["widgets_values"][0] == "/data/tx.fasta"
     validate_workflow_export(workflow)

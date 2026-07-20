@@ -8,6 +8,9 @@ from bioflow_harness.llm.claude_extractor import (
     ClaudeBriefExtractor,
     DEFAULT_MODEL,
 )
+from bioflow_harness.llm.codex_extractor import CodexBriefExtractor
+from bioflow_harness.llm.codex_extractor import DEFAULT_MODEL as CODEX_DEFAULT_MODEL
+from bioflow_harness.llm.gemini_extractor import GeminiBriefExtractor
 from bioflow_harness.models.prompt_contract import AnalysisBrief
 from bioflow_harness.llm.brief_extractor import ExtractionMeta, extract_brief
 
@@ -172,8 +175,106 @@ def test_extract_brief_falls_back_on_nonzero_exit():
     assert brief.domain == "bulk_rna_seq"
 
 
-def test_extract_brief_non_claude_provider_uses_deterministic():
-    brief, meta = extract_brief("Analyze bulk RNA-seq with DESeq2", provider="codex")
+def _codex_jsonl(payload=None):
+    """Build a `codex exec --json` JSONL stdout whose final agent_message is payload."""
+    body = json.dumps(payload or _VALID_PAYLOAD)
+    lines = [
+        json.dumps({"type": "thread.started", "thread_id": "t1"}),
+        json.dumps({"type": "turn.started"}),
+        json.dumps({"type": "item.completed", "item": {"id": "item_0", "type": "agent_message", "text": body}}),
+        json.dumps({"type": "turn.completed", "usage": {}}),
+    ]
+    return "\n".join(lines)
+
+
+def _codex_ok_runner(payload=None):
+    return _FakeRunner(completed=_Completed(returncode=0, stdout=_codex_jsonl(payload)))
+
+
+def test_codex_extract_parses_last_agent_message_into_brief():
+    extractor = CodexBriefExtractor("gpt-5.5", runner=_codex_ok_runner())
+    brief = extractor.extract("Analyze this bulk RNA-seq FASTQ folder, human, treated vs control")
+    assert isinstance(brief, AnalysisBrief)
+    assert brief.domain == "bulk_rna_seq"
+    assert brief.organism == "Homo sapiens"
+
+
+def test_codex_argv_carries_model_and_flags():
+    runner = _codex_ok_runner()
+    CodexBriefExtractor("", runner=runner).extract("hello")
+    argv = runner.calls[0]
+    assert argv[0] == "codex"
+    assert argv[1] == "exec"
+    assert "hello" in argv[2]  # prompt combines system instructions + request text
+    mi = argv.index("--model")
+    assert argv[mi + 1] == CODEX_DEFAULT_MODEL
+    assert "--output-schema" in argv
+    assert "--json" in argv
+
+
+def test_codex_nonzero_exit_raises_extraction_error():
+    runner = _FakeRunner(completed=_Completed(returncode=1, stdout="", stderr="not logged in"))
+    with pytest.raises(BriefExtractionError):
+        CodexBriefExtractor("gpt-5.5", runner=runner).extract("x")
+
+
+def test_codex_missing_agent_message_raises_extraction_error():
+    runner = _FakeRunner(completed=_Completed(returncode=0, stdout=json.dumps({"type": "thread.started"})))
+    with pytest.raises(BriefExtractionError):
+        CodexBriefExtractor("gpt-5.5", runner=runner).extract("x")
+
+
+def test_extract_brief_codex_success_annotates_provenance():
+    brief, meta = extract_brief("bulk RNA-seq, human", provider="codex", runner=_codex_ok_runner())
+    assert meta.source == "codex"
+    assert brief.domain == "bulk_rna_seq"
+    assert any("codex" in note for note in brief.confidence_notes)
+
+
+def test_extract_brief_falls_back_when_codex_raises():
+    failing = _FakeRunner(exc=FileNotFoundError("codex"))
+    brief, meta = extract_brief("bulk RNA-seq with DESeq2", provider="codex", runner=failing)
+    assert meta.source == "deterministic"
+    assert brief.domain == "bulk_rna_seq"
+
+
+def _gemini_ok_runner(payload=None):
+    return _FakeRunner(completed=_Completed(returncode=0, stdout=json.dumps(payload or _VALID_PAYLOAD)))
+
+
+def test_gemini_extract_parses_stdout_into_brief():
+    extractor = GeminiBriefExtractor("gemini-3.1-pro", runner=_gemini_ok_runner())
+    brief = extractor.extract("Analyze this bulk RNA-seq FASTQ folder, human, treated vs control")
+    assert isinstance(brief, AnalysisBrief)
+    assert brief.domain == "bulk_rna_seq"
+
+
+def test_gemini_argv_carries_model_and_prompt():
+    runner = _gemini_ok_runner()
+    GeminiBriefExtractor("", runner=runner).extract("hello")
+    argv = runner.calls[0]
+    assert argv[0] == "gemini"
+    assert "-p" in argv
+    assert "hello" in argv[argv.index("-p") + 1]
+
+
+def test_gemini_nonzero_exit_raises_extraction_error():
+    runner = _FakeRunner(completed=_Completed(returncode=1, stdout="", stderr="not logged in"))
+    with pytest.raises(BriefExtractionError):
+        GeminiBriefExtractor("gemini-3.1-pro", runner=runner).extract("x")
+
+
+def test_extract_brief_falls_back_when_gemini_raises():
+    failing = _FakeRunner(exc=FileNotFoundError("gemini"))
+    brief, meta = extract_brief("bulk RNA-seq with DESeq2", provider="gemini", runner=failing)
+    assert meta.source == "deterministic"
+    assert brief.domain == "bulk_rna_seq"
+
+
+def test_extract_brief_unknown_provider_uses_deterministic():
+    # "codex" and "gemini" are now wired providers (see below); this checks the fallback
+    # path for a provider string with no CLI integration at all.
+    brief, meta = extract_brief("Analyze bulk RNA-seq with DESeq2", provider="mistral")
     assert meta.source == "deterministic"
     assert isinstance(meta, ExtractionMeta)
     assert any("not yet wired" in note for note in brief.confidence_notes)
@@ -182,10 +283,10 @@ def test_extract_brief_non_claude_provider_uses_deterministic():
 from bioflow_harness.server.handlers import compile_spec, generate_workflow
 
 
-def test_compile_spec_default_provider_still_produces_bulk_steps():
+def test_compile_spec_unwired_provider_still_produces_bulk_steps():
     payload = {
         "request_text": "Analyze this FASTQ folder as bulk RNA-seq, human, treated vs control with DESeq2",
-        "provider": "codex",
+        "provider": "mistral",
         "model": "",
         "resources": [],
     }
@@ -195,10 +296,10 @@ def test_compile_spec_default_provider_still_produces_bulk_steps():
     assert len(result["steps"]) > 0
 
 
-def test_generate_workflow_default_provider_returns_workflow():
+def test_generate_workflow_unwired_provider_returns_workflow():
     payload = {
         "request_text": "Analyze this FASTQ folder as bulk RNA-seq, human, treated vs control with DESeq2",
-        "provider": "codex",
+        "provider": "mistral",
         "model": "",
         "resources": [],
         "steps": [],

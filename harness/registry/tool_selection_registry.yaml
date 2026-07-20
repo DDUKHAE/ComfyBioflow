@@ -1,7 +1,7 @@
 {
   "metadata": {
     "name": "ComfyBIO MVP tool registry",
-    "version": "0.2.0",
+    "version": "0.3.0",
     "official_route_id": "bulk_rna_seq_salmon_ref"
   },
   "supported_domains": [
@@ -3541,6 +3541,979 @@
         }
       ],
       "future_comfy_node": "BandageVisualizationNode",
+      "runnable_node_status": "planned"
+    },
+    {
+      "id": "fastqc_qc",
+      "label": "FastQC",
+      "domain_tags": [
+        "bulk_rna_seq",
+        "epigenomics",
+        "metagenome",
+        "genome_assembly"
+      ],
+      "stage_tags": [
+        "read_qc",
+        "read_trimming"
+      ],
+      "input_types": [
+        "fastq"
+      ],
+      "output_types": [
+        "fastp_qc_json"
+      ],
+      "language": "external_cli",
+      "python_bindings": [],
+      "summary": "The long-standing community-standard per-read QC report tool; fastp's built-in QC JSON already covers the REF-only scope, but FastQC's HTML report is the format most reviewers expect to see.",
+      "tier": "ALT",
+      "tier_rationale": "fastp is REF because it does QC and trimming in one pass with no extra dependency; FastQC only does QC, so keeping it REF-only would need a second trimming tool anyway. Credible as an ALT when a reviewer specifically wants FastQC's report format.",
+      "context_routing_rules": [
+        "Select when the user explicitly asks for a FastQC HTML report rather than fastp's QC JSON."
+      ],
+      "applicability_constraints": [
+        "FASTQ"
+      ],
+      "selection_rules": [
+        "Do not include in MVP completion gate unless explicitly requested."
+      ],
+      "operations": [
+        {
+          "id": "fastqc_qc",
+          "label": "FastQC per-read quality report",
+          "input_types": [
+            "fastq"
+          ],
+          "output_types": [
+            "fastp_qc_json"
+          ],
+          "node_type": "FastQCNode"
+        }
+      ],
+      "future_comfy_node": "FastQCNode",
+      "runnable_node_status": "planned"
+    },
+    {
+      "id": "hisat2_align",
+      "label": "HISAT2 Align",
+      "domain_tags": [
+        "bulk_rna_seq"
+      ],
+      "stage_tags": [
+        "alignment_or_pseudoalignment",
+        "salmon_index"
+      ],
+      "input_types": [
+        "transcriptome_fasta",
+        "fastq"
+      ],
+      "output_types": [
+        "sorted_bam_directory"
+      ],
+      "language": "external_cli",
+      "python_bindings": [],
+      "summary": "A splice-aware genome aligner; the classic genome-alignment counterpart to salmon's pseudoalignment approach, typically paired with StringTie for quantification.",
+      "tier": "ALT",
+      "tier_rationale": "Salmon is REF because pseudoalignment needs no genome-scale BAM output and is faster/lighter for the differential-expression MVP scope. HISAT2 is credible when genome-coordinate alignment (e.g. for splice-junction inspection) is explicitly wanted.",
+      "context_routing_rules": [
+        "Select when the user explicitly wants genome-coordinate alignment instead of transcript pseudoalignment."
+      ],
+      "applicability_constraints": [
+        "FASTQ",
+        "reference genome FASTA"
+      ],
+      "selection_rules": [
+        "Do not include in MVP completion gate unless explicitly requested."
+      ],
+      "operations": [
+        {
+          "id": "hisat2_align",
+          "label": "HISAT2 splice-aware genome alignment",
+          "input_types": [
+            "transcriptome_fasta",
+            "fastq"
+          ],
+          "output_types": [
+            "sorted_bam_directory"
+          ],
+          "node_type": "Hisat2AlignNode"
+        }
+      ],
+      "future_comfy_node": "Hisat2AlignNode",
+      "runnable_node_status": "planned"
+    },
+    {
+      "id": "stringtie_quant",
+      "label": "StringTie Quant",
+      "domain_tags": [
+        "bulk_rna_seq"
+      ],
+      "stage_tags": [
+        "salmon_quant"
+      ],
+      "input_types": [
+        "sorted_bam_directory"
+      ],
+      "output_types": [
+        "salmon_quant_dir"
+      ],
+      "language": "external_cli",
+      "python_bindings": [],
+      "summary": "Reference-guided transcript assembly and quantification from genome-aligned BAM files, the standard companion to HISAT2/STAR alignment.",
+      "tier": "ALT",
+      "tier_rationale": "Salmon is REF for exactly the reason HISAT2 isn't: pseudoalignment avoids the BAM-based assembly step entirely. StringTie is credible only alongside HISAT2/STAR as the alignment REF, which this registry does not use by default.",
+      "context_routing_rules": [
+        "Select only alongside an explicit genome-alignment ALT choice (HISAT2/STAR), not standalone."
+      ],
+      "applicability_constraints": [
+        "genome-aligned BAM"
+      ],
+      "selection_rules": [
+        "Do not include in MVP completion gate unless explicitly requested."
+      ],
+      "operations": [
+        {
+          "id": "stringtie_quant",
+          "label": "StringTie transcript assembly and quantification",
+          "input_types": [
+            "sorted_bam_directory"
+          ],
+          "output_types": [
+            "salmon_quant_dir"
+          ],
+          "node_type": "StringtieQuantNode"
+        }
+      ],
+      "future_comfy_node": "StringtieQuantNode",
+      "runnable_node_status": "planned"
+    },
+    {
+      "id": "rsem_quant",
+      "label": "RSEM Quant",
+      "domain_tags": [
+        "bulk_rna_seq"
+      ],
+      "stage_tags": [
+        "salmon_quant",
+        "tximport_import"
+      ],
+      "input_types": [
+        "transcriptome_fasta",
+        "fastq"
+      ],
+      "output_types": [
+        "deseq2_count_matrix"
+      ],
+      "language": "external_cli",
+      "python_bindings": [],
+      "summary": "A widely cited transcript-quantification tool with its own alignment step, producing gene/isoform count matrices directly compatible with DESeq2.",
+      "tier": "ALT",
+      "tier_rationale": "Salmon is REF for its lighter, faster pseudoalignment-based workflow; RSEM is credible for labs standardized on it, but its own alignment step adds runtime and dependency weight salmon avoids.",
+      "context_routing_rules": [
+        "Select when the user explicitly requests RSEM for consistency with a prior analysis."
+      ],
+      "applicability_constraints": [
+        "FASTQ",
+        "transcriptome reference"
+      ],
+      "selection_rules": [
+        "Do not include in MVP completion gate unless explicitly requested."
+      ],
+      "operations": [
+        {
+          "id": "rsem_quant",
+          "label": "RSEM transcript quantification",
+          "input_types": [
+            "transcriptome_fasta",
+            "fastq"
+          ],
+          "output_types": [
+            "deseq2_count_matrix"
+          ],
+          "node_type": "RsemQuantNode"
+        }
+      ],
+      "future_comfy_node": "RsemQuantNode",
+      "runnable_node_status": "planned"
+    },
+    {
+      "id": "limma_voom_analysis",
+      "label": "limma-voom Analysis",
+      "domain_tags": [
+        "bulk_rna_seq"
+      ],
+      "stage_tags": [
+        "deseq2_analysis"
+      ],
+      "input_types": [
+        "deseq2_count_matrix"
+      ],
+      "output_types": [
+        "deseq2_results_table"
+      ],
+      "language": "external_cli",
+      "python_bindings": [],
+      "summary": "A widely used differential expression method (voom transformation plus limma's linear modeling), a common alternative statistical framework to DESeq2's negative-binomial model.",
+      "tier": "ALT",
+      "tier_rationale": "DESeq2 is REF for its negative-binomial model well-suited to typical bulk RNA-seq count data and its tight tximport integration; limma-voom is credible for labs preferring a linear-modeling framework, especially with complex designs.",
+      "context_routing_rules": [
+        "Select when the user explicitly requests limma-voom over DESeq2."
+      ],
+      "applicability_constraints": [
+        "count matrix",
+        "sample metadata"
+      ],
+      "selection_rules": [
+        "Do not include in MVP completion gate unless explicitly requested."
+      ],
+      "operations": [
+        {
+          "id": "limma_voom_analysis",
+          "label": "limma-voom differential expression",
+          "input_types": [
+            "deseq2_count_matrix"
+          ],
+          "output_types": [
+            "deseq2_results_table"
+          ],
+          "node_type": "LimmaVoomAnalysisNode"
+        }
+      ],
+      "future_comfy_node": "LimmaVoomAnalysisNode",
+      "runnable_node_status": "planned"
+    },
+    {
+      "id": "alevin_quant",
+      "label": "Salmon Alevin Quant",
+      "domain_tags": [
+        "scrna_seq"
+      ],
+      "stage_tags": [
+        "tenx_count"
+      ],
+      "input_types": [
+        "fastq"
+      ],
+      "output_types": [
+        "filtered_feature_bc_matrix"
+      ],
+      "language": "external_cli",
+      "python_bindings": [],
+      "summary": "A lightweight, salmon-based single-cell quantification tool producing a cell-by-gene count matrix without Cell Ranger's heavier reference/index requirements.",
+      "tier": "ALT",
+      "tier_rationale": "Cell Ranger-equivalent 10x counting is REF for its ubiquity as the platform-standard tool; Alevin is credible when a lighter-weight, salmon-family quantifier is explicitly preferred.",
+      "context_routing_rules": [
+        "Select when the user explicitly wants a salmon-family tool instead of Cell Ranger/STARsolo."
+      ],
+      "applicability_constraints": [
+        "10x FASTQ",
+        "transcriptome reference"
+      ],
+      "selection_rules": [
+        "Do not include in MVP completion gate unless explicitly requested."
+      ],
+      "operations": [
+        {
+          "id": "alevin_quant",
+          "label": "Alevin single-cell quantification",
+          "input_types": [
+            "fastq"
+          ],
+          "output_types": [
+            "filtered_feature_bc_matrix"
+          ],
+          "node_type": "AlevinQuantNode"
+        }
+      ],
+      "future_comfy_node": "AlevinQuantNode",
+      "runnable_node_status": "planned"
+    },
+    {
+      "id": "harmony_integration",
+      "label": "Harmony Batch Integration",
+      "domain_tags": [
+        "scrna_seq"
+      ],
+      "stage_tags": [
+        "scrna_normalization",
+        "scrna_clustering"
+      ],
+      "input_types": [
+        "normalized_h5ad"
+      ],
+      "output_types": [
+        "clustered_h5ad"
+      ],
+      "language": "external_cli",
+      "python_bindings": [],
+      "summary": "A batch-effect correction tool run between normalization and clustering, standard when multiple samples/batches must be jointly clustered.",
+      "tier": "ALT",
+      "tier_rationale": "The REF pipeline assumes a single-sample/single-batch scRNA route, so batch correction isn't part of the MVP scope; Harmony is credible only once multi-sample integration is explicitly requested.",
+      "context_routing_rules": [
+        "Select when the user explicitly has multiple samples/batches that need joint clustering."
+      ],
+      "applicability_constraints": [
+        "multiple samples or batches"
+      ],
+      "selection_rules": [
+        "Do not include in MVP completion gate unless explicitly requested."
+      ],
+      "operations": [
+        {
+          "id": "harmony_integration",
+          "label": "Harmony batch-effect correction",
+          "input_types": [
+            "normalized_h5ad"
+          ],
+          "output_types": [
+            "clustered_h5ad"
+          ],
+          "node_type": "HarmonyIntegrationNode"
+        }
+      ],
+      "future_comfy_node": "HarmonyIntegrationNode",
+      "runnable_node_status": "planned"
+    },
+    {
+      "id": "monocle3_pipeline",
+      "label": "Monocle3 Pipeline",
+      "domain_tags": [
+        "scrna_seq"
+      ],
+      "stage_tags": [
+        "scrna_clustering",
+        "scrna_marker_genes"
+      ],
+      "input_types": [
+        "normalized_h5ad"
+      ],
+      "output_types": [
+        "marker_genes_csv"
+      ],
+      "language": "external_cli",
+      "python_bindings": [],
+      "summary": "A trajectory-inference-focused single-cell analysis pipeline, a credible alternative to Scanpy/Seurat when pseudotime ordering (not just clustering) is the goal.",
+      "tier": "ALT",
+      "tier_rationale": "Scanpy is REF for general clustering/marker-gene workflows with the broadest scRNA-seq community adoption; Monocle3 is credible specifically when the analysis goal is trajectory/pseudotime, not just cluster identification.",
+      "context_routing_rules": [
+        "Select when the user explicitly asks for trajectory or pseudotime analysis."
+      ],
+      "applicability_constraints": [
+        "clustered or normalized single-cell data"
+      ],
+      "selection_rules": [
+        "Do not include in MVP completion gate unless explicitly requested."
+      ],
+      "operations": [
+        {
+          "id": "monocle3_pipeline",
+          "label": "Monocle3 trajectory analysis",
+          "input_types": [
+            "normalized_h5ad"
+          ],
+          "output_types": [
+            "marker_genes_csv"
+          ],
+          "node_type": "Monocle3PipelineNode"
+        }
+      ],
+      "future_comfy_node": "Monocle3PipelineNode",
+      "runnable_node_status": "planned"
+    },
+    {
+      "id": "bowtie2_align",
+      "label": "Bowtie2 Align",
+      "domain_tags": [
+        "variant_analysis",
+        "epigenomics"
+      ],
+      "stage_tags": [
+        "alignment"
+      ],
+      "input_types": [
+        "reference_fasta",
+        "fastq"
+      ],
+      "output_types": [
+        "sorted_bam_directory"
+      ],
+      "language": "external_cli",
+      "python_bindings": [],
+      "summary": "A widely used, memory-efficient short-read aligner; the classic pre-bwa-mem2 community standard for both variant calling and ATAC-seq alignment.",
+      "tier": "ALT",
+      "tier_rationale": "bwa-mem2 is REF for its faster, bwa-mem-compatible output at equivalent accuracy; Bowtie2 is credible for labs standardized on it or for reads/settings it handles more predictably (e.g. very short reads).",
+      "context_routing_rules": [
+        "Select when the user explicitly requests Bowtie2 over bwa-mem2."
+      ],
+      "applicability_constraints": [
+        "FASTQ",
+        "reference genome FASTA"
+      ],
+      "selection_rules": [
+        "Do not include in MVP completion gate unless explicitly requested."
+      ],
+      "operations": [
+        {
+          "id": "bowtie2_align",
+          "label": "Bowtie2 short-read alignment",
+          "input_types": [
+            "reference_fasta",
+            "fastq"
+          ],
+          "output_types": [
+            "sorted_bam_directory"
+          ],
+          "node_type": "Bowtie2AlignNode"
+        }
+      ],
+      "future_comfy_node": "Bowtie2AlignNode",
+      "runnable_node_status": "planned"
+    },
+    {
+      "id": "deepvariant_call",
+      "label": "DeepVariant Call",
+      "domain_tags": [
+        "variant_analysis"
+      ],
+      "stage_tags": [
+        "variant_calling"
+      ],
+      "input_types": [
+        "dedup_bam_directory"
+      ],
+      "output_types": [
+        "raw_vcf_directory"
+      ],
+      "language": "external_cli",
+      "python_bindings": [],
+      "summary": "A deep-learning-based germline variant caller with published accuracy advantages over traditional statistical callers on standard benchmarks.",
+      "tier": "ALT",
+      "tier_rationale": "bcftools is REF for its single lightweight conda dependency with no GPU/TensorFlow requirement; DeepVariant is credible when its accuracy benefit is explicitly wanted and the heavier runtime/dependency footprint is acceptable.",
+      "context_routing_rules": [
+        "Select when the user explicitly requests DeepVariant for its accuracy profile."
+      ],
+      "applicability_constraints": [
+        "deduplicated BAM",
+        "reference genome FASTA"
+      ],
+      "selection_rules": [
+        "Do not include in MVP completion gate unless explicitly requested."
+      ],
+      "operations": [
+        {
+          "id": "deepvariant_call",
+          "label": "DeepVariant germline variant calling",
+          "input_types": [
+            "dedup_bam_directory"
+          ],
+          "output_types": [
+            "raw_vcf_directory"
+          ],
+          "node_type": "DeepVariantCallNode"
+        }
+      ],
+      "future_comfy_node": "DeepVariantCallNode",
+      "runnable_node_status": "planned"
+    },
+    {
+      "id": "freebayes_call",
+      "label": "FreeBayes Call",
+      "domain_tags": [
+        "variant_analysis"
+      ],
+      "stage_tags": [
+        "variant_calling"
+      ],
+      "input_types": [
+        "dedup_bam_directory"
+      ],
+      "output_types": [
+        "raw_vcf_directory"
+      ],
+      "language": "external_cli",
+      "python_bindings": [],
+      "summary": "A widely used Bayesian haplotype-based variant caller, a common alternative to bcftools/GATK for germline and low-frequency variant detection.",
+      "tier": "ALT",
+      "tier_rationale": "bcftools is REF for its lightweight single-dependency design already covering mpileup, calling, and filtering; FreeBayes is credible for labs preferring haplotype-based calling or specific population/pooled-sample designs.",
+      "context_routing_rules": [
+        "Select when the user explicitly requests FreeBayes."
+      ],
+      "applicability_constraints": [
+        "deduplicated BAM",
+        "reference genome FASTA"
+      ],
+      "selection_rules": [
+        "Do not include in MVP completion gate unless explicitly requested."
+      ],
+      "operations": [
+        {
+          "id": "freebayes_call",
+          "label": "FreeBayes haplotype-based variant calling",
+          "input_types": [
+            "dedup_bam_directory"
+          ],
+          "output_types": [
+            "raw_vcf_directory"
+          ],
+          "node_type": "FreebayesCallNode"
+        }
+      ],
+      "future_comfy_node": "FreebayesCallNode",
+      "runnable_node_status": "planned"
+    },
+    {
+      "id": "strelka2_call",
+      "label": "Strelka2 Call",
+      "domain_tags": [
+        "variant_analysis"
+      ],
+      "stage_tags": [
+        "variant_calling"
+      ],
+      "input_types": [
+        "dedup_bam_directory"
+      ],
+      "output_types": [
+        "raw_vcf_directory"
+      ],
+      "language": "external_cli",
+      "python_bindings": [],
+      "summary": "A fast, widely used germline/somatic variant caller from Illumina, commonly used in clinical and cancer-genomics pipelines.",
+      "tier": "ALT",
+      "tier_rationale": "bcftools is REF as the lighter, more general-purpose default; Strelka2 is credible when a somatic-calling mode or its specific calling model is explicitly wanted.",
+      "context_routing_rules": [
+        "Select when the user explicitly requests Strelka2, especially for somatic calling."
+      ],
+      "applicability_constraints": [
+        "deduplicated BAM",
+        "reference genome FASTA"
+      ],
+      "selection_rules": [
+        "Do not include in MVP completion gate unless explicitly requested."
+      ],
+      "operations": [
+        {
+          "id": "strelka2_call",
+          "label": "Strelka2 germline/somatic variant calling",
+          "input_types": [
+            "dedup_bam_directory"
+          ],
+          "output_types": [
+            "raw_vcf_directory"
+          ],
+          "node_type": "Strelka2CallNode"
+        }
+      ],
+      "future_comfy_node": "Strelka2CallNode",
+      "runnable_node_status": "planned"
+    },
+    {
+      "id": "snpeff_annotate",
+      "label": "SnpEff Annotate",
+      "domain_tags": [
+        "variant_analysis"
+      ],
+      "stage_tags": [
+        "variant_filtering"
+      ],
+      "input_types": [
+        "filtered_vcf_directory"
+      ],
+      "output_types": [
+        "filtered_vcf_directory"
+      ],
+      "language": "external_cli",
+      "python_bindings": [],
+      "summary": "A widely used variant-effect annotation tool (predicted functional impact, affected gene/transcript) commonly run right after variant filtering.",
+      "tier": "ALT",
+      "tier_rationale": "Not part of the REF-only scope, since variant annotation is a separate concern from calling/filtering; SnpEff is credible whenever functional annotation is explicitly requested as an added stage.",
+      "context_routing_rules": [
+        "Select when the user explicitly wants functional/effect annotation of the filtered VCF."
+      ],
+      "applicability_constraints": [
+        "filtered VCF",
+        "annotation database"
+      ],
+      "selection_rules": [
+        "Do not include in MVP completion gate unless explicitly requested."
+      ],
+      "operations": [
+        {
+          "id": "snpeff_annotate",
+          "label": "SnpEff variant effect annotation",
+          "input_types": [
+            "filtered_vcf_directory"
+          ],
+          "output_types": [
+            "filtered_vcf_directory"
+          ],
+          "node_type": "SnpEffAnnotateNode"
+        }
+      ],
+      "future_comfy_node": "SnpEffAnnotateNode",
+      "runnable_node_status": "planned"
+    },
+    {
+      "id": "homer_findpeaks",
+      "label": "HOMER findPeaks",
+      "domain_tags": [
+        "epigenomics"
+      ],
+      "stage_tags": [
+        "peak_calling"
+      ],
+      "input_types": [
+        "filtered_bam_directory"
+      ],
+      "output_types": [
+        "peaks_directory"
+      ],
+      "language": "external_cli",
+      "python_bindings": [],
+      "summary": "A long-standing peak-calling and motif-analysis toolkit, a classic alternative to MACS-family callers with built-in motif enrichment.",
+      "tier": "ALT",
+      "tier_rationale": "MACS3 is REF as the actively maintained, equivalent-semantics successor already proven for ATAC-seq; HOMER is credible when its motif-analysis features are explicitly wanted alongside peak calling.",
+      "context_routing_rules": [
+        "Select when the user explicitly wants HOMER's motif-analysis output alongside peak calling."
+      ],
+      "applicability_constraints": [
+        "filtered/deduplicated BAM"
+      ],
+      "selection_rules": [
+        "Do not include in MVP completion gate unless explicitly requested."
+      ],
+      "operations": [
+        {
+          "id": "homer_findpeaks",
+          "label": "HOMER peak calling and motif analysis",
+          "input_types": [
+            "filtered_bam_directory"
+          ],
+          "output_types": [
+            "peaks_directory"
+          ],
+          "node_type": "HomerFindPeaksNode"
+        }
+      ],
+      "future_comfy_node": "HomerFindPeaksNode",
+      "runnable_node_status": "planned"
+    },
+    {
+      "id": "bedtools_intervals",
+      "label": "bedtools Interval Operations",
+      "domain_tags": [
+        "epigenomics"
+      ],
+      "stage_tags": [
+        "peak_visualization"
+      ],
+      "input_types": [
+        "peaks_directory"
+      ],
+      "output_types": [
+        "plot_directory"
+      ],
+      "language": "external_cli",
+      "python_bindings": [],
+      "summary": "A ubiquitous genomic-interval toolkit for peak-set operations (overlap, merge, intersect) commonly run before or alongside peak visualization.",
+      "tier": "ALT",
+      "tier_rationale": "Not part of the REF-only scope, since the REF peak-visualization node already covers plotting; bedtools is credible when interval-set operations across multiple peak files are explicitly wanted.",
+      "context_routing_rules": [
+        "Select when the user explicitly needs peak-set interval operations (overlap/merge/intersect) across samples."
+      ],
+      "applicability_constraints": [
+        "peak BED/narrowPeak files"
+      ],
+      "selection_rules": [
+        "Do not include in MVP completion gate unless explicitly requested."
+      ],
+      "operations": [
+        {
+          "id": "bedtools_intervals",
+          "label": "bedtools genomic interval operations",
+          "input_types": [
+            "peaks_directory"
+          ],
+          "output_types": [
+            "plot_directory"
+          ],
+          "node_type": "BedtoolsIntervalsNode"
+        }
+      ],
+      "future_comfy_node": "BedtoolsIntervalsNode",
+      "runnable_node_status": "planned"
+    },
+    {
+      "id": "kaiju_classify",
+      "label": "Kaiju Classify",
+      "domain_tags": [
+        "metagenome"
+      ],
+      "stage_tags": [
+        "taxonomic_classification"
+      ],
+      "input_types": [
+        "trimmed_fastq_directory"
+      ],
+      "output_types": [
+        "kraken2_output_dir"
+      ],
+      "language": "external_cli",
+      "python_bindings": [],
+      "summary": "A protein-level taxonomic classifier, a credible alternative to Kraken2's k-mer-based nucleotide classification, often more sensitive for divergent/novel sequences.",
+      "tier": "ALT",
+      "tier_rationale": "Kraken2 is REF for its speed and single-database-dependency simplicity; Kaiju is credible when protein-level sensitivity for divergent taxa is explicitly wanted, at the cost of a separate protein database.",
+      "context_routing_rules": [
+        "Select when the user explicitly wants protein-level classification sensitivity over Kraken2's k-mer approach."
+      ],
+      "applicability_constraints": [
+        "trimmed FASTQ",
+        "protein reference database"
+      ],
+      "selection_rules": [
+        "Do not include in MVP completion gate unless explicitly requested."
+      ],
+      "operations": [
+        {
+          "id": "kaiju_classify",
+          "label": "Kaiju protein-level taxonomic classification",
+          "input_types": [
+            "trimmed_fastq_directory"
+          ],
+          "output_types": [
+            "kraken2_output_dir"
+          ],
+          "node_type": "KaijuClassifyNode"
+        }
+      ],
+      "future_comfy_node": "KaijuClassifyNode",
+      "runnable_node_status": "planned"
+    },
+    {
+      "id": "humann_functional",
+      "label": "HUMAnN Functional Profiling",
+      "domain_tags": [
+        "metagenome"
+      ],
+      "stage_tags": [
+        "abundance_estimation"
+      ],
+      "input_types": [
+        "trimmed_fastq_directory"
+      ],
+      "output_types": [
+        "bracken_directory"
+      ],
+      "language": "external_cli",
+      "python_bindings": [],
+      "summary": "A functional (pathway/gene-family) metagenomic profiler, the standard companion to MetaPhlAn/Kraken2-style taxonomic profiling when functional, not just taxonomic, abundance is wanted.",
+      "tier": "ALT",
+      "tier_rationale": "Bracken is REF for taxonomic abundance re-estimation, sharing Kraken2's database with no extra dependency; HUMAnN is credible only when functional (not taxonomic) profiling is explicitly requested, since it needs its own reference databases.",
+      "context_routing_rules": [
+        "Select when the user explicitly wants functional/pathway abundance, not just taxonomic abundance."
+      ],
+      "applicability_constraints": [
+        "trimmed FASTQ",
+        "functional reference database"
+      ],
+      "selection_rules": [
+        "Do not include in MVP completion gate unless explicitly requested."
+      ],
+      "operations": [
+        {
+          "id": "humann_functional",
+          "label": "HUMAnN functional pathway profiling",
+          "input_types": [
+            "trimmed_fastq_directory"
+          ],
+          "output_types": [
+            "bracken_directory"
+          ],
+          "node_type": "HumannFunctionalNode"
+        }
+      ],
+      "future_comfy_node": "HumannFunctionalNode",
+      "runnable_node_status": "planned"
+    },
+    {
+      "id": "phyloseq_visualization",
+      "label": "phyloseq Visualization",
+      "domain_tags": [
+        "metagenome"
+      ],
+      "stage_tags": [
+        "profile_visualization"
+      ],
+      "input_types": [
+        "bracken_directory"
+      ],
+      "output_types": [
+        "plot_directory"
+      ],
+      "language": "external_cli",
+      "python_bindings": [],
+      "summary": "An R/Bioconductor microbiome-visualization and statistics package, a common alternative to a custom plotting script for diversity metrics and ordination plots.",
+      "tier": "ALT",
+      "tier_rationale": "The REF visualization node already covers the MVP's plotting needs with no extra language dependency; phyloseq is credible when its specific diversity/ordination statistics are explicitly wanted.",
+      "context_routing_rules": [
+        "Select when the user explicitly wants alpha/beta diversity statistics or ordination plots."
+      ],
+      "applicability_constraints": [
+        "taxonomic abundance table"
+      ],
+      "selection_rules": [
+        "Do not include in MVP completion gate unless explicitly requested."
+      ],
+      "operations": [
+        {
+          "id": "phyloseq_visualization",
+          "label": "phyloseq microbiome diversity visualization",
+          "input_types": [
+            "bracken_directory"
+          ],
+          "output_types": [
+            "plot_directory"
+          ],
+          "node_type": "PhyloseqVisualizationNode"
+        }
+      ],
+      "future_comfy_node": "PhyloseqVisualizationNode",
+      "runnable_node_status": "planned"
+    },
+    {
+      "id": "unicycler_assemble",
+      "label": "Unicycler Assemble",
+      "domain_tags": [
+        "genome_assembly"
+      ],
+      "stage_tags": [
+        "assembly"
+      ],
+      "input_types": [
+        "trimmed_fastq_directory"
+      ],
+      "output_types": [
+        "assembly_directory"
+      ],
+      "language": "external_cli",
+      "python_bindings": [],
+      "summary": "A hybrid short+long-read bacterial assembler built on SPAdes, producing more complete (often fully circularized) assemblies when long reads are available.",
+      "tier": "ALT",
+      "tier_rationale": "SPAdes is REF for the short-read-only MVP scope; Unicycler is credible specifically once long reads are also available, since its hybrid mode is what improves completeness over SPAdes alone.",
+      "context_routing_rules": [
+        "Select when the user explicitly has long-read data in addition to short reads."
+      ],
+      "applicability_constraints": [
+        "short-read FASTQ",
+        "optional long-read FASTQ"
+      ],
+      "selection_rules": [
+        "Do not include in MVP completion gate unless explicitly requested."
+      ],
+      "operations": [
+        {
+          "id": "unicycler_assemble",
+          "label": "Unicycler hybrid genome assembly",
+          "input_types": [
+            "trimmed_fastq_directory"
+          ],
+          "output_types": [
+            "assembly_directory"
+          ],
+          "node_type": "UnicyclerAssembleNode"
+        }
+      ],
+      "future_comfy_node": "UnicyclerAssembleNode",
+      "runnable_node_status": "planned"
+    },
+    {
+      "id": "flye_assemble",
+      "label": "Flye Assemble",
+      "domain_tags": [
+        "genome_assembly"
+      ],
+      "stage_tags": [
+        "assembly"
+      ],
+      "input_types": [
+        "trimmed_fastq_directory"
+      ],
+      "output_types": [
+        "assembly_directory"
+      ],
+      "language": "external_cli",
+      "python_bindings": [],
+      "summary": "A long-read (Nanopore/PacBio) de novo assembler, the standard choice once the input is long-read rather than short-read sequencing.",
+      "tier": "ALT",
+      "tier_rationale": "SPAdes is REF for short-read isolate assembly; Flye is credible only for long-read input, which is a different data modality from this route's short-read-only MVP scope.",
+      "context_routing_rules": [
+        "Select when the user explicitly has long-read (Nanopore/PacBio) data instead of short reads."
+      ],
+      "applicability_constraints": [
+        "long-read FASTQ/FASTA"
+      ],
+      "selection_rules": [
+        "Do not include in MVP completion gate unless explicitly requested."
+      ],
+      "operations": [
+        {
+          "id": "flye_assemble",
+          "label": "Flye long-read genome assembly",
+          "input_types": [
+            "trimmed_fastq_directory"
+          ],
+          "output_types": [
+            "assembly_directory"
+          ],
+          "node_type": "FlyeAssembleNode"
+        }
+      ],
+      "future_comfy_node": "FlyeAssembleNode",
+      "runnable_node_status": "planned"
+    },
+    {
+      "id": "checkm_qc",
+      "label": "CheckM QC",
+      "domain_tags": [
+        "genome_assembly"
+      ],
+      "stage_tags": [
+        "assembly_qc"
+      ],
+      "input_types": [
+        "assembly_directory"
+      ],
+      "output_types": [
+        "assembly_qc_directory"
+      ],
+      "language": "external_cli",
+      "python_bindings": [],
+      "summary": "A genome-completeness and contamination estimator using lineage-specific marker genes, a common complement to QUAST's contiguity-focused metrics.",
+      "tier": "ALT",
+      "tier_rationale": "QUAST is REF for its reference-free contiguity metrics (N50, contig count) with no marker-gene database dependency; CheckM is credible when completeness/contamination estimation is explicitly wanted alongside contiguity.",
+      "context_routing_rules": [
+        "Select when the user explicitly wants completeness/contamination estimates, not just contiguity metrics."
+      ],
+      "applicability_constraints": [
+        "assembled contigs",
+        "marker-gene lineage database"
+      ],
+      "selection_rules": [
+        "Do not include in MVP completion gate unless explicitly requested."
+      ],
+      "operations": [
+        {
+          "id": "checkm_qc",
+          "label": "CheckM genome completeness and contamination estimation",
+          "input_types": [
+            "assembly_directory"
+          ],
+          "output_types": [
+            "assembly_qc_directory"
+          ],
+          "node_type": "CheckmQcNode"
+        }
+      ],
+      "future_comfy_node": "CheckmQcNode",
       "runnable_node_status": "planned"
     }
   ]

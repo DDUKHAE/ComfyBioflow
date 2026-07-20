@@ -2,9 +2,13 @@ from bioflow_harness.server.handlers import compile_spec
 from bioflow_harness.comfy.workflow_schema import validate_workflow_export
 from bioflow_harness.server.handlers import generate_workflow
 
+# "mistral" has no CLI integration, so every call below exercises the deterministic
+# parser instead of attempting a real codex/claude/gemini subprocess call.
+_PROVIDER = "mistral"
+
 
 def test_compile_spec_bulk_rna_seq_returns_salmon_route():
-    result = compile_spec({"request_text": "Analyze this FASTQ folder as bulk RNA-seq, human, treated vs control with DESeq2."})
+    result = compile_spec({"request_text": "Analyze this FASTQ folder as bulk RNA-seq, human, treated vs control with DESeq2.", "provider": _PROVIDER})
     assert result["status"] == "ok"
     assert result["domain"] == "bulk_rna_seq"
     assert result["route_id"] == "bulk_rna_seq_salmon_ref"
@@ -16,21 +20,21 @@ def test_compile_spec_bulk_rna_seq_returns_salmon_route():
 
 
 def test_compile_spec_scrna_returns_scanpy_route():
-    result = compile_spec({"request_text": "single-cell RNA-seq with scanpy, clustering and umap and marker genes"})
+    result = compile_spec({"request_text": "single-cell RNA-seq with scanpy, clustering and umap and marker genes", "provider": _PROVIDER})
     assert result["status"] == "ok"
     assert result["domain"] == "scrna_seq"
     assert result["route_id"] == "scrna_seq_scanpy_ref"
 
 
 def test_compile_spec_unsupported_domain_is_planning_required():
-    result = compile_spec({"request_text": "please assemble a bacterial genome"})
+    result = compile_spec({"request_text": "please assemble a bacterial genome", "provider": _PROVIDER})
     assert result["status"] == "planning_required"
     assert result["route_id"] is None
     assert "planning is required" in result["message"].lower()
 
 
 def test_generate_workflow_returns_valid_export():
-    result = generate_workflow({"request_text": "bulk RNA-seq human treated vs control with DESeq2 plots and report"})
+    result = generate_workflow({"request_text": "bulk RNA-seq human treated vs control with DESeq2 plots and report", "provider": _PROVIDER})
     assert result["status"] == "ok"
     assert result["route_id"] == "bulk_rna_seq_salmon_ref"
     workflow = result["workflow"]
@@ -39,18 +43,19 @@ def test_generate_workflow_returns_valid_export():
 
 
 def test_generate_workflow_unsupported_is_planning_required():
-    result = generate_workflow({"request_text": "assemble a bacterial genome"})
+    result = generate_workflow({"request_text": "assemble a bacterial genome", "provider": _PROVIDER})
     assert result["status"] == "planning_required"
     assert result["workflow"] is None
 
 
 def test_generate_workflow_matching_steps_has_no_message():
     request_text = "bulk RNA-seq human treated vs control with DESeq2 plots and report"
-    compiled = compile_spec({"request_text": request_text})
+    compiled = compile_spec({"request_text": request_text, "provider": _PROVIDER})
     deterministic_steps = [step["tool_label"] for step in compiled["steps"]]
     result = generate_workflow(
         {
             "request_text": request_text,
+            "provider": _PROVIDER,
             "steps": deterministic_steps,
             "resources": [
                 {"label": "input_path", "path": "/data/fastq"},
@@ -68,6 +73,7 @@ def test_generate_workflow_reordered_steps_surfaces_warning_not_error():
     result = generate_workflow(
         {
             "request_text": "bulk RNA-seq human treated vs control with DESeq2 plots and report",
+            "provider": _PROVIDER,
             "steps": ["some_reordered_tool", "another_replacement_tool"],
         }
     )
@@ -81,6 +87,7 @@ def test_generate_workflow_reordered_steps_surfaces_warning_not_error():
 def test_generate_workflow_injects_resource_paths():
     payload = {
         "request_text": "bulk RNA-seq human treated vs control with DESeq2 plots and report",
+        "provider": _PROVIDER,
         "resources": [
             {"label": "input_path", "path": "/data/fastq"},
             {"label": "output_path", "path": "/data/out"},
@@ -96,7 +103,7 @@ def test_generate_workflow_injects_resource_paths():
 
 
 def test_generate_workflow_warns_on_missing_resources():
-    payload = {"request_text": "bulk RNA-seq treated vs control with DESeq2 plots and report"}
+    payload = {"request_text": "bulk RNA-seq treated vs control with DESeq2 plots and report", "provider": _PROVIDER}
     result = generate_workflow(payload)
     assert result["status"] == "ok"
     assert "transcriptome_fasta" in (result["message"] or "")

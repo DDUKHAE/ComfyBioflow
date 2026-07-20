@@ -8,7 +8,7 @@ _BULK_INJECTION = {
     "FastpQCNode": {0: "input_fastq_dir", 1: "metadata_csv", 2: "qc_dir"},
     "FastpTrimNode": {0: "input_fastq_dir", 1: "metadata_csv", 2: "trimmed_dir"},
     "SalmonIndexNode": {0: "transcriptome_fasta", 1: "salmon_index_dir"},
-    "SalmonQuantNode": {0: "salmon_index_dir", 1: "input_fastq_dir", 2: "metadata_csv", 3: "salmon_quant_dir"},
+    "SalmonQuantNode": {0: "salmon_index_dir", 1: "input_fastq_dir", 2: "metadata_csv", 3: "trimmed_dir", 4: "salmon_quant_dir"},
     "TximportNode": {0: "salmon_quant_dir", 1: "metadata_csv", 2: "count_matrix"},
     "DESeq2AnalysisNode": {0: "count_matrix", 1: "metadata_csv", 2: "results_csv"},
     "DESeq2VisualizationNode": {0: "count_matrix", 1: "results_csv", 2: "plot_dir"},

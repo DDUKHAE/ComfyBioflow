@@ -76,6 +76,7 @@ def main() -> None:
     parser.add_argument("--run-fixture-dry-run", action="store_true")
     parser.add_argument("--run-fixture", action="store_true")
     parser.add_argument("--validate-registry", action="store_true")
+    parser.add_argument("--route-id", default="bulk_rna_seq_salmon_ref")
     parser.add_argument("--check-env", action="store_true")
     parser.add_argument("--audit-workflow", type=Path)
     parser.add_argument("--audit-mode", choices=["demo", "execution"], default="demo")
@@ -115,7 +116,7 @@ def main() -> None:
     if args.validate_registry:
         report = validate_official_route(
             load_registry(args.registry),
-            "bulk_rna_seq_salmon_ref",
+            args.route_id,
             default_node_catalog(),
         )
         print(json.dumps(asdict(report), indent=2))

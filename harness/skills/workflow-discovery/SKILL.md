@@ -1,32 +1,193 @@
-# Workflow Discovery
+---
+name: workflow-discovery
+description: Use when a natural-language biological analysis request must be classified and expanded into candidate workflows and tools before execution — comparing methods, identifying data and reference requirements, routing to specialized skills or subagents, and converging on a source-backed recommendation with explicit confidence and unknowns.
+---
 
-Use this skill to convert a natural-language genomics request into a normalized ComfyBIO analysis brief.
+# Analysis Workflow Explorer
 
-## Inputs
+프롬프트로 주어진 생물학적 분석 요구를 하나의 성급한 해답으로 축소하지 말고, 질문·데이터·제약 조건에 맞는 분석 워크플로우와 도구의 선택 공간으로 확장한 뒤 근거 있는 추천으로 수렴시킨다. 이 스킬의 기본 산출물은 실행 결과가 아니라 탐색 결과와 선택 근거다.
 
-- Natural-language request text
-- Optional dataset or project notes
+## Core behavior
 
-## Output
+1. 먼저 사용자의 분석 목적, 생물학적 질문, 의사결정 대상, 결과의 사용처를 추출한다.
+2. 요청을 분석 lane으로 분류한다. 예: 발현 비교, 예측, 인과, 시간 변화, 단일세포, 다중 오믹스, 구조·기능, pathway 해석.
+3. 명시되지 않은 전제와 불확실성을 분리한다. 확인할 수 있는 정보, 합리적 가정, 현재 판단 불가를 구분한다.
+4. 분석 문제를 입력 데이터, 관측 단위, reference와 annotation, 시간 범위, 목표 변수, 제약 조건, 성공 기준으로 구조화한다.
+5. 가능한 접근법을 2~4개 제시한다. 접근법은 단순한 알고리즘 목록이 아니라 서로 다른 질문, 데이터 요구, 해석 가능성, 검증 전략을 가져야 한다.
+6. 각 접근법에 필요한 도구와 전문 skill을 탐색한다. 도구 이름을 먼저 나열하지 말고, 선택 조건과 대체 경로를 함께 설명한다.
+7. 사용자의 목적에 가장 잘 맞는 기본 경로를 추천하되, 추천 이유, confidence, 선택을 바꿀 조건을 함께 적는다.
+8. 실행 자체가 아니라 실행 전에 확인할 검증 게이트와 다음 탐색 행동을 제시한다.
 
-Return an analysis brief with:
+## Workflow exploration model
 
-- `analysis_type`
-- `domain`
-- `input_assets`
-- `organism`
-- `expected_outputs`
-- `constraints`
-- `preferred_tools`
-- `confidence_notes`
-- `submission_source`
-- `data_characteristics`
+분석 워크플로우는 다음 요소의 조합으로 설명한다.
 
-## Rules
+- **Question**: 어떤 현상이나 의사결정을 이해하거나 예측하려는가?
+- **Evidence**: 어떤 데이터가 있고, 데이터의 출처·품질·편향은 무엇인가?
+- **Unit**: 한 행 또는 한 관측치가 무엇을 의미하는가?
+- **Method**: 기술통계, 비교, 인과 추론, 예측, 분류, 군집화, 시계열, 시뮬레이션 등 어떤 문제 유형인가?
+- **Validation**: 결과가 맞거나 유용하다고 판단할 기준은 무엇인가?
+- **Decision**: 결과를 누가 어떤 행동에 사용할 것인가?
+- **Delivery**: 표, 차트, 보고서, API, 대시보드, 재현 가능한 코드 중 어떤 형태가 필요한가?
 
-- Map bulk RNA-seq prompts to `bulk_rna_seq`.
-- Map single-cell RNA-seq, scRNA-seq, 10x, UMAP, or marker-gene prompts to `scrna_seq`.
-- Detect planned or unmodeled domains separately. Do not route them to `bulk_rna_seq` just because the prompt contains `RNA-seq`.
-- For planned domains that do not have an implemented route, return a domain value and confidence note that workflow expansion is required.
-- Treat DESeq2 result tables and visualization artifacts as required outputs when the prompt asks for the official REF path.
-- Record uncertainty in `confidence_notes` rather than silently guessing.
+## Reference navigation
+
+상세 규칙은 필요할 때 다음 reference를 읽는다.
+
+- 도구 선택의 출처 정책과 confidence: [tool-selection-evidence.md](references/tool-selection-evidence.md)
+- 질문·데이터 조건별 workflow 선택 rubric: [workflow-selection-rubric.md](references/workflow-selection-rubric.md)
+- 서브에이전트 위임과 결과 합성 형식: [subagent-output-schema.md](references/subagent-output-schema.md)
+
+## Routing and tool selection
+
+분석 workflow를 탐색하기 전에 다음 순서로 라우팅한다.
+
+1. **Question type**: 기술통계, 그룹 비교, 예측, 인과, 시간 변화, 분류, 군집화, pathway, 구조·기능 중 핵심 유형을 고른다.
+2. **Evidence type**: raw data, count matrix, reference genome, GTF/GFF, phenotype table, literature, public database, domain knowledge 중 필요한 근거를 분리한다.
+3. **Analysis unit**: read, cell, sample, gene, transcript, protein, variant, pathway 등 통계 단위를 명시한다.
+4. **Tool class**: QC, alignment, quantification, statistical modeling, enrichment, visualization, database lookup, workflow orchestration 등 도구의 역할을 먼저 정한다.
+5. **Candidate tools**: 후보 도구를 2~4개 비교하고, 선택을 바꾸는 조건을 명시한다.
+
+도구 비교에는 최소한 다음을 포함한다.
+
+- 어떤 질문에 답하는가
+- 어떤 입력과 reference가 필요한가
+- annotation 또는 metadata 의존성이 있는가
+- 결과의 해석 단위는 무엇인가
+- 계산량·재현성·검증 가능성은 어떤가
+- 실패하거나 잘못 해석하기 쉬운 조건은 무엇인가
+
+도구가 실제로 필요한지 불분명하면 특정 도구를 추천하지 않고, 먼저 확인해야 할 정보로 돌린다. 분석 요청과 직접 관련 없는 최신 도구나 유행하는 도구를 추가하지 않는다.
+
+## Evidence-backed tool selection
+
+도구 선택은 LLM의 기억이나 일반적 선호만으로 확정하지 않는다. 후보 생성에는 내부 지식을 사용할 수 있지만, 최종 추천에는 출처와 사용자 조건의 연결을 제시한다. 출처 우선순위, evidence class, confidence, 충돌 처리, selection record는 [tool-selection-evidence.md](references/tool-selection-evidence.md)를 따른다.
+
+최신 동작, 특정 버전, 성능 비교, 공식 권장사항을 말할 때는 웹 또는 제공된 문서에서 원문을 확인한다. 출처가 없는 후보는 `미검증 후보`, 근거가 부족한 선택은 `현재 판단 불가`로 표시한다.
+
+## Skill and subagent routing
+
+다른 전문 skill이나 서브에이전트가 도움이 될 때는 최소한의 역할만 위임한다.
+
+- 전문 skill은 특정 데이터베이스, 파일 형식, 도메인 지식이 필요한 경우 선택한다.
+- 서브에이전트는 서로 독립적인 관점이나 비교 단위가 있을 때만 사용한다.
+- 초기 문제 정의, 분석 범위 확정, 충돌 해결, 최종 합성은 조정 에이전트가 담당한다.
+- 각 서브에이전트에는 좁고 독립적인 질문, 필요한 원자료, 반환 형식을 명시한다.
+
+서브에이전트 반환 형식과 합성 규칙은 [subagent-output-schema.md](references/subagent-output-schema.md)를 따른다.
+
+## Required output structure
+
+분석 요청에 답할 때 다음 순서를 기본으로 사용한다. 정보가 없는 항목은 `미정`으로 표시하고, 임의로 확정하지 않는다.
+
+### 1. 문제 정의
+
+- 분석 목적
+- 핵심 질문
+- 결과를 사용할 사람과 결정
+- 현재 해석의 불확실성
+
+### 2. 탐색 범위
+
+가능한 분석 유형과 후보 접근법을 간단히 열거한다. 후보를 너무 많이 만들지 말고, 실제 선택에 영향을 주는 차이를 설명한다.
+
+### 3. 후보 워크플로우 비교
+
+각 후보에 대해 다음을 설명한다.
+
+- 언제 적합한가
+- 필요한 입력과 전처리
+- 핵심 분석 단계
+- 주요 산출물
+- 장점과 한계
+- 실패하거나 오해하기 쉬운 조건
+
+표를 사용할 수 있으면 다음 열을 권장한다: `후보`, `답할 수 있는 질문`, `데이터 요구`, `검증 방법`, `해석 가능성`, `주요 위험`.
+
+### 4. 추천 경로와 선택 근거
+
+가장 적합한 후보 하나를 기본 경로로 추천한다. 추천은 사용자의 목적과 제약을 근거로 하며, 데이터가 없거나 목적이 충돌하면 조건부 추천으로 표현한다. `확정 가능한 경로`, `조건부 추천`, `탐색적 대안`, `현재 판단 불가`를 구분한다.
+
+도구 추천은 다음 형식으로 설명한다.
+
+```text
+조건 → 후보 도구/방법 → 선택 이유 → 대안 → 선택을 바꾸는 정보
+```
+
+각 후보 또는 최종 추천에는 가능한 경우 다음을 덧붙인다.
+
+```text
+근거 사실 → 사용자 조건에 대한 적용 판단 → 출처 → confidence
+```
+
+### 5. 탐색된 workflow 구조
+
+번호가 있는 단계로 작성한다. 각 단계는 입력, 탐색 대상, 후보 도구 또는 방법, 산출물, 다음 단계로 넘어가는 조건을 가능한 범위에서 포함한다. 실제 명령어 실행, 데이터 변환, 분석 결과 생성은 사용자가 별도로 요청하지 않는 한 수행하지 않는다.
+
+workflow를 DAG 또는 분기 구조로 표현할 수 있다.
+
+```text
+질문 정의
+  ├─ reference 있음 → annotation 검증 → 후보 정량 방법 비교
+  └─ reference 없음 → de novo 또는 homolog 기반 대안 탐색
+```
+
+### 6. 검증과 리스크
+
+최소한 다음을 점검한다.
+
+- 결측치, 중복, 이상치, 단위와 시간 기준
+- 표본 선택 편향과 대표성
+- 학습·평가 데이터 누수
+- 기준선과 비교군
+- 평가 지표가 실제 목적과 일치하는지
+- 결과의 민감도, 불확실성, 재현성
+- 분석 결과를 인과적 주장으로 과대해석할 위험
+
+### 7. 다음 입력 또는 다음 행동
+
+사용자가 곧바로 제공하거나 확인할 수 있는 항목을 최대 5개로 정리한다. 질문이 필요하면 workflow 선택을 가장 크게 바꾸는 순서로 묻고, 답을 기다리는 동안 가능한 문헌·도구·workflow 탐색도 제시한다.
+
+## Decision rules
+
+- 예측 정확도와 설명 가능성이 충돌하면 둘을 별도 축으로 비교한다.
+- 상관관계만으로 인과관계를 주장하지 않는다. 인과 질문이면 식별 전략과 반사실적 가정을 먼저 확인한다.
+- 데이터가 작거나 라벨이 부족하면 복잡한 모델을 기본값으로 삼지 않는다.
+- 시계열 데이터는 시간 순서와 미래 정보 유입 여부를 먼저 점검한다.
+- 그룹 비교는 집계 수준, 교란 변수, 표본 수, 불확실성을 함께 본다.
+- 자동화 또는 외부 도구 사용이 필요한 경우, 도구를 호출하기 전에 목적, 필요한 입력, 기대 산출물을 명시한다.
+- 최신 정보, 외부 자료, 특정 문서가 필요한 분석은 해당 자료를 확인한 뒤 출처와 확인 시점을 기록한다.
+- 방법론·도구·성능에 관한 핵심 주장은 출처 없이 확정하지 않는다.
+- 출처 기반 사실과 현재 요청에 대한 추론을 문장 또는 표에서 분리한다.
+- 공식 문서가 없는 커뮤니티 추천, 모델의 기억, 검색 snippet은 후보 생성에는 사용할 수 있지만 최종 근거로 취급하지 않는다.
+- 사용자가 단순한 분석 방법을 요청하더라도, 방법 선택을 바꿀 수 있는 핵심 제약이 있으면 짧게 경고한다.
+- 실행 결과가 아니라 workflow 선택을 요청받은 경우, 명령어·파라미터·설치 절차를 본문 중심에 두지 않는다.
+- 최신 도구를 선택하는 것과 적합한 도구를 선택하는 것을 혼동하지 않는다.
+- confidence는 근거의 강도를 나타내며, 통계적 유의성이나 생물학적 확실성을 대신하지 않는다.
+
+## Interaction style
+
+- 기본 응답 언어는 한국어이며, 사용자가 다른 언어를 요청하면 그 언어로 답한다.
+- 첫 응답에서 가능한 해석을 1~2개로 정리하고, 가장 중요한 불확실성을 표시한다.
+- 전문 용어는 처음 등장할 때 짧게 풀어 쓴다.
+- 사용자가 탐색을 원하면 비교를 유지하고, 사용자가 실행을 원하면 추천 경로를 구체화한다.
+- 근거가 없는 정밀한 수치, 성능 보장, 도구 선택을 만들어내지 않는다.
+- 분석 결과 자체와 분석 결과를 해석하는 문장을 분리한다.
+- 출력은 간결하게 유지하되, 사용자가 다음 결정을 내리는 데 필요한 정보는 생략하지 않는다.
+
+## Quality checklist
+
+응답을 마치기 전에 확인한다.
+
+- 질문과 의사결정이 명확한가?
+- 후보 워크플로우 사이의 실질적인 차이가 드러나는가?
+- 추천이 사용자 목적과 데이터 제약에 연결되어 있는가?
+- workflow 탐색 단계와 다음 선택 조건이 있는가?
+- 검증, 누수, 편향, 불확실성을 다뤘는가?
+- 부족한 정보와 가정을 구분했는가?
+- 사용자가 취할 다음 행동이 분명한가?
+- 도구 추천마다 선택 조건과 대안이 설명되어 있는가?
+- 핵심 도구 선택에 출처와 확인 시점이 연결되어 있는가?
+- 출처 기반 사실, 적용 추론, 미검증 주장이 구분되어 있는가?
+- 확정 경로와 조건부·탐색적 경로가 구분되어 있는가?
+- 서브에이전트 결과의 합의점, 충돌, 미해결점이 보이는가?

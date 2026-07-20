@@ -5,9 +5,12 @@ def parse_prompt(request_text: str) -> AnalysisBrief:
     text = request_text.lower()
 
     scrna_tokens = ["single-cell", "single cell", "scrna", "10x", "cell ranger", "starsolo", "umap", "marker genes"]
+    # ChIP-seq is deliberately excluded here: it needs control-sample pairing, unlike the
+    # implemented ATAC-seq route, and has no route of its own (see domain-bootstrap
+    # references/examples.md) — matching it would silently misroute it to ATAC-seq.
     epigenomics_tokens = [
         "atac-seq", "atac seq", "chromatin accessibility", "open chromatin",
-        "peak calling", "macs3", "macs2", "narrowpeak", "chip-seq", "chip seq",
+        "peak calling", "macs3", "macs2", "narrowpeak",
     ]
     metagenome_tokens = [
         "metagenom", "kraken2", "kraken", "bracken", "taxonomic profil",
@@ -17,8 +20,12 @@ def parse_prompt(request_text: str) -> AnalysisBrief:
         "de novo assembly", "genome assembly", "spades", "megahit", "contig",
         "assemble the genome", "isolate genome",
     ]
+    # Bare "variant" is deliberately excluded: it also matches "structural variant"
+    # (long-read SV detection via minimap2/Sniffles), a different, unimplemented pipeline
+    # from this route's short-read germline SNP/indel calling (bwa-mem2 + bcftools) — see
+    # the ChIP-seq lesson in domain-bootstrap references/examples.md for the same failure mode.
     variant_tokens = [
-        "variant", "germline", "vcf", "bwa-mem2", "bwa mem2", "snp", "genotyp",
+        "germline", "vcf", "bwa-mem2", "bwa mem2", "snp", "genotyp",
         "whole genome", "whole exome", " wgs", " wes", "bcftools",
     ]
     if any(token in text for token in scrna_tokens):

@@ -2,7 +2,9 @@ from bioflow_harness.server.handlers import generate_workflow
 
 
 def _types(request_text: str) -> list[str]:
-    workflow = generate_workflow({"request_text": request_text})["workflow"]
+    # "mistral" has no CLI integration, so this always exercises the deterministic parser
+    # instead of attempting a real codex/claude/gemini subprocess call.
+    workflow = generate_workflow({"request_text": request_text, "provider": "mistral"})["workflow"]
     return [node["type"] for node in workflow["nodes"]]
 
 
@@ -80,6 +82,43 @@ def test_variant_and_scrna_and_bulk_prompts_still_route_correctly_after_atac_add
     assert parse_prompt("bulk RNA-seq human treated vs control with DESeq2 plots and report").domain == "bulk_rna_seq"
     assert parse_prompt("single-cell RNA-seq with scanpy, clustering and umap and marker genes").domain == "scrna_seq"
     assert parse_prompt("call germline SNPs and indels from WGS FASTQs with bwa-mem2 and bcftools").domain == "variant_analysis"
+
+
+def test_deferred_domains_with_overlapping_vocabulary_stay_unsupported():
+    """Regression test for two real bugs caused by the same failure mode: an overly
+    generic token in one domain's list silently absorbing a different, unimplemented
+    domain's request.
+
+    1. "chip-seq"/"chip seq" were once listed in epigenomics_tokens, so a ChIP-seq
+       request silently misrouted to the ATAC-seq route instead of surfacing
+       planning_required.
+    2. Bare "variant" was once listed in variant_tokens, so a long-read structural-variant
+       (Nanopore/PacBio SV calling, e.g. minimap2 + Sniffles) request silently misrouted to
+       variant_analysis_bwa_ref, which only implements short-read germline SNP/indel
+       calling (bwa-mem2 + bcftools) — a different pipeline shape entirely.
+
+    ChIP-seq, WGBS, Hi-C, and long-read structural-variant calling are all
+    architecturally distinct from every implemented route (see domain-bootstrap
+    references/examples.md) and must never resolve to an existing domain just because
+    they share assay-family vocabulary with one.
+    """
+    from bioflow_harness.parser.prompt_parser import parse_prompt
+    from bioflow_harness.planner.stage_mapper import route_for_domain
+
+    for request_text in [
+        "ChIP-seq data to find genome-wide transcription factor binding sites, with an input control sample",
+        "WGBS bisulfite sequencing to profile DNA methylation",
+        "Hi-C data to analyze chromatin interactions",
+        "Long-read Nanopore sequencing to detect structural variants",
+    ]:
+        domain = parse_prompt(request_text).domain
+        assert domain == "unsupported", f"{request_text!r} incorrectly classified as {domain!r}"
+        try:
+            route_for_domain(domain)
+        except ValueError:
+            pass
+        else:
+            raise AssertionError(f"route_for_domain should have raised for domain {domain!r}")
 
 
 def test_metagenome_graph_starts_at_input_validator_ends_at_preview():

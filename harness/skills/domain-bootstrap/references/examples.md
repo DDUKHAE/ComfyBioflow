@@ -1,6 +1,6 @@
 # Domain Bootstrap: variant_analysis worked example
 
-This is the first domain built with the `domain-bootstrap` skill, and the reference for the next ones (epigenomics, genome_assembly).
+This is the first domain built with the `domain-bootstrap` skill, and the reference for the next ones (epigenomics, metagenome, genome_assembly).
 
 ## Stage decomposition
 
@@ -68,6 +68,14 @@ fastp (not TrimGalore, nf-core's default) for trimming: already a proven-lightwe
 bwa-mem2 for alignment: same aligner family as nf-core/atacseq's BWA default, and already proven in the `variant_analysis` route — but installed into its own `epigenomics` conda environment, never shared across domains.
 
 MACS3 (not MACS2, the current nf-core/atacseq default) for peak calling: the actively maintained successor with equivalent semantics. MACS2 and Genrich (an ATAC-seq-native alternative with built-in replicate handling) are both recorded as `tier: "ALT"`, `runnable_node_status: "planned"`.
+
+## A lesson from this cycle: deferring a domain isn't enough, its keywords must be actively excluded
+
+When this cycle added `epigenomics_tokens` to `parser/prompt_parser.py::parse_prompt` for ATAC-seq, `"chip-seq"`/`"chip seq"` were included as if they were ATAC-seq synonyms — plausible, since both are "epigenomics" in the broad sense, but wrong: ChIP-seq needs control-sample pairing, a genuinely different pipeline shape from ATAC-seq's single-FASTQ-pair route, per the assay scope decision above. The result was a real bug that shipped for a while: a ChIP-seq request silently matched `epigenomics_tokens` and routed to `atac_seq_macs3_ref` instead of surfacing `planning_required`, directly violating this skill's rule 8 — without ever touching `stage_mapper.py` or `handlers.py`, since the domain classification itself was already wrong before either of those ran.
+
+Deciding to defer a domain (as this cycle did for ChIP-seq and WGBS) only has teeth if its likely request vocabulary is also kept out of every *other* domain's token list — writing "ChIP-seq is deferred" in this file does nothing to stop a future edit from accidentally matching it against the closest implemented neighbor. Fixed by removing the two tokens and adding a negative-case regression test (`tests/test_comfybio_graph_structure.py::test_deferred_domains_with_overlapping_vocabulary_stay_unsupported`) asserting ChIP-seq/WGBS/Hi-C requests resolve to `"unsupported"`. Future cycles should add the same kind of test whenever a domain is deferred specifically because it resembles one being implemented.
+
+**This was not a one-off.** A follow-up test pass across all 6 supported domains plus several unimplemented ones found the same failure mode a second time, in a different route: bare `"variant"` in `variant_tokens` (from the `variant_analysis` cycle) matched "structural variant" — long-read SV detection (minimap2/Sniffles), architecturally distinct from `variant_analysis_bwa_ref`'s short-read germline SNP/indel calling (bwa-mem2 + bcftools) — and silently misrouted it the same way ChIP-seq was. Fixed by removing the bare token (the more specific `"germline"`, `"vcf"`, `"snp"`, etc. tokens already cover the real route without it) and extending the same regression test. Two confirmed instances in two different domain cycles confirms this is a structural risk of keyword-substring classification itself, not a one-time mistake — treat the domain-bootstrap Rules section's collision-check step as load-bearing, not optional, every time a token list is touched.
 
 ## Environment isolation
 

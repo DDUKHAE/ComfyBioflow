@@ -40,21 +40,21 @@ Each stage is specified by a skill package; this table is the index. Do not dupl
 |---|---|---|
 | Natural language → analysis brief | `harness/skills/workflow-discovery/` | `bioflow_harness/llm/`, `parser/prompt_parser.py` |
 | Brief → staged workflow plan / route discovery | `harness/skills/workflow-generation/` | `planner/*` |
-| Tool selection (REF/ALT decision) | `harness/skills/tool-ranking/`, `harness/skills/context-routing/` | `planner/tool_selector.py`, registry YAML |
-| Operation → custom node spec & implementation | `harness/skills/custom-node-spec/`, `harness/skills/node-implementation-design/` | `nodes/*` |
+| Tool selection (REF/ALT decision, incl. context-override reasoning) | `harness/skills/tool-ranking/` | `planner/tool_selector.py`, registry YAML |
+| Operation → custom node spec & implementation | `harness/skills/node-implementation-design/` | `nodes/*` |
 | Workflow plan → ComfyUI workflow JSON | `harness/skills/workflow-json-generation/` | `comfy/workflow_builder.py`, `comfy/node_catalog.py` |
 
 ## LLM brief adapter
 
 No skill covers this (it is the slice-4 adapter), so it is documented here.
 
-`bioflow_harness/server/handlers.py` calls `extract_brief(request_text, provider, model)` (in `bioflow_harness/llm/brief_extractor.py`). When `provider == "claude"`, it uses `ClaudeBriefExtractor`, which shells out to the user's **logged-in Claude Code CLI**:
+`bioflow_harness/server/handlers.py` calls `extract_brief(request_text, provider, model)` (in `bioflow_harness/llm/brief_extractor.py`). `provider` is one of `"claude"`, `"codex"`, `"gemini"`, each shelling out to that CLI's already-logged-in session (no API key stored anywhere) — the shared BRIEF_SCHEMA/SYSTEM_PROMPT and post-processing (`brief_from_payload`, `extract_json_object`) live in `bioflow_harness/llm/brief_schema.py` so the three extractors differ only in how they invoke their CLI and where they find the final response text:
 
-```
-claude -p <request_text> --output-format json --model <model> --system-prompt <extraction prompt> --disallowedTools "*"
-```
+- **claude** (`claude_extractor.py`): `claude -p <request_text> --output-format json --model <model> --system-prompt <prompt> --disallowedTools "*"`. Parses the CLI's JSON envelope (`{type, subtype, is_error, result, ...}`) and extracts `result`.
+- **codex** (`codex_extractor.py`): `codex exec "<system prompt>\n\nResearcher's request:\n<request_text>" --skip-git-repo-check --sandbox read-only --model <model> --output-schema <schema file> --json`. Codex has no separate system-prompt flag, so instructions and request text are combined into one prompt; `--output-schema` constrains the response to BRIEF_SCHEMA. `--json` prints one JSONL event per line to stdout — the last `item.completed`/`agent_message` event's `text` field is the response.
+- **gemini** (`gemini_extractor.py`): `gemini -p "<system prompt>\n\nResearcher's request:\n<request_text>" -m <model>`, parsing stdout directly. **This one is unverified** — it was implemented against Gemini CLI's documented non-interactive usage without a `gemini` binary available to test against in the environment it was written in; treat it as less proven than the claude/codex paths until checked against a real login.
 
-It parses the CLI's JSON envelope (`{type, subtype, is_error, result, ...}`), extracts the `result` text, and parses that into an `AnalysisBrief`. There is **no API key** — it reuses the Claude Code login. On any failure (missing binary, not logged in, non-zero exit, error envelope, unparseable output) it falls back to the deterministic `parse_prompt`, so a route always returns a usable brief. `provider` values `codex` and `gemini` fall back to the deterministic parser today.
+On any failure (missing binary, not logged in, non-zero exit, error/malformed response, schema-invalid payload) `extract_brief` falls back to the deterministic `parse_prompt`, so a route always returns a usable brief regardless of which provider is selected or whether its CLI is installed.
 
 ## Node catalog (authoritative)
 
@@ -125,7 +125,7 @@ The bulk route `bulk_rna_seq_salmon_ref` has 9 stages: `metadata_validation, rea
 
 Each tool entry carries: `id`, `label`, `domain_tags`, `stage_tags`, `input_types`, `output_types`, `language`, `summary`, `tier` (`REF` or `ALT`), `tier_rationale`, `context_routing_rules`, `selection_rules`, `future_comfy_node`, `runnable_node_status` (`runnable` when a registered node backs it), and `operations`. Each operation is `{id, label, input_types, output_types, node_type}` where `node_type` must be a key in the node catalog above.
 
-**Selection gate (route generation):** a route is selected and generated into workflow JSON when every stage's tool is `tier: REF`, `runnable_node_status: runnable`, and every `operation.node_type` resolves in `NODE_CLASS_MAPPINGS`. **Caveat:** `runnable_node_status: runnable` marks only that a *registered* node backs the operation; it does **not** guarantee the node *executes*. Today the bulk route (`bulk_rna_seq_salmon_ref`), the variant analysis route (`variant_analysis_bwa_ref`), the epigenomics route (`atac_seq_macs3_ref`), the metagenome route (`metagenome_kraken2_ref`), and the genome assembly route (`genome_assembly_spades_ref`) have nodes that implement `run()`; the scRNA route (`scrna_seq_scanpy_ref`) generates valid workflow JSON but its 7 nodes are construction-only stubs (see the Execution column above), so it is not yet an execution-ready route. `ALT` tools (e.g. STAR, featureCounts, MultiQC) require a recorded context-routing reason and are outside the MVP gate. See the `tool-ranking` and `context-routing` skills for the decision rules.
+**Selection gate (route generation):** a route is selected and generated into workflow JSON when every stage's tool is `tier: REF`, `runnable_node_status: runnable`, and every `operation.node_type` resolves in `NODE_CLASS_MAPPINGS`. **Caveat:** `runnable_node_status: runnable` marks only that a *registered* node backs the operation; it does **not** guarantee the node *executes*. Today the bulk route (`bulk_rna_seq_salmon_ref`), the variant analysis route (`variant_analysis_bwa_ref`), the epigenomics route (`atac_seq_macs3_ref`), the metagenome route (`metagenome_kraken2_ref`), and the genome assembly route (`genome_assembly_spades_ref`) have nodes that implement `run()`; the scRNA route (`scrna_seq_scanpy_ref`) generates valid workflow JSON but its 7 nodes are construction-only stubs (see the Execution column above), so it is not yet an execution-ready route. `ALT` tools (e.g. STAR, featureCounts, MultiQC) require a recorded context-routing reason and are outside the MVP gate. See the `tool-ranking` skill for the decision rules.
 
 ## Node authoring policy
 

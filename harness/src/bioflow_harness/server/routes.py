@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from bioflow_harness.llm.provider_status import provider_login_status
 from bioflow_harness.server.handlers import compile_spec, generate_workflow
 
 
@@ -17,6 +18,11 @@ def register_routes(server) -> None:
     async def _generate(request):
         payload = await request.json()
         return web.json_response(generate_workflow(payload))
+
+    @routes.get("/comfybio/provider_status")
+    async def _provider_status(request):
+        provider = request.query.get("provider", "")
+        return web.json_response(provider_login_status(provider))
 
     @routes.get("/comfybio/health")
     async def _health(request):

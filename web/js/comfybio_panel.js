@@ -95,8 +95,6 @@ const STEP_CATALOG = {
   },
 };
 
-const INITIAL_STEPS = ["input-validator", "fastqc", "fastp", "star", "featurecounts", "deseq2", "report"];
-
 function injectStyles() {
   if (document.getElementById("comfybio-panel-styles")) {
     return;
@@ -230,6 +228,56 @@ function injectStyles() {
       padding: 5px 9px;
       font-size: 12px;
       white-space: nowrap;
+    }
+
+    .cb-provider-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      color: var(--cb-muted);
+    }
+    .cb-provider-status::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--cb-muted);
+    }
+    .cb-provider-status.connected { color: var(--cb-success); }
+    .cb-provider-status.connected::before { background: var(--cb-success); }
+    .cb-provider-status.login_required, .cb-provider-status.unavailable, .cb-provider-status.not_configured {
+      color: var(--cb-warning);
+    }
+    .cb-provider-status.login_required::before,
+    .cb-provider-status.unavailable::before,
+    .cb-provider-status.not_configured::before {
+      background: var(--cb-warning);
+    }
+
+    .cb-button:disabled, .cb-tiny:disabled, .cb-icon-button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+    .cb-button.busy { position: relative; color: transparent !important; }
+    .cb-button.busy::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      width: 16px;
+      height: 16px;
+      border-radius: 999px;
+      border: 2px solid color-mix(in srgb, currentColor 30%, transparent);
+      border-top-color: var(--cb-accent-contrast, var(--cb-text));
+      color: var(--cb-text);
+      animation: cb-spin 700ms linear infinite;
+    }
+    .cb-button.apply.busy::after { color: var(--cb-accent-contrast); }
+    @keyframes cb-spin { to { transform: rotate(360deg); } }
+
+    .cb-field-error {
+      border-color: color-mix(in srgb, #ff7070 65%, transparent) !important;
     }
 
     .cb-icon-button, .cb-button, .cb-tiny, .cb-tab, .cb-path-button, .cb-step-option, .cb-replace-option {
@@ -771,22 +819,22 @@ function createPanel() {
         <span>Research-backed workflow generation</span>
       </div>
       <div class="cb-actions">
-        <span class="cb-status">Spec valid</span>
+        <span class="cb-status">Ready</span>
         <button class="cb-icon-button cb-close" type="button" title="Close">x</button>
       </div>
     </header>
     <section class="cb-content">
       <nav class="cb-tabs" role="tablist" aria-label="Harness console tabs">
-        <button class="cb-tab" data-tab="prompt" type="button">Prompt</button>
-        <button class="cb-tab active" data-tab="tool" type="button">Tool Select</button>
+        <button class="cb-tab active" data-tab="prompt" type="button">Prompt</button>
+        <button class="cb-tab" data-tab="tool" type="button">Tool Select</button>
         <button class="cb-tab" data-tab="generate" type="button">Generate Graph</button>
       </nav>
 
-      <section class="cb-panel-section" data-panel="prompt">
+      <section class="cb-panel-section active" data-panel="prompt">
         <div class="cb-box">
-          <div class="cb-box-header"><strong>LLM settings</strong><span>provider-specific model list</span></div>
+          <div class="cb-box-header"><strong>LLM settings</strong><span class="cb-provider-status">checking connection…</span></div>
           <div class="cb-settings-fields">
-            <label class="cb-field">Provider<select class="cb-provider"><option>codex</option><option>claude</option><option>gemini</option></select></label>
+            <label class="cb-field">Provider<select class="cb-provider"><option>claude</option><option>codex</option><option>gemini</option></select></label>
             <label class="cb-field">Model<select class="cb-model"></select></label>
           </div>
         </div>
@@ -796,32 +844,32 @@ function createPanel() {
         </div>
         <div class="cb-box">
           <div class="cb-box-header"><strong>Analysis request</strong><span>natural language prompt</span></div>
-          <label class="cb-field">Request<textarea class="cb-analysis-request">Analyze this FASTQ folder as RNA-seq, human GRCh38, treated vs control.</textarea></label>
+          <label class="cb-field">Request<textarea class="cb-analysis-request" placeholder="e.g. Analyze this FASTQ folder as RNA-seq, human GRCh38, treated vs control."></textarea></label>
         </div>
         <div class="cb-generate-footer"><button class="cb-button apply cb-submit" type="button">Submit</button></div>
       </section>
 
-      <section class="cb-panel-section active" data-panel="tool">
+      <section class="cb-panel-section" data-panel="tool">
         <div class="cb-box">
           <div class="cb-meta">
-            ${createField("Analysis domain", "Bulk RNA-seq").outerHTML}
-            ${createField("Workflow route", "Genome alignment + count matrix").outerHTML}
+            ${createField("Analysis domain", "—").outerHTML}
+            ${createField("Workflow route", "—").outerHTML}
           </div>
         </div>
-        <div class="cb-message">
-          <span class="severity">tool sequence</span>
-          Drag a handle to reorder a step, click a step to inspect details, or approve the spec for graph generation.
+        <div class="cb-message cb-tool-message">
+          <span class="severity">status</span>
+          Submit a request in the Prompt tab to see the recommended tool sequence.
         </div>
         <div class="cb-step-list"></div>
         <div class="cb-footer">
-          <span class="cb-chip">Spec edited, not approved</span>
+          <span class="cb-chip cb-spec-chip">No spec yet</span>
           <div class="cb-add-step-wrap">
-            <button class="cb-button cb-add-step" type="button" aria-expanded="false">Add Step</button>
+            <button class="cb-button cb-add-step" type="button" aria-expanded="false" disabled>Add Step</button>
             <div class="cb-add-step-menu">
               ${Object.entries(STEP_CATALOG).map(([key, value]) => `<button class="cb-step-option" type="button" data-step="${key}"><strong>${value.tool}</strong><span>${value.stage}</span></button>`).join("")}
             </div>
           </div>
-          <button class="cb-button apply cb-approve" type="button">Approve Spec</button>
+          <button class="cb-button apply cb-approve" type="button" disabled>Approve Spec</button>
         </div>
       </section>
 
@@ -831,14 +879,14 @@ function createPanel() {
           This graph will be generated from the prompt resources and the approved tool sequence.
         </div>
         <div class="cb-summary-grid">
-          ${createField("LLM", "codex / gpt-5.5").outerHTML}
-          ${createField("Input path", "/data/project/fastq").outerHTML}
-          ${createField("Output path", "/data/project/results").outerHTML}
-          ${createField("Resources", "metadata_csv, genome_index, gtf_annotation").outerHTML}
-          ${createField("Analysis domain", "Bulk RNA-seq").outerHTML}
-          ${createField("Tool sequence", "InputValidator, FastQC, fastp, STAR, featureCounts, DESeq2, InteractiveReport").outerHTML}
+          ${createField("LLM", "—").outerHTML}
+          ${createField("Input path", "—").outerHTML}
+          ${createField("Output path", "—").outerHTML}
+          ${createField("Resources", "—").outerHTML}
+          ${createField("Analysis domain", "—").outerHTML}
+          ${createField("Tool sequence", "—").outerHTML}
         </div>
-        <div class="cb-generate-footer"><button class="cb-button apply cb-generate" type="button">Generate Graph</button></div>
+        <div class="cb-generate-footer"><button class="cb-button apply cb-generate" type="button" disabled>Generate Graph</button></div>
       </section>
     </section>
   `;
@@ -865,12 +913,49 @@ function initializePanel(panel, launcher) {
   const launcherSize = 56;
   const provider = panel.querySelector(".cb-provider");
   const model = panel.querySelector(".cb-model");
+  const providerStatus = panel.querySelector(".cb-provider-status");
   const status = panel.querySelector(".cb-status");
   const resourceList = panel.querySelector(".cb-resource-list");
   const stepList = panel.querySelector(".cb-step-list");
+  const requestField = panel.querySelector(".cb-analysis-request");
+  const submitButton = panel.querySelector(".cb-submit");
+  const approveButton = panel.querySelector(".cb-approve");
+  const addStepButtonEl = panel.querySelector(".cb-add-step");
+  const generateButton = panel.querySelector(".cb-generate");
+  const specChip = panel.querySelector(".cb-spec-chip");
 
   function clamp(value, min, max) {
     return Math.min(Math.max(value, min), max);
+  }
+
+  function setBusy(button, isBusy, busyLabel) {
+    button.disabled = isBusy || button.dataset.disabledByState === "1";
+    button.classList.toggle("busy", isBusy);
+    if (isBusy) {
+      button.dataset.idleText = button.dataset.idleText || button.textContent;
+      button.textContent = busyLabel || button.dataset.idleText;
+    } else if (button.dataset.idleText) {
+      button.textContent = button.dataset.idleText;
+    }
+  }
+
+  function setEnabled(button, isEnabled) {
+    button.dataset.disabledByState = isEnabled ? "0" : "1";
+    button.disabled = !isEnabled;
+  }
+
+  async function refreshProviderStatus() {
+    providerStatus.className = "cb-provider-status";
+    providerStatus.textContent = "checking connection…";
+    try {
+      const response = await api.fetchApi(`/comfybio/provider_status?provider=${encodeURIComponent(provider.value)}`);
+      const data = await response.json();
+      providerStatus.className = `cb-provider-status ${data.status || ""}`;
+      providerStatus.textContent = data.message || (data.connected ? "Connected" : "Not connected");
+    } catch (error) {
+      providerStatus.className = "cb-provider-status unavailable";
+      providerStatus.textContent = "Status unavailable (backend offline?)";
+    }
   }
 
   function syncLauncher() {
@@ -931,9 +1016,18 @@ function initializePanel(panel, launcher) {
     };
   }
 
-  function renderServerSteps(steps) {
+  function renderServerSteps(spec) {
+    const steps = spec.steps || [];
     stepList.replaceChildren(...steps.map((dto) => createStep(stepFromDTO(dto))));
     renumberSteps();
+    const metaFields = panel.querySelectorAll('[data-panel="tool"] .cb-meta .cb-field strong');
+    if (metaFields[0]) metaFields[0].textContent = spec.domain || "—";
+    if (metaFields[1]) metaFields[1].textContent = spec.route_id || "—";
+    specChip.textContent = "Spec edited, not approved";
+    setEnabled(approveButton, steps.length > 0);
+    setEnabled(addStepButtonEl, steps.length > 0);
+    setEnabled(generateButton, false);
+    showToolMessage("Drag a handle to reorder a step, click a step to inspect details, or approve the spec for graph generation.");
     refreshSummary();
   }
 
@@ -942,6 +1036,12 @@ function initializePanel(panel, launcher) {
     if (message) {
       message.innerHTML = `<span class="severity">status</span>${text}`;
     }
+  }
+
+  function switchTab(selected) {
+    panel.querySelectorAll(".cb-tab").forEach((candidate) => candidate.classList.toggle("active", candidate.dataset.tab === selected));
+    panel.querySelectorAll(".cb-panel-section").forEach((section) => section.classList.toggle("active", section.dataset.panel === selected));
+    if (selected === "generate") refreshSummary();
   }
 
   function setExpandedStep(item, shouldExpand) {
@@ -965,23 +1065,23 @@ function initializePanel(panel, launcher) {
   function getResources() {
     return [...resourceList.querySelectorAll(".cb-resource-row")].map((row) => ({
       label: row.querySelector(".cb-resource-label")?.value?.trim() || "",
-      type: row.querySelector(".cb-resource-type")?.value || (row.querySelector(".cb-resource-label")?.readOnly ? "path" : "resource"),
+      type: row.querySelector(".cb-resource-type")?.value || "path",
       path: row.querySelector(".cb-resource-path")?.value?.trim() || "",
     })).filter((resource) => resource.label || resource.path);
   }
 
   function refreshSummary() {
     const resources = getResources();
-    const input = resources.find((resource) => resource.label === "input_path")?.path || "";
-    const output = resources.find((resource) => resource.label === "output_path")?.path || "";
+    const input = resources.find((resource) => resource.label === "input_path")?.path || "—";
+    const output = resources.find((resource) => resource.label === "output_path")?.path || "—";
     const extras = resources.filter((resource) => resource.label !== "input_path" && resource.label !== "output_path");
     const values = [
       `${provider.value} / ${model.value}`,
       input,
       output,
       extras.map((resource) => resource.label).join(", ") || "none",
-      "Bulk RNA-seq",
-      getToolSequence().join(", "),
+      state.spec?.domain || "—",
+      getToolSequence().join(", ") || "—",
     ];
     panel.querySelectorAll('[data-panel="generate"] .cb-field strong').forEach((field, index) => {
       field.textContent = values[index] || "";
@@ -1027,19 +1127,18 @@ function initializePanel(panel, launcher) {
     createExtraResource(),
     createTranscriptomeResource(),
   );
-  for (const key of INITIAL_STEPS) {
-    stepList.append(createStep(STEP_CATALOG[key]));
-  }
-  renumberSteps();
   refreshSummary();
   syncLauncher();
+  refreshProviderStatus();
 
   provider.addEventListener("change", () => {
     updateModelOptions();
     refreshSummary();
+    refreshProviderStatus();
   });
   model.addEventListener("change", refreshSummary);
   resourceList.addEventListener("input", refreshSummary);
+  requestField.addEventListener("input", () => requestField.classList.remove("cb-field-error"));
 
   panel.querySelector(".cb-add-resource").addEventListener("click", () => {
     resourceList.append(createExtraResource());
@@ -1071,13 +1170,23 @@ function initializePanel(panel, launcher) {
   });
 
   panel.querySelector(".cb-submit").addEventListener("click", async () => {
+    const requestText = requestField.value.trim();
+    if (!requestText) {
+      requestField.classList.add("cb-field-error");
+      requestField.focus();
+      status.textContent = "Request required";
+      return;
+    }
+    requestField.classList.remove("cb-field-error");
     const payload = {
       provider: provider.value,
       model: model.value,
-      request_text: panel.querySelector(".cb-analysis-request").value.trim(),
+      request_text: requestText,
       resources: getResources(),
     };
     state.lastPayload = payload;
+    setBusy(submitButton, true, "Compiling…");
+    status.textContent = "Compiling…";
     try {
       const response = await api.fetchApi("/comfybio/compile", {
         method: "POST",
@@ -1085,22 +1194,36 @@ function initializePanel(panel, launcher) {
         body: JSON.stringify(payload),
       });
       const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || `Server returned ${response.status}`);
+      }
+      switchTab("tool");
       if (data.status === "planning_required") {
+        state.spec = null;
+        stepList.replaceChildren();
+        setEnabled(approveButton, false);
+        setEnabled(addStepButtonEl, false);
+        setEnabled(generateButton, false);
+        specChip.textContent = "Planning required";
         status.textContent = "Planning required";
-        showToolMessage(data.message || "Domain requires planning.");
+        showToolMessage(data.message || "This domain has no runnable route yet.");
         return;
       }
       state.spec = data;
-      renderServerSteps(data.steps || []);
+      renderServerSteps(data);
       status.textContent = "Spec ready";
     } catch (error) {
-      status.textContent = "Backend offline";
-      showToolMessage(`Compile failed: ${error.message}`);
+      status.textContent = "Compile failed";
+      showToolMessage(`Compile failed: ${error.message}. Check that the ComfyBIO server is running.`);
+    } finally {
+      setBusy(submitButton, false);
     }
   });
 
   panel.querySelector(".cb-approve").addEventListener("click", () => {
     status.textContent = "Spec approved";
+    specChip.textContent = "Spec approved";
+    setEnabled(generateButton, true);
     refreshSummary();
   });
 
@@ -1109,10 +1232,12 @@ function initializePanel(panel, launcher) {
     const payload = {
       provider: provider.value,
       model: model.value,
-      request_text: panel.querySelector(".cb-analysis-request").value.trim(),
+      request_text: requestField.value.trim(),
       resources: getResources(),
       steps: getToolSequence(),
     };
+    setBusy(generateButton, true, "Generating…");
+    status.textContent = "Generating…";
     try {
       const response = await api.fetchApi("/comfybio/generate", {
         method: "POST",
@@ -1120,7 +1245,7 @@ function initializePanel(panel, launcher) {
         body: JSON.stringify(payload),
       });
       const data = await response.json();
-      if (data.status !== "ok" || !data.workflow) {
+      if (!response.ok || data.status !== "ok" || !data.workflow) {
         status.textContent = "Generate failed";
         showToolMessage(data.message || "Workflow generation failed.");
         return;
@@ -1132,7 +1257,9 @@ function initializePanel(panel, launcher) {
       }
     } catch (error) {
       status.textContent = "Backend offline";
-      showToolMessage(`Generate failed: ${error.message}`);
+      showToolMessage(`Generate failed: ${error.message}. Check that the ComfyBIO server is running.`);
+    } finally {
+      setBusy(generateButton, false);
     }
   });
 
@@ -1205,10 +1332,7 @@ function initializePanel(panel, launcher) {
   panel.querySelector(".cb-tabs").addEventListener("click", (event) => {
     const tab = event.target.closest(".cb-tab");
     if (!tab) return;
-    const selected = tab.dataset.tab;
-    panel.querySelectorAll(".cb-tab").forEach((candidate) => candidate.classList.toggle("active", candidate === tab));
-    panel.querySelectorAll(".cb-panel-section").forEach((section) => section.classList.toggle("active", section.dataset.panel === selected));
-    if (selected === "generate") refreshSummary();
+    switchTab(tab.dataset.tab);
   });
 
   stepList.addEventListener("click", (event) => {

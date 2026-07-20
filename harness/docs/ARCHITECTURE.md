@@ -16,6 +16,7 @@ The browser panel `web/js/comfybio_panel.js` renders the draggable launcher and 
 
 - `POST /comfybio/compile` → `handlers.compile_spec`
 - `POST /comfybio/generate` → `handlers.generate_workflow`
+- `GET /comfybio/provider_status?provider=<name>` → `llm.provider_status.provider_login_status`, so the panel can show a live connected/login-required/unavailable indicator per LLM provider instead of assuming one is configured.
 - `GET /comfybio/health`
 
 ## End-to-end pipeline

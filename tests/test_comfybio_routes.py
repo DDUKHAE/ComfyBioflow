@@ -25,9 +25,10 @@ class _FakeServer:
         self.routes = _FakeRoutes()
 
 
-def test_register_routes_attaches_three_endpoints():
+def test_register_routes_attaches_endpoints():
     server = _FakeServer()
     register_routes(server)
     assert ("POST", "/comfybio/compile") in server.routes.registered
     assert ("POST", "/comfybio/generate") in server.routes.registered
+    assert ("GET", "/comfybio/provider_status") in server.routes.registered
     assert ("GET", "/comfybio/health") in server.routes.registered

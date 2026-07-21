@@ -227,11 +227,22 @@ class Macs3PeakCallingNode(_BaseComfyBIONode):
             bam = sample_dir / "final.bam"
             sample_out = out / sample_dir.name
             sample_out.mkdir(parents=True, exist_ok=True)
+            format_flag = "BAMPE" if self._is_paired_end(runner, bam, sample_out) else "BAM"
             runner.run(
-                atac_stage_commands.macs3_callpeak_argv(bam, sample_out, sample_dir.name, genome_size, extra_command),
+                atac_stage_commands.macs3_callpeak_argv(bam, sample_out, sample_dir.name, genome_size, format_flag, extra_command),
                 sample_out,
             )
         return (str(out),)
+
+    @staticmethod
+    def _is_paired_end(runner, bam, cwd) -> bool:
+        record = runner.run(atac_stage_commands.samtools_count_paired_argv(bam), cwd)
+        try:
+            return int(record.stdout.strip()) > 0
+        except (ValueError, AttributeError):
+            # Dry-run runners return empty stdout (no real samtools execution); default to
+            # BAMPE, matching this route's paired-end-by-convention ATAC-seq assumption.
+            return True
 
 
 class AtacPeakVisualizationNode(_BaseComfyBIONode):

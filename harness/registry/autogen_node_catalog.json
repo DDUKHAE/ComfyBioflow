@@ -1,0 +1,199 @@
+[
+  {
+    "node_type": "FastpNode",
+    "title": "fastp",
+    "category": "ComfyBIO/Autogen",
+    "inputs": [
+      {
+        "name": "raw_fastq",
+        "type": "STRING"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "trimmed_fastq",
+        "type": "STRING"
+      }
+    ],
+    "widgets": [
+      "trimmed_fastq",
+      ""
+    ]
+  },
+  {
+    "node_type": "SalmonNode",
+    "title": "Salmon",
+    "category": "ComfyBIO/Autogen",
+    "inputs": [
+      {
+        "name": "trimmed_fastq",
+        "type": "STRING"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "salmon_quant_sf",
+        "type": "STRING"
+      }
+    ],
+    "widgets": [
+      "salmon_quant_sf",
+      ""
+    ]
+  },
+  {
+    "node_type": "TximportNode",
+    "title": "tximport",
+    "category": "ComfyBIO/Autogen",
+    "inputs": [
+      {
+        "name": "salmon_quant_sf",
+        "type": "STRING"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "gene_count_matrix",
+        "type": "STRING"
+      }
+    ],
+    "widgets": [
+      "gene_count_matrix",
+      ""
+    ]
+  },
+  {
+    "node_type": "Deseq2Node",
+    "title": "DESeq2",
+    "category": "ComfyBIO/Autogen",
+    "inputs": [
+      {
+        "name": "gene_count_matrix",
+        "type": "STRING"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "dge_results_table",
+        "type": "STRING"
+      }
+    ],
+    "widgets": [
+      "dge_results_table",
+      ""
+    ]
+  },
+  {
+    "node_type": "EnhancedvolcanoNode",
+    "title": "EnhancedVolcano",
+    "category": "ComfyBIO/Visualization",
+    "inputs": [
+      {
+        "name": "dge_results_table",
+        "type": "STRING"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "volcano_plot_png",
+        "type": "STRING"
+      },
+      {
+        "name": "preview_plot",
+        "type": "IMAGE"
+      }
+    ],
+    "widgets": [
+      "volcano_plot_png",
+      ""
+    ]
+  },
+  {
+    "node_type": "Bowtie2Node",
+    "title": "Bowtie2",
+    "category": "ComfyBIO/Autogen",
+    "inputs": [
+      {
+        "name": "trimmed_fastq",
+        "type": "STRING"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "sam_alignment",
+        "type": "STRING"
+      }
+    ],
+    "widgets": [
+      "sam_alignment",
+      ""
+    ]
+  },
+  {
+    "node_type": "SamtoolsNode",
+    "title": "SAMtools",
+    "category": "ComfyBIO/Autogen",
+    "inputs": [
+      {
+        "name": "sam_alignment",
+        "type": "STRING"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "sorted_bam",
+        "type": "STRING"
+      }
+    ],
+    "widgets": [
+      "sorted_bam",
+      ""
+    ]
+  },
+  {
+    "node_type": "Macs2Node",
+    "title": "MACS2",
+    "category": "ComfyBIO/Autogen",
+    "inputs": [
+      {
+        "name": "sorted_bam",
+        "type": "STRING"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "peak_calls",
+        "type": "STRING"
+      }
+    ],
+    "widgets": [
+      "peak_calls",
+      ""
+    ]
+  },
+  {
+    "node_type": "DeeptoolsPlotheatmapNode",
+    "title": "deepTools (plotHeatmap)",
+    "category": "ComfyBIO/Visualization",
+    "inputs": [
+      {
+        "name": "bigwig_signal",
+        "type": "STRING"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "visualization_artifacts",
+        "type": "STRING"
+      },
+      {
+        "name": "preview_plot",
+        "type": "IMAGE"
+      }
+    ],
+    "widgets": [
+      "visualization_artifacts",
+      ""
+    ]
+  }
+]

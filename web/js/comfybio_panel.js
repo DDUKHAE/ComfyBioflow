@@ -280,7 +280,7 @@ function injectStyles() {
       border-color: color-mix(in srgb, #ff7070 65%, transparent) !important;
     }
 
-    .cb-icon-button, .cb-button, .cb-tiny, .cb-tab, .cb-path-button, .cb-step-option, .cb-replace-option {
+    .cb-icon-button, .cb-button, .cb-tiny, .cb-tab, .cb-step-option, .cb-replace-option {
       border: 1px solid var(--cb-line);
       color: var(--cb-text);
       background: var(--cb-panel-2);
@@ -383,7 +383,7 @@ function injectStyles() {
     .cb-field textarea { min-height: 92px; resize: vertical; }
     .cb-resource-row {
       display: grid;
-      grid-template-columns: minmax(96px, .8fr) minmax(0, 1fr) auto auto;
+      grid-template-columns: minmax(96px, .8fr) minmax(0, 1fr) auto;
       align-items: end;
       gap: 8px;
       padding: 8px;
@@ -391,9 +391,9 @@ function injectStyles() {
       border-radius: 8px;
       background: var(--cb-panel-2);
     }
-    .cb-resource-row.extra { grid-template-columns: minmax(88px, .7fr) minmax(80px, .55fr) minmax(0, 1fr) auto auto; }
-    .cb-path-wrap, .cb-add-step-wrap { position: relative; }
-    .cb-path-menu, .cb-add-step-menu {
+    .cb-resource-row.extra { grid-template-columns: minmax(88px, .7fr) minmax(80px, .55fr) minmax(0, 1fr) auto; }
+    .cb-add-step-wrap { position: relative; }
+    .cb-add-step-menu {
       position: absolute;
       right: 0;
       z-index: 5;
@@ -405,13 +405,9 @@ function injectStyles() {
       border-radius: 8px;
       background: var(--cb-panel-2);
       box-shadow: 0 14px 32px rgba(0, 0, 0, 0.32);
-    }
-    .cb-path-menu { top: calc(100% + 6px); }
-    .cb-add-step-menu {
       bottom: calc(100% + 8px);
       width: min(280px, calc(100vw - 40px));
     }
-    .cb-path-wrap.open .cb-path-menu,
     .cb-add-step-wrap.open .cb-add-step-menu { display: grid; }
 
     .cb-message {
@@ -436,6 +432,12 @@ function injectStyles() {
     }
     .cb-step-list { display: grid; gap: 8px; }
     .cb-step-list.drag-active { user-select: none; }
+    .cb-edit-notice {
+      margin: 0;
+      font-size: 11px;
+      line-height: 1.4;
+      color: var(--cb-muted);
+    }
     .cb-step {
       min-width: 0;
       border: 1px solid var(--cb-line);
@@ -635,6 +637,12 @@ function injectStyles() {
   document.head.append(style);
 }
 
+const _escapeHtmlEl = document.createElement("span");
+function escapeHtml(value) {
+  _escapeHtmlEl.textContent = value == null ? "" : String(value);
+  return _escapeHtmlEl.innerHTML;
+}
+
 function el(tag, options = {}, children = []) {
   const node = document.createElement(tag);
   for (const [key, value] of Object.entries(options)) {
@@ -663,23 +671,21 @@ function createField(label, value) {
   ]);
 }
 
+// ComfyUI's browser panel cannot open a native OS file/folder dialog and get a full
+// filesystem path back (browsers only expose a filename, not the absolute path, without
+// an Electron-style desktop wrapper) — so paths are typed directly rather than "browsed".
+const PATH_INPUT_PLACEHOLDER = "Absolute path on the machine running ComfyUI";
+
 function createPathPicker(label, value, readonly = false) {
   const row = el("div", { class: "cb-resource-row" });
   row.innerHTML = `
     <div class="cb-field">
       <label>Label</label>
-      <input class="cb-resource-label" value="${label}" ${readonly ? "readonly" : ""}>
+      <input class="cb-resource-label" value="${escapeHtml(label)}" ${readonly ? "readonly" : ""}>
     </div>
     <div class="cb-field">
       <label>Path</label>
-      <input class="cb-resource-path" value="${value}">
-    </div>
-    <div class="cb-path-wrap">
-      <button class="cb-path-button cb-tiny" type="button">Browse</button>
-      <div class="cb-path-menu">
-        <button class="cb-tiny cb-path-choice" type="button" data-kind="file">File</button>
-        <button class="cb-tiny cb-path-choice" type="button" data-kind="folder">Folder</button>
-      </div>
+      <input class="cb-resource-path" value="${escapeHtml(value)}" placeholder="${PATH_INPUT_PLACEHOLDER}">
     </div>
     <button class="cb-tiny cb-remove-resource" type="button" ${readonly ? "hidden" : ""}>x</button>
   `;
@@ -706,14 +712,7 @@ function createExtraResource() {
     </div>
     <div class="cb-field">
       <label>Path</label>
-      <input class="cb-resource-path" value="/data/project/sample_metadata.csv">
-    </div>
-    <div class="cb-path-wrap">
-      <button class="cb-path-button cb-tiny" type="button">Browse</button>
-      <div class="cb-path-menu">
-        <button class="cb-tiny cb-path-choice" type="button" data-kind="file">File</button>
-        <button class="cb-tiny cb-path-choice" type="button" data-kind="folder">Folder</button>
-      </div>
+      <input class="cb-resource-path" value="/data/project/sample_metadata.csv" placeholder="${PATH_INPUT_PLACEHOLDER}">
     </div>
     <button class="cb-tiny cb-remove-resource" type="button">x</button>
   `;
@@ -740,14 +739,7 @@ function createTranscriptomeResource() {
     </div>
     <div class="cb-field">
       <label>Path</label>
-      <input class="cb-resource-path" value="/data/project/transcriptome.fasta">
-    </div>
-    <div class="cb-path-wrap">
-      <button class="cb-path-button cb-tiny" type="button">Browse</button>
-      <div class="cb-path-menu">
-        <button class="cb-tiny cb-path-choice" type="button" data-kind="file">File</button>
-        <button class="cb-tiny cb-path-choice" type="button" data-kind="folder">Folder</button>
-      </div>
+      <input class="cb-resource-path" value="/data/project/transcriptome.fasta" placeholder="${PATH_INPUT_PLACEHOLDER}">
     </div>
     <button class="cb-tiny cb-remove-resource" type="button">x</button>
   `;
@@ -760,8 +752,8 @@ function createStep(step) {
     <div class="cb-step-summary" role="button" tabindex="0" aria-expanded="false">
       <span class="cb-drag" title="Drag to reorder" aria-hidden="true">::</span>
       <span class="cb-badge">0</span>
-      <span class="cb-step-label">${step.stage}</span>
-      <span class="cb-step-tool">${step.tool}</span>
+      <span class="cb-step-label">${escapeHtml(step.stage)}</span>
+      <span class="cb-step-tool">${escapeHtml(step.tool)}</span>
       <button class="cb-step-remove" type="button" aria-label="Remove step">x</button>
     </div>
     <div class="cb-step-detail">
@@ -771,11 +763,11 @@ function createStep(step) {
       </div>
       <div class="cb-actions-row"><button class="cb-tiny cb-replace-trigger" type="button">Replace</button></div>
       <div class="cb-replace-popover" aria-label="Replacement tool candidates">
-        <div class="cb-replace-title"><strong>${step.title}</strong><span>${step.subtitle}</span></div>
+        <div class="cb-replace-title"><strong>${escapeHtml(step.title)}</strong><span>${escapeHtml(step.subtitle)}</span></div>
         ${step.candidates.map((candidate, index) => `
           <button class="cb-replace-option ${index === 0 ? "recommended" : ""}" type="button">
-            <strong>${candidate[0]} <span class="cb-chip${candidate[2]}">${candidate[1]}</span></strong>
-            <span>${candidate[3]}</span>
+            <strong>${escapeHtml(candidate[0])} <span class="cb-chip${candidate[2]}">${escapeHtml(candidate[1])}</span></strong>
+            <span>${escapeHtml(candidate[3])}</span>
           </button>
         `).join("")}
       </div>
@@ -861,6 +853,7 @@ function createPanel() {
           Submit a request in the Prompt tab to see the recommended tool sequence.
         </div>
         <div class="cb-step-list"></div>
+        <p class="cb-edit-notice">Reordering, adding, or replacing steps below is exploratory — Generate Graph currently builds the workflow from the recommended default route regardless of edits made here.</p>
         <div class="cb-footer">
           <span class="cb-chip cb-spec-chip">No spec yet</span>
           <div class="cb-add-step-wrap">
@@ -1034,7 +1027,7 @@ function initializePanel(panel, launcher) {
   function showToolMessage(text) {
     const message = panel.querySelector('[data-panel="tool"] .cb-message');
     if (message) {
-      message.innerHTML = `<span class="severity">status</span>${text}`;
+      message.innerHTML = `<span class="severity">status</span>${escapeHtml(text)}`;
     }
   }
 
@@ -1146,22 +1139,6 @@ function initializePanel(panel, launcher) {
   });
 
   resourceList.addEventListener("click", (event) => {
-    const picker = event.target.closest(".cb-path-button");
-    if (picker) {
-      const wrap = picker.closest(".cb-path-wrap");
-      resourceList.querySelectorAll(".cb-path-wrap.open").forEach((candidate) => {
-        if (candidate !== wrap) candidate.classList.remove("open");
-      });
-      wrap.classList.toggle("open");
-      return;
-    }
-    const choice = event.target.closest(".cb-path-choice");
-    if (choice) {
-      const wrap = choice.closest(".cb-path-wrap");
-      wrap.querySelector(".cb-path-button").textContent = choice.dataset.kind === "file" ? "File" : "Folder";
-      wrap.classList.remove("open");
-      return;
-    }
     const remove = event.target.closest(".cb-remove-resource");
     if (remove) {
       remove.closest(".cb-resource-row")?.remove();

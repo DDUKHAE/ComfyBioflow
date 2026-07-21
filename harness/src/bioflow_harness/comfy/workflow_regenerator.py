@@ -14,6 +14,9 @@ def regenerate_bulk_rna_seq_workflow(
     fixture = validate_quickstart_fixture(fixture_dir)
     catalog = default_node_catalog()
     base_metadata = _metadata_by_type(workflow)
+    # Derived from the actual fixture directory name, not a hardcoded "quickstart" literal —
+    # this function is reachable with any --fixture-dir, not just the quickstart default.
+    run_root = fixture.fixture_dir.parent.parent / "runs" / fixture.fixture_dir.name
 
     node_specs: list[tuple[str, list[object], str | None]] = [
         (
@@ -27,7 +30,7 @@ def regenerate_bulk_rna_seq_workflow(
         sample_widgets = [
             str(sample.fastq_1),
             str(sample.fastq_2) if sample.fastq_2 is not None else "",
-            str(fixture.fixture_dir.parent.parent / "runs" / "quickstart" / "qc" / f"{sample.sample_id}.fastp.json"),
+            str(run_root / "qc" / f"{sample.sample_id}.fastp.json"),
             2,
             "",
         ]
@@ -35,7 +38,7 @@ def regenerate_bulk_rna_seq_workflow(
         trim_widgets = [
             str(sample.fastq_1),
             str(sample.fastq_2) if sample.fastq_2 is not None else "",
-            str(fixture.fixture_dir.parent.parent / "runs" / "quickstart" / "trimmed" / sample.sample_id),
+            str(run_root / "trimmed" / sample.sample_id),
             2,
             _trim_policy() if apply_safe_defaults else "--length_required 1",
         ]
@@ -46,7 +49,7 @@ def regenerate_bulk_rna_seq_workflow(
             "SalmonIndexNode",
             [
                 str(fixture.transcriptome_fasta),
-                str(fixture.fixture_dir.parent.parent / "runs" / "quickstart" / "salmon_index"),
+                str(run_root / "salmon_index"),
                 2,
                 "-k 7",
             ],
@@ -58,10 +61,10 @@ def regenerate_bulk_rna_seq_workflow(
             (
                 "SalmonQuantNode",
                 [
-                    str(fixture.fixture_dir.parent.parent / "runs" / "quickstart" / "salmon_index"),
-                    str(fixture.fixture_dir.parent.parent / "runs" / "quickstart" / "trimmed" / sample.sample_id / "R1.fastq"),
-                    str(fixture.fixture_dir.parent.parent / "runs" / "quickstart" / "trimmed" / sample.sample_id / "R2.fastq"),
-                    str(fixture.fixture_dir.parent.parent / "runs" / "quickstart" / "salmon_quant" / sample.sample_id),
+                    str(run_root / "salmon_index"),
+                    str(run_root / "trimmed" / sample.sample_id / "R1.fastq"),
+                    str(run_root / "trimmed" / sample.sample_id / "R2.fastq"),
+                    str(run_root / "salmon_quant" / sample.sample_id),
                     "A",
                     2,
                     "",
@@ -75,8 +78,8 @@ def regenerate_bulk_rna_seq_workflow(
             (
                 "TximportNode",
                 [
-                    str(fixture.fixture_dir.parent.parent / "runs" / "quickstart" / "salmon_quant"),
-                    str(fixture.fixture_dir.parent.parent / "runs" / "quickstart" / "deseq2" / "count_matrix.csv"),
+                    str(run_root / "salmon_quant"),
+                    str(run_root / "deseq2" / "count_matrix.csv"),
                     "",
                 ],
                 None,
@@ -84,9 +87,9 @@ def regenerate_bulk_rna_seq_workflow(
             (
                 "DESeq2AnalysisNode",
                 [
-                    str(fixture.fixture_dir.parent.parent / "runs" / "quickstart" / "deseq2" / "count_matrix.csv"),
+                    str(run_root / "deseq2" / "count_matrix.csv"),
                     str(fixture.sample_metadata),
-                    str(fixture.fixture_dir.parent.parent / "runs" / "quickstart" / "deseq2" / "results.csv"),
+                    str(run_root / "deseq2" / "results.csv"),
                     "~ condition",
                     _deseq2_policy() if apply_safe_defaults else "",
                 ],
@@ -95,9 +98,9 @@ def regenerate_bulk_rna_seq_workflow(
             (
                 "DESeq2VisualizationNode",
                 [
-                    str(fixture.fixture_dir.parent.parent / "runs" / "quickstart" / "deseq2" / "count_matrix.csv"),
-                    str(fixture.fixture_dir.parent.parent / "runs" / "quickstart" / "deseq2" / "results.csv"),
-                    str(fixture.fixture_dir.parent.parent / "runs" / "quickstart" / "plots"),
+                    str(run_root / "deseq2" / "count_matrix.csv"),
+                    str(run_root / "deseq2" / "results.csv"),
+                    str(run_root / "plots"),
                     "pca,ma,volcano,heatmap",
                 ],
                 None,
@@ -105,9 +108,9 @@ def regenerate_bulk_rna_seq_workflow(
             (
                 "ComfyBIOReportNode",
                 [
-                    str(fixture.fixture_dir.parent.parent / "runs" / "quickstart" / "deseq2" / "results.csv"),
-                    str(fixture.fixture_dir.parent.parent / "runs" / "quickstart" / "plots"),
-                    str(fixture.fixture_dir.parent.parent / "runs" / "quickstart" / "report" / "comfybio_report.md"),
+                    str(run_root / "deseq2" / "results.csv"),
+                    str(run_root / "plots"),
+                    str(run_root / "report" / "comfybio_report.md"),
                     _report_contract() if apply_safe_defaults else "",
                 ],
                 None,

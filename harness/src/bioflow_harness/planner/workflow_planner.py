@@ -1,7 +1,6 @@
 from bioflow_harness.models.prompt_contract import AnalysisBrief
 from bioflow_harness.models.registry_contract import ToolRegistry
 from bioflow_harness.models.workflow_plan import WorkflowPlan, WorkflowStage
-from bioflow_harness.planner.stage_mapper import route_for_domain
 from bioflow_harness.planner.tool_selector import ToolSelector
 
 
@@ -10,7 +9,10 @@ class WorkflowPlanner:
         self.registry = registry
 
     def plan(self, brief: AnalysisBrief) -> WorkflowPlan:
-        route_id = route_for_domain(brief.domain)
+        try:
+            route_id = self.registry.route_id_for_domain(brief.domain)
+        except KeyError as error:
+            raise ValueError(str(error)) from error
         stages: list[WorkflowStage] = []
         selector = ToolSelector(self.registry)
         route = {stage.stage_id: stage for stage in self.registry.official_route(route_id)}

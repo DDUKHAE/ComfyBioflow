@@ -1,4 +1,6 @@
+import json
 from dataclasses import dataclass
+from pathlib import Path
 
 
 @dataclass(frozen=True)
@@ -9,6 +11,36 @@ class NodeDefinition:
     inputs: list[dict[str, str]]
     outputs: list[dict[str, str]]
     widgets: list[str | int | bool]
+
+
+AUTOGEN_NODE_CATALOG_PATH = Path(__file__).resolve().parents[3] / "registry" / "autogen_node_catalog.json"
+
+
+def load_autogen_node_catalog(path: Path | None = None) -> dict[str, "NodeDefinition"]:
+    """Node definitions self-authored by autogen.node_synthesizer for LLM-researched
+    domains/tools. Empty dict if the sidecar file doesn't exist yet."""
+    catalog_path = path or AUTOGEN_NODE_CATALOG_PATH
+    if not catalog_path.exists():
+        return {}
+    entries = json.loads(catalog_path.read_text(encoding="utf-8"))
+    return {
+        entry["node_type"]: NodeDefinition(
+            node_type=entry["node_type"],
+            title=entry["title"],
+            category=entry["category"],
+            inputs=entry["inputs"],
+            outputs=entry["outputs"],
+            widgets=entry["widgets"],
+        )
+        for entry in entries
+    }
+
+
+def combined_node_catalog(autogen_path: Path | None = None) -> dict[str, "NodeDefinition"]:
+    """The hand-authored default catalog merged with any autogen-synthesized node
+    definitions. Use this (instead of default_node_catalog()) wherever a workflow may
+    reference a self-extended domain's nodes."""
+    return {**default_node_catalog(), **load_autogen_node_catalog(autogen_path)}
 
 
 def default_node_catalog() -> dict[str, NodeDefinition]:

@@ -19,9 +19,9 @@ def validate_workflow_export(workflow: dict) -> dict:
     if node_ids != expected_ids:
         raise WorkflowValidationError(f"Workflow node ids must be sequential starting at 1: {node_ids}")
 
-    from bioflow_harness.comfy.node_catalog import default_node_catalog
+    from bioflow_harness.comfy.node_catalog import combined_node_catalog
 
-    known_node_types = set(default_node_catalog().keys())
+    known_node_types = set(combined_node_catalog().keys())
     node_id_set = set(node_ids)
     for node in workflow["nodes"]:
         node_type = node.get("type")

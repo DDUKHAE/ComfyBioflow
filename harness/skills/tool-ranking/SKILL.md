@@ -27,6 +27,17 @@ When choosing which tool becomes `REF` for a new stage (see `domain-bootstrap`),
 
 A credible tool that loses on these criteria is still worth recording as `tier: "ALT"`, `runnable_node_status: "planned"` rather than dropped — e.g. GATK, MEGAHIT, Centrifuge, MultiQC.
 
+## Evidence tier: tagging *why* a rubric criterion applies, not just asserting it
+
+Every tool entry carries `evidence_tier` and `evidence_citation`, so a REF/ALT rationale is never just an unattributed developer claim. This is the mechanism behind the "Evidence Hierarchy for Tier Assignment" described in the project paper (`paper.md` Section 3.2.1):
+
+1. `primary_openebench` — backed by a concretely identified ELIXIR OpenEBench/bio.tools community benchmarking challenge or adoption-frequency statistic for this exact comparison. Do not use this tag unless you can name and check the actual challenge/community page — as of this registry's last citation pass, no such page had been independently confirmed for any tool here, so this tier is currently unused.
+2. `secondary_literature` — OpenEBench/bio.tools has no dedicated challenge for the comparison; backed instead by a specific, checkable benchmark paper cited in `evidence_citation` (author/year/venue/URL), or explicitly reusing the citation already verified for the other side of the same head-to-head comparison (e.g. `gatk_haplotype_caller`'s citation just points back to `bcftools_call`'s). 55 of 93 tools carry this tag after two citation passes — see the registry for the exact text per tool. Where the literature is mixed (e.g. `deseq2_analysis`, `salmon_quant`, `samtools_markdup`), the citation says so rather than overclaiming a unanimous win, and flags itself as weaker evidence when the only source found is a community forum thread rather than a published benchmark (e.g. `samtools_markdup`/`atac_samtools_markdup`/`picard_markduplicates`).
+3. `not_applicable_internal_node` — a permanent classification, not a to-do: this entry is a ComfyBIO-authored glue/validation/reporting node (input validators, most `*_visualization`/`*_report` nodes) with no competing external tool to benchmark against, so no citation is ever owed. 17 tools are tagged this way. Don't confuse this with tier 4 below — if a tool has a recorded `ALT` alternative (e.g. `comfybio_report` vs `multiqc`), it's a real REF-vs-ALT choice and belongs in tier 2, not here.
+4. `pending_citation_review` — a real REF-vs-ALT choice between external tools that hasn't been backed by a verified citation yet. 21 tools remain here after two citation passes (mostly niche ALT entries — e.g. `snpeff_annotate`, `humann_functional`, `bwa_align`, `sambamba`) — do the research before upgrading one of these, don't guess.
+
+When adding a new REF tool (during `domain-bootstrap`) or upgrading an existing rationale, search for a real citation before writing `secondary_literature` — an invented or unchecked citation is worse than leaving the tool `pending_citation_review`, since it looks evidence-backed without being verifiable. Check whether the other side of the same comparison already has a citation first (tier 2's reuse case) before starting new research. `models/registry_contract.py::SUPPORTED_EVIDENCE_TIERS` is the enforced enum; `ToolEntry.validate()` rejects any other value.
+
 ## Context override guidance
 
 Some requests mention a need that a REF tool doesn't cover (e.g. explicit genome alignment, or a QC dashboard beyond fastp's report). Use this to decide whether that's worth recording, not to switch tools at runtime:

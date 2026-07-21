@@ -15,15 +15,6 @@ BRIEF_SCHEMA = {
         "analysis_type": {"type": "string"},
         "domain": {
             "type": "string",
-            "enum": [
-                "bulk_rna_seq",
-                "scrna_seq",
-                "variant_analysis",
-                "epigenomics",
-                "metagenome",
-                "genome_assembly",
-                "unsupported",
-            ],
         },
         "input_assets": {"type": "array", "items": {"type": "string"}},
         "organism": {"type": "string"},
@@ -59,19 +50,25 @@ BRIEF_SCHEMA = {
 
 SYSTEM_PROMPT = """You extract a structured bioinformatics analysis brief from a researcher's free-text request.
 
-Supported domains:
+Known domains (use the exact slug when the request genuinely matches its pipeline):
 - "bulk_rna_seq": bulk RNA sequencing (FASTQ reads, differential expression, salmon/DESeq2, etc.)
 - "scrna_seq": single-cell RNA sequencing (10x, Cell Ranger, scanpy, clustering, UMAP, marker genes)
 - "variant_analysis": germline variant calling (FASTQ reads, bwa-mem2 alignment, bcftools calling, VCF)
 - "epigenomics": ATAC-seq chromatin accessibility (peak calling, MACS3). Not ChIP-seq — ChIP-seq needs
-  control-sample pairing and has no route yet, so classify ChIP-seq requests as "unsupported".
+  control-sample pairing and a different pipeline; do not classify it as "epigenomics".
 - "metagenome": shotgun metagenomic taxonomic classification (Kraken2/Bracken, microbiome profiling)
 - "genome_assembly": bacterial isolate de novo assembly (SPAdes, QUAST QC)
-- "unsupported": anything that is none of the above
+
+Never force-fit a request into one of the known domains above just because it is the closest match —
+a wrong domain silently produces the wrong pipeline. If the request is a legitimate bioinformatics
+analysis that does NOT genuinely match any known domain's pipeline (e.g. ChIP-seq, long-read structural
+variant calling, spatial transcriptomics), invent a new short, descriptive snake_case domain slug for it
+instead (e.g. "chip_seq", "long_read_sv"). Only use "unsupported" when the request is not a
+bioinformatics analysis request at all.
 
 Fields:
 - analysis_type: short slug for the intent (e.g. "differential_expression", "single_cell_analysis", "workflow_generation")
-- domain: one of the values above
+- domain: one of the known slugs above, a new invented slug, or "unsupported" (see rules above)
 - input_assets: input data kinds mentioned (e.g. "fastq", "sample_metadata")
 - organism: the species/genome if stated, else an empty string
 - expected_outputs: artifacts wanted (e.g. "salmon_quantification", "deseq2_results", "visualization_artifacts", "report")

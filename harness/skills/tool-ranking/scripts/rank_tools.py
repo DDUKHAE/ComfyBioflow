@@ -12,7 +12,9 @@ def main() -> None:
     registry = load_registry(args.registry)
     for tool in registry.tools:
         if args.stage in tool.stage_tags:
-            print(f"{tool.tier}\t{tool.id}\t{tool.tier_rationale}")
+            print(f"{tool.tier}\t{tool.id}\t[{tool.evidence_tier}]\t{tool.tier_rationale}")
+            if tool.evidence_citation:
+                print(f"\t\tcitation: {tool.evidence_citation}")
 
 
 if __name__ == "__main__":

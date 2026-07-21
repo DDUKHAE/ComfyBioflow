@@ -3,7 +3,7 @@ import json
 from dataclasses import asdict
 from pathlib import Path
 
-from bioflow_harness.comfy.node_catalog import default_node_catalog
+from bioflow_harness.comfy.node_catalog import combined_node_catalog
 from bioflow_harness.comfy.pending_workflow import write_pending_workflow_record
 from bioflow_harness.comfy.workflow_auditor import audit_workflow
 from bioflow_harness.comfy.workflow_builder import WorkflowBuilder
@@ -28,7 +28,7 @@ def build_workflow(
         plan = WorkflowPlanner(load_registry(registry_path)).plan(brief)
     except ValueError as error:
         raise WorkflowPlanningRequired(brief.domain, brief.confidence_notes) from error
-    workflow = WorkflowBuilder(default_node_catalog()).build(plan)
+    workflow = WorkflowBuilder(combined_node_catalog()).build(plan)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(json.dumps(workflow, indent=2), encoding="utf-8")
     if write_pending_record:
@@ -117,7 +117,7 @@ def main() -> None:
         report = validate_official_route(
             load_registry(args.registry),
             args.route_id,
-            default_node_catalog(),
+            combined_node_catalog(),
         )
         print(json.dumps(asdict(report), indent=2))
         return

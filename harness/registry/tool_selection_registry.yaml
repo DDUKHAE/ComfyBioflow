@@ -1,7 +1,7 @@
 {
   "metadata": {
     "name": "ComfyBIO MVP tool registry",
-    "version": "0.3.0",
+    "version": "0.5.0",
     "official_route_id": "bulk_rna_seq_salmon_ref"
   },
   "supported_domains": [
@@ -10,8 +10,18 @@
     "variant_analysis",
     "epigenomics",
     "metagenome",
-    "genome_assembly"
+    "genome_assembly",
+    "chip_seq"
   ],
+  "domain_routes": {
+    "bulk_rna_seq": "bulk_rna_seq_salmon_ref",
+    "scrna_seq": "scrna_seq_scanpy_ref",
+    "variant_analysis": "variant_analysis_bwa_ref",
+    "epigenomics": "atac_seq_macs3_ref",
+    "metagenome": "metagenome_kraken2_ref",
+    "genome_assembly": "genome_assembly_spades_ref",
+    "chip_seq": "chip_seq_autogen_ref"
+  },
   "planned_domains": [],
   "routes": {
     "bulk_rna_seq_salmon_ref": [
@@ -298,6 +308,38 @@
         "tool_id": "assembly_report",
         "operation_id": "assembly_report"
       }
+    ],
+    "chip_seq_autogen_ref": [
+      {
+        "stage_id": "read_qc_trim",
+        "stage_label": "Read QC and adapter trimming",
+        "tool_id": "fastp",
+        "operation_id": "fastp_operation"
+      },
+      {
+        "stage_id": "align",
+        "stage_label": "Align reads to human genome",
+        "tool_id": "bowtie2",
+        "operation_id": "bowtie2_operation"
+      },
+      {
+        "stage_id": "sort_filter_dedup",
+        "stage_label": "Sort, filter, and deduplicate alignments",
+        "tool_id": "samtools",
+        "operation_id": "samtools_operation"
+      },
+      {
+        "stage_id": "peak_calling",
+        "stage_label": "Call peaks against matched input control",
+        "tool_id": "macs2",
+        "operation_id": "macs2_operation"
+      },
+      {
+        "stage_id": "signal_visualization",
+        "stage_label": "Signal heatmap over peak regions",
+        "tool_id": "deeptools_plotheatmap",
+        "operation_id": "deeptools_plotheatmap_operation"
+      }
     ]
   },
   "tools": [
@@ -343,7 +385,9 @@
         }
       ],
       "future_comfy_node": "SampleMetadataValidatorNode",
-      "runnable_node_status": "runnable"
+      "runnable_node_status": "runnable",
+      "evidence_tier": "not_applicable_internal_node",
+      "evidence_citation": ""
     },
     {
       "id": "fastp_qc",
@@ -388,7 +432,9 @@
         }
       ],
       "future_comfy_node": "FastpQCNode",
-      "runnable_node_status": "runnable"
+      "runnable_node_status": "runnable",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Chen S, et al. (2018) 'fastp: an ultra-fast all-in-one FASTQ preprocessor.' Bioinformatics 34(17):i884-i890. https://academic.oup.com/bioinformatics/article/34/17/i884/5093234 \u2014 fastp is ~9x faster than Trimmomatic with comparable output quality, and its single-pass QC+trim design is why fastp (not FastQC+Trimmomatic separately) is REF here."
     },
     {
       "id": "fastp_trim",
@@ -433,7 +479,9 @@
         }
       ],
       "future_comfy_node": "FastpTrimNode",
-      "runnable_node_status": "runnable"
+      "runnable_node_status": "runnable",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Same evidence as fastp_qc (Chen et al., Bioinformatics 2018)."
     },
     {
       "id": "salmon_index",
@@ -479,7 +527,9 @@
         }
       ],
       "future_comfy_node": "SalmonIndexNode",
-      "runnable_node_status": "runnable"
+      "runnable_node_status": "runnable",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Zhang C, Zhang B, Lin LL, Zhao S. (2017) 'Evaluation and comparison of computational tools for RNA-seq isoform quantification.' BMC Genomics. https://link.springer.com/article/10.1186/s12864-017-4002-1 \u2014 salmon and kallisto (pseudoalignment methods) reported as top-tier accuracy alongside RSEM."
     },
     {
       "id": "salmon_quant",
@@ -526,7 +576,9 @@
         }
       ],
       "future_comfy_node": "SalmonQuantNode",
-      "runnable_node_status": "runnable"
+      "runnable_node_status": "runnable",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Same evidence as salmon_index (Zhang et al., BMC Genomics 2017). Note: some studies (e.g. kallisto's own benchmarks) report kallisto as comparably accurate or marginally better on specific datasets \u2014 salmon's REF status here rests on downstream tximport/DESeq2 integration and community adoption, not a unanimous accuracy win; see the REF selection rubric in the tool-ranking skill."
     },
     {
       "id": "tximport_import",
@@ -572,7 +624,9 @@
         }
       ],
       "future_comfy_node": "TximportNode",
-      "runnable_node_status": "runnable"
+      "runnable_node_status": "runnable",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Same evidence as salmon_index/salmon_quant (Zhang et al., BMC Genomics 2017); tximport is the standard glue between pseudoalignment quantifiers and DESeq2/edgeR."
     },
     {
       "id": "deseq2_analysis",
@@ -619,7 +673,9 @@
         }
       ],
       "future_comfy_node": "DESeq2AnalysisNode",
-      "runnable_node_status": "runnable"
+      "runnable_node_status": "runnable",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Li Y, Ge X, Peng F, Li W, Li JJ. (2022) 'Exaggerated false positives by popular differential expression methods when analyzing human population samples.' Genome Biology. https://genomebiology.biomedcentral.com/articles/10.1186/s13059-022-02648-4 \u2014 reports DESeq2 and edgeR can exceed target FDR on large population samples. Cited here as an honest, nuanced caveat, not a blanket endorsement: DESeq2 remains REF for its negative-binomial model fit to small-sample bulk RNA-seq designs and tximport integration, not for unconditional superiority over edgeR/limma-voom."
     },
     {
       "id": "comfybio_deseq2_visualization",
@@ -668,7 +724,9 @@
         }
       ],
       "future_comfy_node": "DESeq2VisualizationNode",
-      "runnable_node_status": "runnable"
+      "runnable_node_status": "runnable",
+      "evidence_tier": "not_applicable_internal_node",
+      "evidence_citation": ""
     },
     {
       "id": "comfybio_report",
@@ -712,7 +770,9 @@
         }
       ],
       "future_comfy_node": "ComfyBIOReportNode",
-      "runnable_node_status": "runnable"
+      "runnable_node_status": "runnable",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "MultiQC (Ewels et al., Bioinformatics 2016, DOI 10.1093/bioinformatics/btw354) is this stage's recorded ALT for QC-log aggregation; ComfyBIOReportNode is REF because it also synthesizes DESeq2/DE-specific interpretation, not just QC-metric aggregation, which MultiQC alone does not cover."
     },
     {
       "id": "multiqc",
@@ -758,7 +818,9 @@
         }
       ],
       "future_comfy_node": "MultiQCNode",
-      "runnable_node_status": "planned"
+      "runnable_node_status": "planned",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Ewels P, Magnusson M, Lundin S, Kaller M. (2016) 'MultiQC: summarize analysis results for multiple tools and samples in a single report.' Bioinformatics 32(19):3047-3049. DOI: 10.1093/bioinformatics/btw354. https://academic.oup.com/bioinformatics/article/32/19/3047/2196507"
     },
     {
       "id": "tenx_count",
@@ -805,7 +867,9 @@
         }
       ],
       "future_comfy_node": "TenxCountNode",
-      "runnable_node_status": "runnable"
+      "runnable_node_status": "runnable",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Kaminow B, Yunusov D, Dobin A. (2021) 'STARsolo: accurate, fast and versatile mapping/quantification of single-cell and single-nucleus RNA-seq data.' bioRxiv. https://www.biorxiv.org/content/10.1101/2021.05.05.442755v1.full \u2014 Cell Ranger is REF as the platform-standard tool STARsolo explicitly re-implements to match; STARsolo achieves comparable accuracy at ~10x the speed, recorded as ALT here."
     },
     {
       "id": "scanpy_qc",
@@ -851,7 +915,9 @@
         }
       ],
       "future_comfy_node": "ScanpyQCNode",
-      "runnable_node_status": "runnable"
+      "runnable_node_status": "runnable",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "You Y, et al. (2024) 'The impact of package selection and versioning on single-cell RNA-seq analysis.' bioRxiv/PMC11014608. https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11014608/ \u2014 Scanpy and Seurat are reported as the two most widely-used single-cell toolkits with non-trivial output differences (roughly comparable to a ~5% read-depth or ~20% cell-population subsampling effect); Scanpy is REF here for its Python-ecosystem integration."
     },
     {
       "id": "scanpy_normalize",
@@ -897,7 +963,9 @@
         }
       ],
       "future_comfy_node": "ScanpyNormalizeNode",
-      "runnable_node_status": "runnable"
+      "runnable_node_status": "runnable",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Same evidence as scanpy_qc (You et al., PMC11014608)."
     },
     {
       "id": "scanpy_cluster",
@@ -944,7 +1012,9 @@
         }
       ],
       "future_comfy_node": "ScanpyClusterNode",
-      "runnable_node_status": "runnable"
+      "runnable_node_status": "runnable",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Same evidence as scanpy_qc (You et al., PMC11014608)."
     },
     {
       "id": "scanpy_marker_genes",
@@ -990,7 +1060,9 @@
         }
       ],
       "future_comfy_node": "ScanpyMarkerGenesNode",
-      "runnable_node_status": "runnable"
+      "runnable_node_status": "runnable",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Same evidence as scanpy_qc (You et al., PMC11014608)."
     },
     {
       "id": "comfybio_scrna_visualization",
@@ -1039,7 +1111,9 @@
         }
       ],
       "future_comfy_node": "ScRNAVisualizationNode",
-      "runnable_node_status": "runnable"
+      "runnable_node_status": "runnable",
+      "evidence_tier": "not_applicable_internal_node",
+      "evidence_citation": ""
     },
     {
       "id": "comfybio_scrna_report",
@@ -1085,7 +1159,9 @@
         }
       ],
       "future_comfy_node": "ScRNAReportNode",
-      "runnable_node_status": "runnable"
+      "runnable_node_status": "runnable",
+      "evidence_tier": "not_applicable_internal_node",
+      "evidence_citation": ""
     },
     {
       "id": "variant_input_validator",
@@ -1130,7 +1206,9 @@
         }
       ],
       "future_comfy_node": "VariantInputValidatorNode",
-      "runnable_node_status": "runnable"
+      "runnable_node_status": "runnable",
+      "evidence_tier": "not_applicable_internal_node",
+      "evidence_citation": ""
     },
     {
       "id": "bwa_mem2_index",
@@ -1175,7 +1253,9 @@
         }
       ],
       "future_comfy_node": "BwaMem2IndexNode",
-      "runnable_node_status": "runnable"
+      "runnable_node_status": "runnable",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Ruffalo M, LaFramboise T, Koyuturk M. (2016) 'Accuracy, speed and error tolerance of short DNA sequence aligners.' https://www.biorxiv.org/content/10.1101/053686v1.full.pdf \u2014 bwa-mem tied for top accuracy (F0.25=0.995) among short-read aligners including Bowtie2."
     },
     {
       "id": "bwa_mem2_align",
@@ -1219,7 +1299,9 @@
         }
       ],
       "future_comfy_node": "BwaMem2AlignNode",
-      "runnable_node_status": "runnable"
+      "runnable_node_status": "runnable",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Same evidence as bwa_mem2_index (Ruffalo et al., biorxiv 053686): bwa-mem-family aligners tie for top accuracy among short-read aligners; bwa-mem2 is a drop-in-compatible, faster reimplementation of the same algorithm."
     },
     {
       "id": "samtools_markdup",
@@ -1262,7 +1344,9 @@
         }
       ],
       "future_comfy_node": "MarkDuplicatesNode",
-      "runnable_node_status": "runnable"
+      "runnable_node_status": "runnable",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Community comparison (biostars.org/p/390305, biostars.org/p/3917): samtools markdup and Picard MarkDuplicates are reported as producing comparable results for standard paired-end data, with differences mainly at edge cases (e.g. interchromosomal/supplementary alignments); no head-to-head published benchmark paper was found, so this is community-forum-level evidence, weaker than the other secondary_literature entries here \u2014 revisit if a formal benchmark is published."
     },
     {
       "id": "bcftools_call",
@@ -1307,7 +1391,9 @@
         }
       ],
       "future_comfy_node": "BcftoolsCallNode",
-      "runnable_node_status": "runnable"
+      "runnable_node_status": "runnable",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Yao Z, You FM, N'Diaye A, et al. (2020) 'The evaluation of Bcftools mpileup and GATK HaplotypeCaller for variant calling in non-human species.' https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9256665/ \u2014 reports bcftools mpileup recovery/accuracy at least matching GATK HaplotypeCaller across aligners."
     },
     {
       "id": "gatk_haplotype_caller",
@@ -1352,7 +1438,9 @@
         }
       ],
       "future_comfy_node": "GatkHaplotypeCallerNode",
-      "runnable_node_status": "planned"
+      "runnable_node_status": "planned",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Same evidence as bcftools_call (the other side of the same head-to-head comparison): Yao Z, You FM, N'Diaye A, et al. (2020) 'The evaluation of Bcftools mpileup and GATK HaplotypeCaller for variant calling in non-human species.' https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9256665/ \u2014 reports bcftools mpileup recovery/accuracy at least matching GATK HaplotypeCaller across aligners."
     },
     {
       "id": "bcftools_filter",
@@ -1395,7 +1483,9 @@
         }
       ],
       "future_comfy_node": "BcftoolsFilterNode",
-      "runnable_node_status": "runnable"
+      "runnable_node_status": "runnable",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Same evidence as bcftools_call (Yao et al., PMC9256665): bcftools' integrated call+filter workflow is evaluated against GATK's separate HaplotypeCaller+VariantFiltration pipeline."
     },
     {
       "id": "variant_visualization",
@@ -1438,7 +1528,9 @@
         }
       ],
       "future_comfy_node": "VariantVisualizationNode",
-      "runnable_node_status": "runnable"
+      "runnable_node_status": "runnable",
+      "evidence_tier": "not_applicable_internal_node",
+      "evidence_citation": ""
     },
     {
       "id": "variant_report",
@@ -1481,7 +1573,9 @@
         }
       ],
       "future_comfy_node": "VariantReportNode",
-      "runnable_node_status": "runnable"
+      "runnable_node_status": "runnable",
+      "evidence_tier": "not_applicable_internal_node",
+      "evidence_citation": ""
     },
     {
       "id": "atac_input_validator",
@@ -1526,7 +1620,9 @@
         }
       ],
       "future_comfy_node": "AtacInputValidatorNode",
-      "runnable_node_status": "runnable"
+      "runnable_node_status": "runnable",
+      "evidence_tier": "not_applicable_internal_node",
+      "evidence_citation": ""
     },
     {
       "id": "atac_fastp_trim",
@@ -1569,7 +1665,9 @@
         }
       ],
       "future_comfy_node": "AtacFastpTrimNode",
-      "runnable_node_status": "runnable"
+      "runnable_node_status": "runnable",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Same evidence as fastp_qc (Chen et al., Bioinformatics 2018), applied to the ATAC-seq route."
     },
     {
       "id": "atac_bwa_mem2_index",
@@ -1614,7 +1712,9 @@
         }
       ],
       "future_comfy_node": "AtacBwaMem2IndexNode",
-      "runnable_node_status": "runnable"
+      "runnable_node_status": "runnable",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Same evidence as bwa_mem2_index (Ruffalo et al., biorxiv 053686), applied to the ATAC-seq route's short-read alignment stage."
     },
     {
       "id": "atac_bwa_mem2_align",
@@ -1658,7 +1758,9 @@
         }
       ],
       "future_comfy_node": "AtacBwaMem2AlignNode",
-      "runnable_node_status": "runnable"
+      "runnable_node_status": "runnable",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Same evidence as bwa_mem2_align (Ruffalo et al., biorxiv 053686), applied to the ATAC-seq route's short-read alignment stage."
     },
     {
       "id": "atac_samtools_markdup",
@@ -1701,7 +1803,9 @@
         }
       ],
       "future_comfy_node": "AtacMarkDuplicatesNode",
-      "runnable_node_status": "runnable"
+      "runnable_node_status": "runnable",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Same evidence as samtools_markdup (community comparison, weaker evidence \u2014 see note there), applied to the ATAC-seq route."
     },
     {
       "id": "atac_quality_filter",
@@ -1744,7 +1848,9 @@
         }
       ],
       "future_comfy_node": "AtacQualityFilterNode",
-      "runnable_node_status": "runnable"
+      "runnable_node_status": "runnable",
+      "evidence_tier": "not_applicable_internal_node",
+      "evidence_citation": ""
     },
     {
       "id": "atac_macs3_callpeak",
@@ -1789,7 +1895,9 @@
         }
       ],
       "future_comfy_node": "Macs3PeakCallingNode",
-      "runnable_node_status": "runnable"
+      "runnable_node_status": "runnable",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Zhang Y, et al. 'Improved peak-calling with MACS2.' https://www.biorxiv.org/content/10.1101/496521.full.pdf \u2014 establishes the MACS2 algorithm MACS3 extends; note this is background on the algorithm lineage, not a strict MACS3-vs-MACS2 head-to-head benchmark \u2014 a direct MACS3/MACS2 ATAC-seq comparison paper was not found in this search pass, so this citation is weaker than the others above and should be revisited."
     },
     {
       "id": "atac_macs2_callpeak",
@@ -1834,7 +1942,9 @@
         }
       ],
       "future_comfy_node": "Macs2PeakCallingNode",
-      "runnable_node_status": "planned"
+      "runnable_node_status": "planned",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Same evidence as atac_macs3_callpeak (the other side of the same head-to-head comparison): Zhang Y, et al. 'Improved peak-calling with MACS2.' https://www.biorxiv.org/content/10.1101/496521.full.pdf \u2014 establishes the MACS2 algorithm MACS3 extends; note this is background on the algorithm lineage, not a strict MACS3-vs-MACS2 head-to-head benchmark \u2014 a direct MACS3/MACS2 ATAC-seq comparison paper was not found in this search pass, so this citation is weaker than the others above and should be revisited."
     },
     {
       "id": "atac_genrich_callpeak",
@@ -1879,7 +1989,9 @@
         }
       ],
       "future_comfy_node": "GenrichPeakCallingNode",
-      "runnable_node_status": "planned"
+      "runnable_node_status": "planned",
+      "evidence_tier": "pending_citation_review",
+      "evidence_citation": ""
     },
     {
       "id": "atac_peak_visualization",
@@ -1922,7 +2034,9 @@
         }
       ],
       "future_comfy_node": "AtacPeakVisualizationNode",
-      "runnable_node_status": "runnable"
+      "runnable_node_status": "runnable",
+      "evidence_tier": "not_applicable_internal_node",
+      "evidence_citation": ""
     },
     {
       "id": "atac_report",
@@ -1965,7 +2079,9 @@
         }
       ],
       "future_comfy_node": "AtacReportNode",
-      "runnable_node_status": "runnable"
+      "runnable_node_status": "runnable",
+      "evidence_tier": "not_applicable_internal_node",
+      "evidence_citation": ""
     },
     {
       "id": "metagenome_input_validator",
@@ -2010,7 +2126,9 @@
         }
       ],
       "future_comfy_node": "MetagenomeInputValidatorNode",
-      "runnable_node_status": "runnable"
+      "runnable_node_status": "runnable",
+      "evidence_tier": "not_applicable_internal_node",
+      "evidence_citation": ""
     },
     {
       "id": "metagenome_fastp_trim",
@@ -2053,7 +2171,9 @@
         }
       ],
       "future_comfy_node": "MetagenomeFastpTrimNode",
-      "runnable_node_status": "runnable"
+      "runnable_node_status": "runnable",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Same evidence as fastp_qc (Chen et al., Bioinformatics 2018), applied to the metagenome route."
     },
     {
       "id": "kraken2_classify",
@@ -2098,7 +2218,9 @@
         }
       ],
       "future_comfy_node": "Kraken2ClassifyNode",
-      "runnable_node_status": "runnable"
+      "runnable_node_status": "runnable",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Ye SH, Siddle KJ, Park DJ, Sabeti PC. (2019) 'Benchmarking Metagenomics Tools for Taxonomic Classification.' Cell. https://www.sciencedirect.com/science/article/pii/S0092867419307755 \u2014 Kraken2 reported more accurate than Kraken1/KrakenUniq/CLARK/Centrifuge at genus and species level for Illumina short reads."
     },
     {
       "id": "centrifuge_classify",
@@ -2143,7 +2265,9 @@
         }
       ],
       "future_comfy_node": "CentrifugeClassifyNode",
-      "runnable_node_status": "planned"
+      "runnable_node_status": "planned",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Same evidence as kraken2_classify (the other side of the same head-to-head comparison): Ye SH, Siddle KJ, Park DJ, Sabeti PC. (2019) 'Benchmarking Metagenomics Tools for Taxonomic Classification.' Cell. https://www.sciencedirect.com/science/article/pii/S0092867419307755 \u2014 Kraken2 reported more accurate than Kraken1/KrakenUniq/CLARK/Centrifuge at genus and species level for Illumina short reads."
     },
     {
       "id": "bracken_reestimate",
@@ -2186,7 +2310,9 @@
         }
       ],
       "future_comfy_node": "BrackenAbundanceNode",
-      "runnable_node_status": "runnable"
+      "runnable_node_status": "runnable",
+      "evidence_tier": "pending_citation_review",
+      "evidence_citation": ""
     },
     {
       "id": "metagenome_visualization",
@@ -2229,7 +2355,9 @@
         }
       ],
       "future_comfy_node": "MetagenomeVisualizationNode",
-      "runnable_node_status": "runnable"
+      "runnable_node_status": "runnable",
+      "evidence_tier": "not_applicable_internal_node",
+      "evidence_citation": ""
     },
     {
       "id": "metagenome_report",
@@ -2272,7 +2400,9 @@
         }
       ],
       "future_comfy_node": "MetagenomeReportNode",
-      "runnable_node_status": "runnable"
+      "runnable_node_status": "runnable",
+      "evidence_tier": "not_applicable_internal_node",
+      "evidence_citation": ""
     },
     {
       "id": "assembly_input_validator",
@@ -2316,7 +2446,9 @@
         }
       ],
       "future_comfy_node": "AssemblyInputValidatorNode",
-      "runnable_node_status": "runnable"
+      "runnable_node_status": "runnable",
+      "evidence_tier": "not_applicable_internal_node",
+      "evidence_citation": ""
     },
     {
       "id": "assembly_fastp_trim",
@@ -2359,7 +2491,9 @@
         }
       ],
       "future_comfy_node": "AssemblyFastpTrimNode",
-      "runnable_node_status": "runnable"
+      "runnable_node_status": "runnable",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Same evidence as fastp_qc (Chen et al., Bioinformatics 2018), applied to the genome assembly route."
     },
     {
       "id": "spades_assemble",
@@ -2404,7 +2538,9 @@
         }
       ],
       "future_comfy_node": "SpadesAssembleNode",
-      "runnable_node_status": "runnable"
+      "runnable_node_status": "runnable",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "(2025) 'Benchmarking genome assemblers for four bacterial models based on contiguity, correctness, and completeness.' Scientific Reports. https://www.nature.com/articles/s41598-025-26847-8 \u2014 direct bacterial-isolate short-read assembler comparison including SPAdes and MEGAHIT; note MEGAHIT trades some contiguity/accuracy for speed/memory, consistent with this registry's ALT rationale for megahit_assemble."
     },
     {
       "id": "megahit_assemble",
@@ -2449,7 +2585,9 @@
         }
       ],
       "future_comfy_node": "MegahitAssembleNode",
-      "runnable_node_status": "planned"
+      "runnable_node_status": "planned",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Same evidence as spades_assemble (the other side of the same head-to-head comparison): (2025) 'Benchmarking genome assemblers for four bacterial models based on contiguity, correctness, and completeness.' Scientific Reports. https://www.nature.com/articles/s41598-025-26847-8 \u2014 direct bacterial-isolate short-read assembler comparison including SPAdes and MEGAHIT; note MEGAHIT trades some contiguity/accuracy for speed/memory, consistent with this registry's ALT rationale for megahit_assemble."
     },
     {
       "id": "quast_qc",
@@ -2492,7 +2630,9 @@
         }
       ],
       "future_comfy_node": "QuastQcNode",
-      "runnable_node_status": "runnable"
+      "runnable_node_status": "runnable",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Bankevich A, et al.; WebQUAST: https://academic.oup.com/nar/article/51/W1/W601/7167303 \u2014 QUAST is the standard reference-free contiguity/correctness metrics tool for assembly QC, complementary to (not a substitute for) BUSCO's completeness metrics."
     },
     {
       "id": "assembly_visualization",
@@ -2535,7 +2675,9 @@
         }
       ],
       "future_comfy_node": "AssemblyVisualizationNode",
-      "runnable_node_status": "runnable"
+      "runnable_node_status": "runnable",
+      "evidence_tier": "not_applicable_internal_node",
+      "evidence_citation": ""
     },
     {
       "id": "assembly_report",
@@ -2578,7 +2720,9 @@
         }
       ],
       "future_comfy_node": "AssemblyReportNode",
-      "runnable_node_status": "runnable"
+      "runnable_node_status": "runnable",
+      "evidence_tier": "not_applicable_internal_node",
+      "evidence_citation": ""
     },
     {
       "id": "trimmomatic_trim",
@@ -2627,7 +2771,9 @@
         }
       ],
       "future_comfy_node": "TrimmomaticTrimNode",
-      "runnable_node_status": "planned"
+      "runnable_node_status": "planned",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Same comparison as fastp_trim: fastp was benchmarked ~9x faster than Trimmomatic-0.39 with similar output quality (mapping rate 94.3-94.8%, read retention 96.8-97.2% across tools) \u2014 see NotchBio's fastp-vs-Trimmomatic-vs-BBDuk benchmark and Chen et al. 2018."
     },
     {
       "id": "kallisto_index",
@@ -2672,7 +2818,9 @@
         }
       ],
       "future_comfy_node": "KallistoIndexNode",
-      "runnable_node_status": "planned"
+      "runnable_node_status": "planned",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Same evidence as salmon_index (the other side of the same head-to-head comparison): Zhang C, Zhang B, Lin LL, Zhao S. (2017) 'Evaluation and comparison of computational tools for RNA-seq isoform quantification.' BMC Genomics. https://link.springer.com/article/10.1186/s12864-017-4002-1 \u2014 salmon and kallisto (pseudoalignment methods) reported as top-tier accuracy alongside RSEM."
     },
     {
       "id": "kallisto_quant",
@@ -2719,7 +2867,9 @@
         }
       ],
       "future_comfy_node": "KallistoQuantNode",
-      "runnable_node_status": "planned"
+      "runnable_node_status": "planned",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Same evidence as salmon_quant (the other side of the same head-to-head comparison): Same evidence as salmon_index (Zhang et al., BMC Genomics 2017). Note: some studies (e.g. kallisto's own benchmarks) report kallisto as comparably accurate or marginally better on specific datasets \u2014 salmon's REF status here rests on downstream tximport/DESeq2 integration and community adoption, not a unanimous accuracy win; see the REF selection rubric in the tool-ranking skill."
     },
     {
       "id": "star_align",
@@ -2764,7 +2914,9 @@
         }
       ],
       "future_comfy_node": "StarAlignNode",
-      "runnable_node_status": "planned"
+      "runnable_node_status": "planned",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Multiple benchmark sources (MDPI Plants 13(5):582, https://www.mdpi.com/2223-7747/13/5/582; NotchBio's STAR-vs-HISAT2-vs-Salmon comparison): STAR shows higher overall mapping accuracy and F1-scores than HISAT2 but requires substantially more memory (up to ~28GB vs HISAT2's ~4.3GB for a human genome index) \u2014 recorded as ALT (genome-alignment route) since salmon's lighter pseudoalignment is REF for this MVP's differential-expression scope."
     },
     {
       "id": "featurecounts",
@@ -2809,7 +2961,9 @@
         }
       ],
       "future_comfy_node": "FeatureCountsNode",
-      "runnable_node_status": "planned"
+      "runnable_node_status": "planned",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Liao Y, Smyth GK, Shi W. (2014) 'featureCounts: an efficient general purpose program for assigning sequence reads to genomic features.' Bioinformatics 30(7):923-930. https://academic.oup.com/bioinformatics/article/30/7/923/232889 \u2014 reports ~18x (37x multi-threaded) speedup over HTSeq-count with more sophisticated paired-end read handling. Recorded here as an ALT for the genome-alignment (STAR) route's read counting, not the REF pseudoalignment (salmon) route, which produces transcript-level counts directly."
     },
     {
       "id": "edger_analysis",
@@ -2854,7 +3008,9 @@
         }
       ],
       "future_comfy_node": "EdgeRAnalysisNode",
-      "runnable_node_status": "planned"
+      "runnable_node_status": "planned",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Comparative discussion (jove.com/t/62528; NotchBio's DESeq2-vs-edgeR-vs-limma-voom comparison; biostars.org/p/284775): edgeR and DESeq2 are reported to detect more DE genes than limma-voom (especially among lowly-expressed genes) but with inflated FDR in some settings, versus limma-voom's more conservative FDR control \u2014 see also the deseq2_analysis citation (Li et al., Genome Biology 2022) on DESeq2's own FDR caveats. edgeR is a credible ALT when small-sample dispersion handling is explicitly preferred over DESeq2's model."
     },
     {
       "id": "enhancedvolcano",
@@ -2899,7 +3055,9 @@
         }
       ],
       "future_comfy_node": "EnhancedVolcanoNode",
-      "runnable_node_status": "planned"
+      "runnable_node_status": "planned",
+      "evidence_tier": "pending_citation_review",
+      "evidence_citation": ""
     },
     {
       "id": "starsolo_count",
@@ -2946,7 +3104,9 @@
         }
       ],
       "future_comfy_node": "StarSoloCountNode",
-      "runnable_node_status": "planned"
+      "runnable_node_status": "planned",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Same evidence as tenx_count (Kaminow et al., bioRxiv 2021.05.05.442755)."
     },
     {
       "id": "dropletutils_qc",
@@ -2991,7 +3151,9 @@
         }
       ],
       "future_comfy_node": "DropletUtilsQcNode",
-      "runnable_node_status": "planned"
+      "runnable_node_status": "planned",
+      "evidence_tier": "pending_citation_review",
+      "evidence_citation": ""
     },
     {
       "id": "scran_normalize",
@@ -3036,7 +3198,9 @@
         }
       ],
       "future_comfy_node": "ScranNormalizeNode",
-      "runnable_node_status": "planned"
+      "runnable_node_status": "planned",
+      "evidence_tier": "pending_citation_review",
+      "evidence_citation": ""
     },
     {
       "id": "seurat_pipeline",
@@ -3083,7 +3247,9 @@
         }
       ],
       "future_comfy_node": "SeuratPipelineNode",
-      "runnable_node_status": "planned"
+      "runnable_node_status": "planned",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Same evidence as scanpy_qc (You et al., PMC11014608): Seurat is a credible, equally widely-used ALT, recorded as tier: ALT because this route's REF stack is Python/Scanpy-based."
     },
     {
       "id": "bwa_align",
@@ -3132,7 +3298,9 @@
         }
       ],
       "future_comfy_node": "BwaAlignNode",
-      "runnable_node_status": "planned"
+      "runnable_node_status": "planned",
+      "evidence_tier": "pending_citation_review",
+      "evidence_citation": ""
     },
     {
       "id": "picard_markduplicates",
@@ -3178,7 +3346,9 @@
         }
       ],
       "future_comfy_node": "PicardMarkDuplicatesNode",
-      "runnable_node_status": "planned"
+      "runnable_node_status": "planned",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Same evidence as samtools_markdup: reported comparable for standard cases; recorded as ALT since bcftools-family/samtools tooling is this registry's lighter-weight default stack."
     },
     {
       "id": "gatk_variant_filtration",
@@ -3223,7 +3393,9 @@
         }
       ],
       "future_comfy_node": "GatkVariantFiltrationNode",
-      "runnable_node_status": "planned"
+      "runnable_node_status": "planned",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "GATK documentation (Broad Institute, 'Hard-filtering germline short variants' / 'VariantFiltration'): https://gatk.broadinstitute.org/hc/en-us/articles/360035890471 \u2014 GATK's own hard-filtering guidance notes that GATK variant-quality scores did not clearly separate true from false positives in non-human contexts, motivating bcftools filter's score-threshold approach as REF here; contrast source for bcftools_filter's tier_rationale."
     },
     {
       "id": "vcftools_stats",
@@ -3268,7 +3440,9 @@
         }
       ],
       "future_comfy_node": "VcftoolsStatsNode",
-      "runnable_node_status": "planned"
+      "runnable_node_status": "planned",
+      "evidence_tier": "pending_citation_review",
+      "evidence_citation": ""
     },
     {
       "id": "sambamba",
@@ -3315,7 +3489,9 @@
         }
       ],
       "future_comfy_node": "SambambaNode",
-      "runnable_node_status": "planned"
+      "runnable_node_status": "planned",
+      "evidence_tier": "pending_citation_review",
+      "evidence_citation": ""
     },
     {
       "id": "deeptools_visualization",
@@ -3360,7 +3536,9 @@
         }
       ],
       "future_comfy_node": "DeeptoolsVisualizationNode",
-      "runnable_node_status": "planned"
+      "runnable_node_status": "planned",
+      "evidence_tier": "pending_citation_review",
+      "evidence_citation": ""
     },
     {
       "id": "metaphlan_profile",
@@ -3406,7 +3584,9 @@
         }
       ],
       "future_comfy_node": "MetaphlanProfileNode",
-      "runnable_node_status": "planned"
+      "runnable_node_status": "planned",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Ye SH, Siddle KJ, Park DJ, Sabeti PC. (2019) 'Benchmarking Metagenomics Tools for Taxonomic Classification.' Cell. https://www.sciencedirect.com/science/article/pii/S0092867419307755 \u2014 MetaPhlAn is reported to have very low computational requirements and fast classification but does not allow custom databases, unlike Kraken2 (this registry's REF), which is credited with the best accuracy on modern shotgun datasets in the same benchmark."
     },
     {
       "id": "krona_visualization",
@@ -3451,7 +3631,9 @@
         }
       ],
       "future_comfy_node": "KronaVisualizationNode",
-      "runnable_node_status": "planned"
+      "runnable_node_status": "planned",
+      "evidence_tier": "pending_citation_review",
+      "evidence_citation": ""
     },
     {
       "id": "busco_qc",
@@ -3496,7 +3678,9 @@
         }
       ],
       "future_comfy_node": "BuscoQcNode",
-      "runnable_node_status": "planned"
+      "runnable_node_status": "planned",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Simao FA, Waterhouse RM, Ioannidis P, Kriventseva EV, Zdobnov EM. (2015) 'BUSCO: assessing genome assembly and annotation completeness with single-copy orthologs.' Bioinformatics 31(19):3210-3212. https://academic.oup.com/bioinformatics/article/31/19/3210/211866 \u2014 BUSCO assesses gene-content completeness via conserved single-copy orthologs, complementing (not replacing) QUAST's reference-free contiguity/correctness metrics, which are REF here."
     },
     {
       "id": "bandage_visualization",
@@ -3541,7 +3725,9 @@
         }
       ],
       "future_comfy_node": "BandageVisualizationNode",
-      "runnable_node_status": "planned"
+      "runnable_node_status": "planned",
+      "evidence_tier": "pending_citation_review",
+      "evidence_citation": ""
     },
     {
       "id": "fastqc_qc",
@@ -3590,7 +3776,9 @@
         }
       ],
       "future_comfy_node": "FastQCNode",
-      "runnable_node_status": "planned"
+      "runnable_node_status": "planned",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Same comparison as fastp_qc (Chen et al., Bioinformatics 2018): FastQC only performs QC (no trimming), which is why it's ALT rather than REF once fastp's combined QC+trim covers the same ground."
     },
     {
       "id": "hisat2_align",
@@ -3639,7 +3827,9 @@
         }
       ],
       "future_comfy_node": "Hisat2AlignNode",
-      "runnable_node_status": "planned"
+      "runnable_node_status": "planned",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Same benchmark sources as star_align (MDPI 13(5):582 et al.): HISAT2 trades some mapping accuracy for substantially lower memory use than STAR, and is faster in some benchmarks \u2014 credible ALT when the STAR/featureCounts genome-alignment route is explicitly requested under memory constraints."
     },
     {
       "id": "stringtie_quant",
@@ -3684,7 +3874,9 @@
         }
       ],
       "future_comfy_node": "StringtieQuantNode",
-      "runnable_node_status": "planned"
+      "runnable_node_status": "planned",
+      "evidence_tier": "pending_citation_review",
+      "evidence_citation": ""
     },
     {
       "id": "rsem_quant",
@@ -3733,7 +3925,9 @@
         }
       ],
       "future_comfy_node": "RsemQuantNode",
-      "runnable_node_status": "planned"
+      "runnable_node_status": "planned",
+      "evidence_tier": "pending_citation_review",
+      "evidence_citation": ""
     },
     {
       "id": "limma_voom_analysis",
@@ -3779,7 +3973,9 @@
         }
       ],
       "future_comfy_node": "LimmaVoomAnalysisNode",
-      "runnable_node_status": "planned"
+      "runnable_node_status": "planned",
+      "evidence_tier": "pending_citation_review",
+      "evidence_citation": ""
     },
     {
       "id": "alevin_quant",
@@ -3825,7 +4021,9 @@
         }
       ],
       "future_comfy_node": "AlevinQuantNode",
-      "runnable_node_status": "planned"
+      "runnable_node_status": "planned",
+      "evidence_tier": "pending_citation_review",
+      "evidence_citation": ""
     },
     {
       "id": "harmony_integration",
@@ -3871,7 +4069,9 @@
         }
       ],
       "future_comfy_node": "HarmonyIntegrationNode",
-      "runnable_node_status": "planned"
+      "runnable_node_status": "planned",
+      "evidence_tier": "pending_citation_review",
+      "evidence_citation": ""
     },
     {
       "id": "monocle3_pipeline",
@@ -3917,7 +4117,9 @@
         }
       ],
       "future_comfy_node": "Monocle3PipelineNode",
-      "runnable_node_status": "planned"
+      "runnable_node_status": "planned",
+      "evidence_tier": "pending_citation_review",
+      "evidence_citation": ""
     },
     {
       "id": "bowtie2_align",
@@ -3966,7 +4168,9 @@
         }
       ],
       "future_comfy_node": "Bowtie2AlignNode",
-      "runnable_node_status": "planned"
+      "runnable_node_status": "planned",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Same evidence as bwa_mem2_align (the other side of the same head-to-head comparison): Same evidence as bwa_mem2_index (Ruffalo et al., biorxiv 053686): bwa-mem-family aligners tie for top accuracy among short-read aligners; bwa-mem2 is a drop-in-compatible, faster reimplementation of the same algorithm."
     },
     {
       "id": "deepvariant_call",
@@ -4012,7 +4216,9 @@
         }
       ],
       "future_comfy_node": "DeepVariantCallNode",
-      "runnable_node_status": "planned"
+      "runnable_node_status": "planned",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Systematic benchmark: 'Systematic benchmark of state-of-the-art variant calling pipelines identifies major factors affecting accuracy of coding sequence variant discovery.' bioRxiv 2021.04.13.439626 / PMC8862519. https://pmc.ncbi.nlm.nih.gov/articles/PMC8862519/ \u2014 DeepVariant reported with the highest F1-scores for SNPs and indels among compared callers, particularly in difficult genomic regions; bcftools remains REF here for its far lighter dependency footprint (no GPU/TensorFlow requirement)."
     },
     {
       "id": "freebayes_call",
@@ -4058,7 +4264,9 @@
         }
       ],
       "future_comfy_node": "FreebayesCallNode",
-      "runnable_node_status": "planned"
+      "runnable_node_status": "planned",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Same benchmark as deepvariant_call (PMC8862519): FreeBayes reported to perform considerably worse than DeepVariant/Strelka2 on both SNPs and indels in this comparison, with high sensitivity but lower precision \u2014 credible ALT for specific population/pooled-sample designs FreeBayes is purpose-built for, not for general accuracy superiority."
     },
     {
       "id": "strelka2_call",
@@ -4104,7 +4312,9 @@
         }
       ],
       "future_comfy_node": "Strelka2CallNode",
-      "runnable_node_status": "planned"
+      "runnable_node_status": "planned",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Same benchmark as deepvariant_call (PMC8862519): Strelka2 reported with strong precision (comparable to or exceeding DeepVariant in some genome-wide measures) when paired with BWA/Isaac/Novoalign, but performance drops sharply with Bowtie2 as the aligner \u2014 aligner-dependent, unlike bcftools' REF pairing with bwa-mem2 in this registry."
     },
     {
       "id": "snpeff_annotate",
@@ -4150,7 +4360,9 @@
         }
       ],
       "future_comfy_node": "SnpEffAnnotateNode",
-      "runnable_node_status": "planned"
+      "runnable_node_status": "planned",
+      "evidence_tier": "pending_citation_review",
+      "evidence_citation": ""
     },
     {
       "id": "homer_findpeaks",
@@ -4195,7 +4407,9 @@
         }
       ],
       "future_comfy_node": "HomerFindPeaksNode",
-      "runnable_node_status": "planned"
+      "runnable_node_status": "planned",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "HOMER documentation and community comparisons (hbctraining ChIP-seq materials; bio-protocol ATAC-seq/ChIP-seq analysis notes): HOMER findPeaks is one of the earliest dedicated peak callers usable for both ChIP-seq and ATAC-seq, with its own motif-enrichment features; MACS3 is REF as the actively-maintained successor with equivalent core semantics."
     },
     {
       "id": "bedtools_intervals",
@@ -4240,7 +4454,9 @@
         }
       ],
       "future_comfy_node": "BedtoolsIntervalsNode",
-      "runnable_node_status": "planned"
+      "runnable_node_status": "planned",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Same sources as homer_findpeaks: bedtools is characterized as a downstream interval-manipulation toolkit (overlap/intersect/merge across peak sets), not a competing peak caller \u2014 it is credible as a recorded ALT for interval-set operations layered on top of MACS3's REF peak calls, not a substitute for peak calling itself."
     },
     {
       "id": "kaiju_classify",
@@ -4286,7 +4502,9 @@
         }
       ],
       "future_comfy_node": "KaijuClassifyNode",
-      "runnable_node_status": "planned"
+      "runnable_node_status": "planned",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Same evidence as metaphlan_profile and kraken2_classify's own citation (Ye et al., Cell S0092867419307755): Kaiju (protein-level classification) is reported to give reliable estimates of the most abundant genera but with the lowest F1-score among profilers compared in damaged/ancient-DNA benchmarks, and a tendency toward false-positive taxa \u2014 credible ALT when protein-level sensitivity for divergent taxa is explicitly wanted."
     },
     {
       "id": "humann_functional",
@@ -4332,7 +4550,9 @@
         }
       ],
       "future_comfy_node": "HumannFunctionalNode",
-      "runnable_node_status": "planned"
+      "runnable_node_status": "planned",
+      "evidence_tier": "pending_citation_review",
+      "evidence_citation": ""
     },
     {
       "id": "phyloseq_visualization",
@@ -4377,7 +4597,9 @@
         }
       ],
       "future_comfy_node": "PhyloseqVisualizationNode",
-      "runnable_node_status": "planned"
+      "runnable_node_status": "planned",
+      "evidence_tier": "pending_citation_review",
+      "evidence_citation": ""
     },
     {
       "id": "unicycler_assemble",
@@ -4423,7 +4645,9 @@
         }
       ],
       "future_comfy_node": "UnicyclerAssembleNode",
-      "runnable_node_status": "planned"
+      "runnable_node_status": "planned",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Wick RR, et al.; benchmark: 'Do You Want to Build a Genome? Benchmarking Hybrid Bacterial Genome Assembly Methods.' bioRxiv 2021.11.07.467652. https://www.biorxiv.org/content/10.1101/2021.11.07.467652v1 \u2014 Unicycler reported with the highest sequence accuracy in non-repetitive regions among hybrid assemblers and reliable circularization, at the cost of being more computationally involved than long-read-only Flye."
     },
     {
       "id": "flye_assemble",
@@ -4468,7 +4692,9 @@
         }
       ],
       "future_comfy_node": "FlyeAssembleNode",
-      "runnable_node_status": "planned"
+      "runnable_node_status": "planned",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Same evidence as unicycler_assemble (bioRxiv 2021.11.07.467652): Flye reported as the most structurally accurate among compared long-read assemblers, recommended when balancing accuracy and speed without short-read data for hybrid assembly."
     },
     {
       "id": "checkm_qc",
@@ -4514,7 +4740,222 @@
         }
       ],
       "future_comfy_node": "CheckmQcNode",
-      "runnable_node_status": "planned"
+      "runnable_node_status": "planned",
+      "evidence_tier": "pending_citation_review",
+      "evidence_citation": ""
+    },
+    {
+      "id": "fastp",
+      "label": "fastp",
+      "domain_tags": [],
+      "stage_tags": [
+        "read_qc_trim"
+      ],
+      "input_types": [
+        "fastq"
+      ],
+      "output_types": [
+        "trimmed_fastq",
+        "qc_report_html"
+      ],
+      "language": "C++",
+      "python_bindings": [],
+      "summary": "Performs quality filtering, adapter trimming, and per-read QC on raw ChIP and input-control FASTQ files.",
+      "tier": "REF",
+      "tier_rationale": "[LLM-researched, unreviewed] fastp is an all-in-one ultrafast preprocessor that combines adapter/quality trimming and QC in one pass, the de facto default for short-read cleanup before alignment.",
+      "context_routing_rules": [],
+      "applicability_constraints": [],
+      "selection_rules": [],
+      "operations": [
+        {
+          "id": "fastp_operation",
+          "label": "Read QC and adapter trimming",
+          "input_types": [
+            "fastq"
+          ],
+          "output_types": [
+            "trimmed_fastq",
+            "qc_report_html"
+          ],
+          "node_type": "FastpNode"
+        }
+      ],
+      "future_comfy_node": "FastpNode",
+      "runnable_node_status": "runnable",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Chen et al., 'fastp: an ultra-fast all-in-one FASTQ preprocessor', Bioinformatics, 2018 (benchmarks speed/accuracy vs Trimmomatic, Cutadapt, FASTQC)."
+    },
+    {
+      "id": "bowtie2",
+      "label": "Bowtie2",
+      "domain_tags": [],
+      "stage_tags": [
+        "align"
+      ],
+      "input_types": [
+        "trimmed_fastq",
+        "bowtie2_index"
+      ],
+      "output_types": [
+        "sam_alignment"
+      ],
+      "language": "C++",
+      "python_bindings": [],
+      "summary": "Aligns trimmed ChIP and input-control reads to the human reference genome (GRCh38) producing SAM/BAM alignments.",
+      "tier": "REF",
+      "tier_rationale": "[LLM-researched, unreviewed] Bowtie2 is the aligner used by the ENCODE ChIP-seq processing pipeline and is a robust, sensitive default for short unspliced ChIP-seq reads.",
+      "context_routing_rules": [],
+      "applicability_constraints": [],
+      "selection_rules": [],
+      "operations": [
+        {
+          "id": "bowtie2_operation",
+          "label": "Align reads to human genome",
+          "input_types": [
+            "trimmed_fastq",
+            "bowtie2_index"
+          ],
+          "output_types": [
+            "sam_alignment"
+          ],
+          "node_type": "Bowtie2Node"
+        }
+      ],
+      "future_comfy_node": "Bowtie2Node",
+      "runnable_node_status": "runnable",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Langmead & Salzberg, 'Fast gapped-read alignment with Bowtie 2', Nature Methods, 2012; adopted as ENCODE ChIP-seq pipeline aligner."
+    },
+    {
+      "id": "samtools",
+      "label": "SAMtools",
+      "domain_tags": [],
+      "stage_tags": [
+        "sort_filter_dedup"
+      ],
+      "input_types": [
+        "sam_alignment"
+      ],
+      "output_types": [
+        "sorted_bam",
+        "bam_index"
+      ],
+      "language": "C",
+      "python_bindings": [],
+      "summary": "Converts, coordinate-sorts, filters low-quality/multi-mapping reads, marks duplicates, and indexes alignments for both ChIP and control.",
+      "tier": "REF",
+      "tier_rationale": "[LLM-researched, unreviewed] SAMtools is the universal standard for SAM/BAM manipulation, sorting, filtering, and indexing required before peak calling.",
+      "context_routing_rules": [],
+      "applicability_constraints": [],
+      "selection_rules": [],
+      "operations": [
+        {
+          "id": "samtools_operation",
+          "label": "Sort, filter, and deduplicate alignments",
+          "input_types": [
+            "sam_alignment"
+          ],
+          "output_types": [
+            "sorted_bam",
+            "bam_index"
+          ],
+          "node_type": "SamtoolsNode"
+        }
+      ],
+      "future_comfy_node": "SamtoolsNode",
+      "runnable_node_status": "runnable",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Danecek et al., 'Twelve years of SAMtools and BCFtools', GigaScience, 2021."
+    },
+    {
+      "id": "macs2",
+      "label": "MACS2",
+      "domain_tags": [],
+      "stage_tags": [
+        "peak_calling"
+      ],
+      "input_types": [
+        "sorted_bam",
+        "input_control_sample"
+      ],
+      "output_types": [
+        "peak_calls",
+        "narrowpeak_bed",
+        "bedgraph"
+      ],
+      "language": "Python",
+      "python_bindings": [],
+      "summary": "Identifies statistically significant ChIP enrichment (peaks) by modeling read shift and comparing the treatment BAM against the matched input-control BAM.",
+      "tier": "REF",
+      "tier_rationale": "[LLM-researched, unreviewed] MACS2 is the ENCODE-standard peak caller and among the top-performing methods for transcription-factor binding data; it natively consumes a matched input control satisfying the pipeline constraint.",
+      "context_routing_rules": [],
+      "applicability_constraints": [],
+      "selection_rules": [],
+      "operations": [
+        {
+          "id": "macs2_operation",
+          "label": "Call peaks against matched input control",
+          "input_types": [
+            "sorted_bam",
+            "input_control_sample"
+          ],
+          "output_types": [
+            "peak_calls",
+            "narrowpeak_bed",
+            "bedgraph"
+          ],
+          "node_type": "Macs2Node"
+        }
+      ],
+      "future_comfy_node": "Macs2Node",
+      "runnable_node_status": "runnable",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Thomas, Thomas, Holloway & Pollard, 'Features that define the best ChIP-seq peak calling algorithms', Briefings in Bioinformatics, 18(3):441-450, 2017 (MACS2 among best operating characteristics on TF-binding data)."
+    },
+    {
+      "id": "deeptools_plotheatmap",
+      "label": "deepTools (plotHeatmap)",
+      "domain_tags": [],
+      "stage_tags": [
+        "signal_visualization"
+      ],
+      "input_types": [
+        "bigwig_signal",
+        "narrowpeak_bed",
+        "computematrix_gz"
+      ],
+      "output_types": [
+        "visualization_artifacts",
+        "heatmap_png"
+      ],
+      "language": "Python",
+      "python_bindings": [],
+      "summary": "Computes ChIP-vs-input signal over called peak regions and renders a heatmap/profile image summarizing enrichment.",
+      "tier": "REF",
+      "tier_rationale": "[LLM-researched, unreviewed] deepTools is the standard suite for ChIP-seq signal visualization; plotHeatmap produces the canonical peak-centered enrichment heatmap image required as the final artifact.",
+      "context_routing_rules": [],
+      "applicability_constraints": [],
+      "selection_rules": [],
+      "operations": [
+        {
+          "id": "deeptools_plotheatmap_operation",
+          "label": "Signal heatmap over peak regions",
+          "input_types": [
+            "bigwig_signal",
+            "narrowpeak_bed",
+            "computematrix_gz"
+          ],
+          "output_types": [
+            "visualization_artifacts",
+            "heatmap_png"
+          ],
+          "node_type": "DeeptoolsPlotheatmapNode"
+        }
+      ],
+      "future_comfy_node": "DeeptoolsPlotheatmapNode",
+      "runnable_node_status": "runnable",
+      "evidence_tier": "secondary_literature",
+      "evidence_citation": "Ram\u00edrez et al., 'deepTools2: a next generation web server for deep-sequencing data analysis', Nucleic Acids Research, 44(W1):W160-W165, 2016."
     }
   ]
 }

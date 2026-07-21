@@ -53,6 +53,8 @@ def load_registry(path: str | Path) -> ToolRegistry:
             ],
             future_comfy_node=item["future_comfy_node"],
             runnable_node_status=item["runnable_node_status"],
+            evidence_tier=item.get("evidence_tier", "pending_citation_review"),
+            evidence_citation=item.get("evidence_citation", ""),
         )
         for item in data["tools"]
     ]
@@ -74,6 +76,7 @@ def load_registry(path: str | Path) -> ToolRegistry:
         supported_domains=_list(data.get("supported_domains")),
         routes=routes,
         tools=tools,
+        domain_routes=dict(data.get("domain_routes", {})),
     )
 
 

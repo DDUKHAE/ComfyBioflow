@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from .ref_nodes import (
     ComfyBIOReportNode,
     DESeq2AnalysisNode,
@@ -114,3 +116,25 @@ def resolve_node_class(node_type: str):
         return NODE_CLASS_MAPPINGS[node_type]
     except KeyError as error:
         raise KeyError(f"No ComfyBIO custom node class registered for {node_type}") from error
+
+
+def _load_autogen_nodes() -> None:
+    """Scan nodes/autogen/*.py (written by bioflow_harness.autogen.node_synthesizer for
+    self-extended domains) and merge their AUTOGEN_NODE_CLASSES into the mappings above.
+    New autogen modules are picked up automatically — this function does not need editing
+    when a new self-extended domain/tool is added."""
+    import importlib
+    import pkgutil
+
+    autogen_dir = Path(__file__).parent / "autogen"
+    if not autogen_dir.exists():
+        return
+    for module_info in pkgutil.iter_modules([str(autogen_dir)]):
+        module = importlib.import_module(f"nodes.autogen.{module_info.name}")
+        for class_name in getattr(module, "AUTOGEN_NODE_CLASSES", []):
+            node_cls = getattr(module, class_name)
+            NODE_CLASS_MAPPINGS[class_name] = node_cls
+            NODE_DISPLAY_NAME_MAPPINGS[class_name] = class_name.replace("Node", "")
+
+
+_load_autogen_nodes()

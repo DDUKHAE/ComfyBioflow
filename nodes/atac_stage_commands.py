@@ -74,10 +74,16 @@ def samtools_quality_filter_argv(input_bam, output_bam, min_mapq, exclude_flags,
     )
 
 
-def macs3_callpeak_argv(input_bam, outdir, sample_name, genome_size, extra_command="") -> list[str]:
+def samtools_count_paired_argv(bam_path) -> list[str]:
+    """Counts reads with SAM flag 0x1 (paired) set; a nonzero count means the BAM is paired-end.
+    Used by Macs3PeakCallingNode to pick -f BAM vs -f BAMPE instead of assuming paired-end."""
+    return conda_command(ENV_NAME, "samtools", "view", "-c", "-f", "1", str(bam_path))
+
+
+def macs3_callpeak_argv(input_bam, outdir, sample_name, genome_size, format_flag="BAMPE", extra_command="") -> list[str]:
     return conda_command(
         ENV_NAME, "macs3", "callpeak",
-        "-t", str(input_bam), "-f", "BAMPE", "-g", str(genome_size),
+        "-t", str(input_bam), "-f", format_flag, "-g", str(genome_size),
         "--outdir", str(outdir), "-n", str(sample_name), "--keep-dup", "all",
         *_extra(extra_command),
     )
